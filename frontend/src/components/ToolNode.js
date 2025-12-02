@@ -39,21 +39,29 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             style={{ touchAction: 'none' }}
           >
             {/* Node Container */}
-            <div className="w-full h-full rounded-xl glass flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group">
+            <div className="w-full h-full rounded-xl glass flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group bg-slate-900/50 dark:bg-slate-800/50 border border-white/10">
               {tool.favicon ? (
-                <img 
-                  src={tool.favicon} 
-                  alt={tool.title}
-                  className="w-10 h-10 rounded-lg"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-              ) : null}
-              <div className={`w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center ${tool.favicon ? 'hidden' : 'flex'}`}>
-                <span className="text-2xl">{tool.title.charAt(0).toUpperCase()}</span>
-              </div>
+                <>
+                  <img 
+                    src={tool.favicon} 
+                    alt={tool.title}
+                    className="w-10 h-10 rounded-lg object-contain"
+                    style={{ display: 'block' }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      const fallback = e.target.parentElement.querySelector('.fallback-icon');
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                  />
+                  <div className="fallback-icon hidden w-10 h-10 rounded-lg bg-violet-500/30 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-violet-500/30 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
+                </div>
+              )}
               
               {/* Favorite indicator */}
               {tool.favorite && (
