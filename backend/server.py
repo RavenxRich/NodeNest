@@ -101,8 +101,10 @@ class ToolUpdate(BaseModel):
 
 class ExtractMetadataRequest(BaseModel):
     url: str
-    llm_provider: str = "anthropic"  # anthropic, openai, gemini
+    llm_provider: str = "anthropic"  # anthropic, openai, gemini, local
     llm_model: str = "claude-4-sonnet-20250514"
+    local_endpoint: Optional[str] = None  # For local LLMs
+    local_api_key: Optional[str] = None  # Optional API key for local LLMs
 
 class ExtractMetadataResponse(BaseModel):
     title: str
