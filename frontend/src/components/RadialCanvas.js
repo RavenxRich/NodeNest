@@ -107,10 +107,10 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
               <motion.text
                 fill={category.color}
                 fontSize="13"
-                fontWeight="600"
+                fontWeight="700"
                 className="font-sans uppercase tracking-wider"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.8 }}
+                animate={{ opacity: 0.9 }}
                 transition={{ delay: idx * 0.1 + 0.2 }}
               >
                 <textPath href={`#${pathId}`} startOffset="25%">
