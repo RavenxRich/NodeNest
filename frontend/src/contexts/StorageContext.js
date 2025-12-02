@@ -47,20 +47,29 @@ export const StorageProvider = ({ children }) => {
       // If filesystem storage, prompt user to select directory
       if (storageType === 'filesystem') {
         try {
-          if ('showDirectoryPicker' in window) {
-            const handle = await window.showDirectoryPicker({
-              mode: 'readwrite',
-              startIn: 'documents'
-            });
-            setDirectoryHandle(handle);
-            // Store directory handle reference
-            localStorage.setItem('nodenest_has_directory', 'true');
-            return { success: true };
-          } else {
-            throw new Error('File System Access API not supported');
+          if (!('showDirectoryPicker' in window)) {
+            throw new Error('File System Access API not supported in your browser. Please use Chrome or Edge.');
           }
+          
+          const handle = await window.showDirectoryPicker({
+            mode: 'readwrite',
+            startIn: 'documents'
+          });
+          
+          // Store handle in IndexedDB for persistence
+          const db = await openDB();
+          const tx = db.transaction('handles', 'readwrite');
+          await tx.objectStore('handles').put(handle, 'directory');
+          await tx.done;
+          
+          setDirectoryHandle(handle);
+          localStorage.setItem('nodenest_has_directory', 'true');
+          return { success: true };
         } catch (error) {
           console.error('Error selecting directory:', error);
+          if (error.name === 'AbortError') {
+            return { success: false, error: 'Folder selection cancelled' };
+          }
           return { success: false, error: error.message };
         }
       }
