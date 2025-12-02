@@ -32,14 +32,14 @@ api_router = APIRouter(prefix="/api")
 # LLM Configuration
 LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 DEFAULT_CATEGORIES = [
-    {"id": "chat-assistants", "name": "Chat & Assistants", "color": "#8B5CF6"},
+    {"id": "chat-assistants", "name": "Chat & Assistants", "color": "#EF4444"},
     {"id": "image-video", "name": "Image & Video", "color": "#EC4899"},
     {"id": "code-dev", "name": "Code & Dev Tools", "color": "#06B6D4"},
-    {"id": "audio-voice", "name": "Audio & Voice", "color": "#10B981"},
-    {"id": "writing-content", "name": "Writing & Content", "color": "#A855F7"},
-    {"id": "automation-agents", "name": "Automation & Agents", "color": "#F97316"},
+    {"id": "audio-voice", "name": "Audio & Voice", "color": "#F97316"},
+    {"id": "writing-content", "name": "Writing & Content", "color": "#FBBF24"},
+    {"id": "automation-agents", "name": "Automation & Agents", "color": "#10B981"},
     {"id": "data-research", "name": "Data & Research", "color": "#3B82F6"},
-    {"id": "business-tools", "name": "Business Tools", "color": "#F59E0B"}
+    {"id": "business-tools", "name": "Business Tools", "color": "#A855F7"}
 ]
 
 # Models
