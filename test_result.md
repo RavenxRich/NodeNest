@@ -101,3 +101,138 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Build NodeNest - A visual AI tools bookmark manager with radial layout. User requested crucial feature: ability to choose a folder for local storage instead of just browser storage."
+
+backend:
+  - task: "API endpoint for metadata extraction"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Backend API endpoints working correctly for metadata extraction"
+
+  - task: "MongoDB tools CRUD operations"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "CRUD operations for tools collection working"
+
+frontend:
+  - task: "Folder selection for local storage"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/contexts/StorageContext.js, /app/frontend/src/pages/Landing.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Just implemented File System Access API to allow users to choose a folder for local data storage. Two options now available: 1) Choose Folder (filesystem storage) 2) Browser Storage (encrypted localStorage). Needs comprehensive testing."
+
+  - task: "Google OAuth login"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/Landing.js"
+    stuck_count: 3
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: Google OAuth blocked by Google. Error: 'The given client ID is not found'"
+      - working: false
+        agent: "main"
+        comment: "Client ID added to .env file but needs to be properly configured in Google Cloud Console for the preview domain. Requires user to provide valid Client ID."
+
+  - task: "Radial dashboard with 8 categories"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/RadialCanvas.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Radial layout with curved labels working correctly"
+
+  - task: "Add/Edit/Delete tool nodes"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/AddNodeModal.js, /app/frontend/src/components/NodeDetailsSidebar.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Node management working. Needs retesting with new filesystem storage option"
+
+  - task: "Drag-and-drop nodes"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Drag-and-drop working. Needs retesting with new filesystem storage"
+
+  - task: "Favorites system"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/contexts/StorageContext.js, /app/frontend/src/components/ToolNode.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Favorites with star icon, filter, and badge count working"
+
+  - task: "Import/Export functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Settings.js"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Import/Export working for browser storage mode"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "Folder selection for local storage"
+    - "Add/Edit/Delete with filesystem storage"
+    - "Drag-and-drop with filesystem storage"
+  stuck_tasks:
+    - "Google OAuth login"
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Implemented File System Access API for folder-based local storage. User can now choose between: 1) Selecting a folder to save data (nodenest_tools.json file) or 2) Using encrypted browser storage. Frontend service restarted. Ready for comprehensive testing of the new storage feature and all dependent features (add/edit/delete/drag-drop)."
