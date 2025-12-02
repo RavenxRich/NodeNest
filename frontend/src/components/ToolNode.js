@@ -36,26 +36,31 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
             data-testid={`tool-node-${tool.id}`}
             drag
             dragMomentum={false}
-            dragElastic={0.1}
+            dragElastic={0}
             dragConstraints={false}
+            dragTransition={{ bounceStiffness: 0, bounceDamping: 0 }}
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
             onClick={!isDragging ? onClick : undefined}
-            initial={{ opacity: 0, scale: 0 }}
+            initial={{ opacity: 0, scale: 0, x: position.x - 28, y: position.y - 28 }}
             animate={{ 
               opacity: 1, 
               scale: isSelected ? 1.2 : 1,
-              x: position.x - 28,
-              y: position.y - 28
+              x: isDragging ? undefined : position.x - 28,
+              y: isDragging ? undefined : position.y - 28
             }}
-            whileHover={{ scale: 1.15 }}
-            whileDrag={{ scale: 1.1, cursor: 'grabbing' }}
+            whileHover={{ scale: isDragging ? 1.1 : 1.15 }}
+            whileDrag={{ scale: 1.1, cursor: 'grabbing', zIndex: 50 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             className={`absolute w-14 h-14 cursor-grab active:cursor-grabbing z-10 ${
               isSelected ? 'glow-pulse' : ''
             }`}
-            style={{ touchAction: 'none' }}
+            style={{ 
+              touchAction: 'none',
+              left: 0,
+              top: 0
+            }}
           >
             {/* Node Container - Bubble Design */}
             <div className="w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
