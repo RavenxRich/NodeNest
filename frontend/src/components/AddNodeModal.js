@@ -66,6 +66,7 @@ const AddNodeModal = ({ open, onClose }) => {
     setLoading(true);
     try {
       await addTool(formData);
+      await loadTools(); // Reload tools to update canvas
       toast.success('Tool added successfully!');
       onClose();
       // Reset form
@@ -81,6 +82,7 @@ const AddNodeModal = ({ open, onClose }) => {
       });
     } catch (error) {
       toast.error('Failed to add tool');
+      console.error('Error adding tool:', error);
     } finally {
       setLoading(false);
     }
