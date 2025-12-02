@@ -189,10 +189,10 @@ const Landing = () => {
                     </Button>
                   )}
                   <p className="text-xs text-violet-300/70 text-center">
-                    {supportsFileSystem ? '✅ Folder access enabled' : '⚠️ Using browser storage (enable flag for folder access)'}
+                    {supportsFileSystem ? '✨ Your data, your folder, your control' : '⚠️ Using browser storage (enable flag for folder access)'}
                   </p>
                   <p className="text-xs text-violet-300/70 text-center">
-                    💾 File: nodenest_tools.json
+                    💾 Saves as: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
                   </p>
                 </div>
               </div>
