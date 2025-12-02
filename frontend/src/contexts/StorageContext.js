@@ -93,11 +93,22 @@ export const StorageProvider = ({ children }) => {
           setStorageMode(mode);
           localStorage.setItem('nodenest_storage_mode', mode);
           
+          console.log('✅ Folder storage setup complete!');
           return { success: true };
         } catch (error) {
-          console.error('Error selecting directory:', error);
+          console.error('❌ Error selecting directory:', error);
+          console.error('Error name:', error.name);
+          console.error('Error message:', error.message);
+          console.error('Error stack:', error.stack);
+          
           if (error.name === 'AbortError') {
             return { success: false, error: 'Folder selection cancelled' };
+          }
+          if (error.name === 'NotAllowedError') {
+            return { success: false, error: 'Permission denied. Please allow file system access in your browser settings.' };
+          }
+          if (error.name === 'SecurityError') {
+            return { success: false, error: 'Security error. Check Brave Shields or browser permissions.' };
           }
           return { success: false, error: error.message };
         }
