@@ -35,7 +35,8 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
             dragMomentum={false}
             dragElastic={0.1}
             dragConstraints={false}
-            onDragStart={() => setIsDragging(true)}
+            onDragStart={handleDragStart}
+            onDrag={handleDrag}
             onDragEnd={handleDragEnd}
             onClick={!isDragging ? onClick : undefined}
             initial={{ opacity: 0, scale: 0 }}
