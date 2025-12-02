@@ -106,7 +106,13 @@ const Dashboard = () => {
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold gradient-text">NodeNest</h1>
+            <h1 
+              className="text-2xl font-bold gradient-text cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => navigate('/')}
+              data-testid="logo-home-btn"
+            >
+              NodeNest
+            </h1>
             <div className="hidden md:flex items-center gap-2 glass px-4 py-2 rounded-full">
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input
