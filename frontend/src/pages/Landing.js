@@ -17,6 +17,7 @@ const Landing = () => {
   const navigate = useNavigate();
   const { selectStorageMode, storageMode } = useStorage();
   const [showOptions, setShowOptions] = useState(false);
+  const [showLocalOptions, setShowLocalOptions] = useState(false);
 
   // Check if already has storage mode selected
   React.useEffect(() => {
