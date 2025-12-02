@@ -67,6 +67,18 @@ const Dashboard = () => {
   };
 
   const handleToolMove = async (toolId, newPosition, ringRadiuses, categories) => {
+    console.log('📍 handleToolMove called:', {
+      toolId,
+      newPosition,
+      ringRadiuses,
+      categoriesCount: categories?.length
+    });
+
+    if (!ringRadiuses || !categories || ringRadiuses.length === 0) {
+      console.error('❌ Missing ringRadiuses or categories');
+      return;
+    }
+
     // Convert screen position back to angle and radius
     const centerX = window.innerWidth / 2;
     const centerY = (window.innerHeight - 80) / 2;
@@ -74,6 +86,13 @@ const Dashboard = () => {
     const dy = newPosition.y - centerY;
     const angle = Math.atan2(dy, dx);
     const draggedRadius = Math.sqrt(dx * dx + dy * dy);
+
+    console.log('📐 Position calculation:', {
+      center: { x: centerX, y: centerY },
+      delta: { dx, dy },
+      angle,
+      draggedRadius
+    });
 
     // Find the closest ring
     let closestRingIndex = 0;
@@ -91,16 +110,34 @@ const Dashboard = () => {
     const snappedRadius = ringRadiuses[closestRingIndex];
     const newCategory = categories[closestRingIndex];
 
-    // Update tool with new position and category
-    await updateTool(toolId, {
-      position: { angle, radius: snappedRadius },
-      category_id: newCategory.id
+    console.log('🎯 Snapping to ring:', {
+      closestRingIndex,
+      snappedRadius,
+      newCategory: newCategory.name
     });
 
-    // Show feedback toast
+    // Update tool with new position and category
     const tool = tools.find(t => t.id === toolId);
-    if (tool && tool.category_id !== newCategory.id) {
-      toast.success(`Moved to ${newCategory.name}`);
+    const oldCategory = tool?.category_id;
+    
+    try {
+      await updateTool(toolId, {
+        position: { angle, radius: snappedRadius },
+        category_id: newCategory.id
+      });
+      
+      console.log('✅ Tool updated successfully');
+
+      // Show feedback toast
+      if (tool && oldCategory !== newCategory.id) {
+        toast.success(`Moved to ${newCategory.name}`);
+      }
+      
+      // Reload tools to show updated position
+      await loadTools();
+    } catch (error) {
+      console.error('❌ Error updating tool:', error);
+      toast.error('Failed to move node');
     }
   };
 
