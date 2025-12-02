@@ -81,10 +81,13 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('storageMode');
-    localStorage.removeItem('userId');
+    // Clear all NodeNest data
+    localStorage.removeItem('nodenest_storage_mode');
+    localStorage.removeItem('nodenest_user_id');
+    localStorage.removeItem('nodenest_tools_encrypted');
+    toast.success('Logged out successfully');
     navigate('/');
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 100);
   };
 
   const favoriteCount = tools.filter(t => t.favorite).length;
