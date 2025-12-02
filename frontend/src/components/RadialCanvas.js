@@ -89,6 +89,7 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
         {categories.map((category, idx) => {
           const radius = ringRadiuses[idx];
           const pathId = `ring-path-${category.id}`;
+          const isHovered = isDragging && hoveredRingIndex === idx;
           return (
             <g key={category.id}>
               {/* Ring circle */}
@@ -98,12 +99,17 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
                 r={radius}
                 fill="none"
                 stroke={category.color}
-                strokeWidth="2"
-                strokeOpacity="0.45"
+                strokeWidth={isHovered ? "4" : "2"}
+                strokeOpacity={isHovered ? "0.8" : "0.45"}
                 strokeDasharray="10 5"
                 initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  strokeWidth: isHovered ? 4 : 2,
+                  strokeOpacity: isHovered ? 0.8 : 0.45
+                }}
+                transition={{ delay: idx * 0.1, duration: 0.3 }}
               />
               {/* Category label on curved path */}
               <motion.text
