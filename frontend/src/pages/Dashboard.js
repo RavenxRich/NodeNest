@@ -23,8 +23,14 @@ const Dashboard = () => {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
-    if (!storageMode) {
+    const mode = localStorage.getItem('nodenest_storage_mode');
+    if (!mode) {
       navigate('/');
+      return;
+    }
+    // If we have a mode but context doesn't, reload it
+    if (!storageMode && mode) {
+      window.location.reload();
     }
   }, [storageMode, navigate]);
 
