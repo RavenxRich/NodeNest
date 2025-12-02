@@ -66,18 +66,42 @@ const Dashboard = () => {
     window.open(tool.url, '_blank');
   };
 
-  const handleToolMove = async (toolId, newPosition) => {
+  const handleToolMove = async (toolId, newPosition, ringRadiuses, categories) => {
     // Convert screen position back to angle and radius
     const centerX = window.innerWidth / 2;
     const centerY = (window.innerHeight - 80) / 2;
     const dx = newPosition.x - centerX;
     const dy = newPosition.y - centerY;
     const angle = Math.atan2(dy, dx);
-    const radius = Math.sqrt(dx * dx + dy * dy);
+    const draggedRadius = Math.sqrt(dx * dx + dy * dy);
 
+    // Find the closest ring
+    let closestRingIndex = 0;
+    let minDistance = Math.abs(draggedRadius - ringRadiuses[0]);
+    
+    for (let i = 1; i < ringRadiuses.length; i++) {
+      const distance = Math.abs(draggedRadius - ringRadiuses[i]);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestRingIndex = i;
+      }
+    }
+
+    // Snap to the closest ring
+    const snappedRadius = ringRadiuses[closestRingIndex];
+    const newCategory = categories[closestRingIndex];
+
+    // Update tool with new position and category
     await updateTool(toolId, {
-      position: { angle, radius }
+      position: { angle, radius: snappedRadius },
+      category_id: newCategory.id
     });
+
+    // Show feedback toast
+    const tool = tools.find(t => t.id === toolId);
+    if (tool && tool.category_id !== newCategory.id) {
+      toast.success(`Moved to ${newCategory.name}`);
+    }
   };
 
   const handleLogout = () => {
