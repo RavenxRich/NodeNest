@@ -6,11 +6,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = () => {
+    console.log('🟢 Drag started:', tool.title);
     setIsDragging(true);
     if (onDragStart) onDragStart();
   };
 
   const handleDrag = (event, info) => {
+    console.log('🔵 Dragging:', tool.title, 'offset:', info.offset);
     if (onDrag) {
       const newX = position.x + info.offset.x;
       const newY = position.y + info.offset.y;
@@ -19,6 +21,7 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
   };
 
   const handleDragEnd = (event, info) => {
+    console.log('🔴 Drag ended:', tool.title, 'offset:', info.offset);
     setIsDragging(false);
     const newX = position.x + info.offset.x;
     const newY = position.y + info.offset.y;
