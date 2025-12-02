@@ -94,6 +94,22 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
           const isHovered = isDragging && hoveredRingIndex === idx;
           return (
             <g key={category.id}>
+              {/* Glow effect for hovered ring */}
+              {isHovered && (
+                <motion.circle
+                  cx={centerX}
+                  cy={centerY}
+                  r={radius}
+                  fill="none"
+                  stroke={category.color}
+                  strokeWidth="12"
+                  strokeOpacity="0.3"
+                  filter="url(#glow)"
+                  initial={{ strokeOpacity: 0 }}
+                  animate={{ strokeOpacity: 0.3 }}
+                  transition={{ duration: 0.2 }}
+                />
+              )}
               {/* Ring circle */}
               <motion.circle
                 cx={centerX}
@@ -101,17 +117,18 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
                 r={radius}
                 fill="none"
                 stroke={category.color}
-                strokeWidth={isHovered ? "4" : "2"}
-                strokeOpacity={isHovered ? "0.8" : "0.45"}
-                strokeDasharray="10 5"
+                strokeWidth={isHovered ? "6" : "2"}
+                strokeOpacity={isHovered ? "1.0" : "0.45"}
+                strokeDasharray={isHovered ? "0" : "10 5"}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ 
                   opacity: 1, 
                   scale: 1,
-                  strokeWidth: isHovered ? 4 : 2,
-                  strokeOpacity: isHovered ? 0.8 : 0.45
+                  strokeWidth: isHovered ? 6 : 2,
+                  strokeOpacity: isHovered ? 1.0 : 0.45,
+                  strokeDasharray: isHovered ? "0" : "10 5"
                 }}
-                transition={{ delay: idx * 0.1, duration: 0.3 }}
+                transition={{ duration: 0.2 }}
               />
               {/* Category label on curved path */}
               <motion.text
