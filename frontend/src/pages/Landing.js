@@ -157,24 +157,15 @@ const Landing = () => {
                 </p>
                 {!showLocalOptions ? (
                   <div className="w-full space-y-2">
-                    {supportsFileSystem ? (
-                      <Button
-                        onClick={() => setShowLocalOptions(true)}
-                        className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-                      >
-                        Choose Storage Type
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleLocalStorage('browser')}
-                        className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-                      >
-                        Use Local Storage
-                      </Button>
-                    )}
+                    <Button
+                      onClick={() => setShowLocalOptions(true)}
+                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                    >
+                      Choose Storage Type
+                    </Button>
                     {!supportsFileSystem && (
-                      <p className="text-xs text-violet-300/70 text-center">
-                        📝 Folder selection requires Chrome or Edge
+                      <p className="text-xs text-amber-300/70 text-center">
+                        ⚠️ Folder selection may not work in your browser
                       </p>
                     )}
                   </div>
