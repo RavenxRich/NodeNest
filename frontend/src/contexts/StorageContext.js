@@ -46,20 +46,14 @@ export const StorageProvider = ({ children }) => {
 
   // Initialize storage mode
   const selectStorageMode = async (mode, googleUser = null, storageType = 'browser') => {
-    setStorageMode(mode);
-    localStorage.setItem('nodenest_storage_mode', mode);
-    
     if (mode === 'cloud' && googleUser) {
       const uid = googleUser.sub || googleUser.email;
       setUserId(uid);
       localStorage.setItem('nodenest_user_id', uid);
+      setStorageMode(mode);
+      localStorage.setItem('nodenest_storage_mode', mode);
     } else if (mode === 'local') {
-      setUserId('local_user');
-      localStorage.setItem('nodenest_user_id', 'local_user');
-      setLocalStorageType(storageType);
-      localStorage.setItem('nodenest_local_storage_type', storageType);
-      
-      // If filesystem storage, prompt user to select directory
+      // If filesystem storage, prompt user to select directory FIRST
       if (storageType === 'filesystem') {
         try {
           if (!('showDirectoryPicker' in window)) {
@@ -74,11 +68,25 @@ export const StorageProvider = ({ children }) => {
           // Store handle in IndexedDB for persistence
           const db = await openDB();
           const tx = db.transaction('handles', 'readwrite');
-          await tx.objectStore('handles').put(handle, 'directory');
-          await tx.done;
+          tx.objectStore('handles').put(handle, 'directory');
+          
+          // Wait for transaction to complete
+          await new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+          });
           
           setDirectoryHandle(handle);
           localStorage.setItem('nodenest_has_directory', 'true');
+          
+          // Only set storage mode after successful folder selection
+          setUserId('local_user');
+          localStorage.setItem('nodenest_user_id', 'local_user');
+          setLocalStorageType(storageType);
+          localStorage.setItem('nodenest_local_storage_type', storageType);
+          setStorageMode(mode);
+          localStorage.setItem('nodenest_storage_mode', mode);
+          
           return { success: true };
         } catch (error) {
           console.error('Error selecting directory:', error);
@@ -87,6 +95,14 @@ export const StorageProvider = ({ children }) => {
           }
           return { success: false, error: error.message };
         }
+      } else {
+        // Browser storage mode - set immediately
+        setUserId('local_user');
+        localStorage.setItem('nodenest_user_id', 'local_user');
+        setLocalStorageType(storageType);
+        localStorage.setItem('nodenest_local_storage_type', storageType);
+        setStorageMode(mode);
+        localStorage.setItem('nodenest_storage_mode', mode);
       }
     }
     return { success: true };
