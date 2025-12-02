@@ -168,7 +168,7 @@ const NodeDetailsSidebar = ({ tool, onClose }) => {
                   <p className="text-sm">{formData.description}</p>
                 </div>
               )}
-              {formData.tags.length > 0 && (
+              {formData.tags && formData.tags.length > 0 && (
                 <div>
                   <h3 className="font-semibold text-sm text-muted-foreground mb-2">Tags</h3>
                   <div className="flex flex-wrap gap-2">
