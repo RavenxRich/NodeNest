@@ -27,13 +27,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ 
               opacity: 1, 
-              scale: isSelected ? 1.3 : 1,
-              x: position.x - 56,
-              y: position.y - 56
+              scale: isSelected ? 1.2 : 1,
+              x: position.x - 36,
+              y: position.y - 36
             }}
             whileHover={{ scale: 1.15 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className={`absolute w-28 h-28 cursor-pointer z-10 ${
+            className={`absolute w-[72px] h-[72px] cursor-pointer z-10 ${
               isSelected ? 'glow-pulse' : ''
             }`}
             style={{ touchAction: 'none' }}
