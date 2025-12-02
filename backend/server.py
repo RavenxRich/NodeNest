@@ -13,6 +13,7 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 import json
 import csv
 from io import StringIO
+import aiohttp
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
