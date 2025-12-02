@@ -393,6 +393,8 @@ export const StorageProvider = ({ children }) => {
     userId,
     tools,
     categories,
+    localStorageType,
+    directoryHandle,
     selectStorageMode,
     loadTools,
     addTool,
