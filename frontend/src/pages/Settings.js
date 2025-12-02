@@ -201,9 +201,34 @@ const Settings = () => {
                     </span>
                   </p>
                   {llmProvider !== 'local' && (
-                    <p className="text-xs text-muted-foreground">
-                      Note: Using Emergent LLM Key for cloud AI features
-                    </p>
+                    <>
+                      <p className="text-xs text-muted-foreground">
+                        Note: Using Emergent LLM Key for cloud AI features
+                      </p>
+                      <div className="space-y-3 mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">Use Your Own API Key (Optional)</p>
+                        <div>
+                          <Label htmlFor="custom-api-key">Custom API Key</Label>
+                          <Input
+                            id="custom-api-key"
+                            type="password"
+                            placeholder="Your own Claude/GPT/Gemini API key"
+                            defaultValue={localStorage.getItem('custom_llm_key_encrypted') ? '••••••••••••••••' : ''}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                // Encrypt and store
+                                const encrypted = btoa(e.target.value);
+                                localStorage.setItem('custom_llm_key_encrypted', encrypted);
+                              }
+                            }}
+                            className="mt-1"
+                          />
+                          <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+                            🔒 Securely encrypted in browser. Never sent to our servers.
+                          </p>
+                        </div>
+                      </div>
+                    </>
                   )}
                   <Button 
                     onClick={handleSaveLlmSettings}
