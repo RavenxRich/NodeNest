@@ -107,26 +107,51 @@ export const StorageProvider = ({ children }) => {
 
   // Load tools from filesystem
   const loadFromFileSystem = async () => {
-    if (!directoryHandle) {
-      // Try to request permission again
-      const hasDirectory = localStorage.getItem('nodenest_has_directory');
-      if (hasDirectory === 'true') {
-        try {
-          const handle = await window.showDirectoryPicker({
-            mode: 'readwrite',
-            startIn: 'documents'
-          });
-          setDirectoryHandle(handle);
-          return await readToolsFromDirectory(handle);
-        } catch (error) {
-          console.error('Error accessing directory:', error);
+    try {
+      let handle = directoryHandle;
+      
+      // If no handle in memory, try to get from IndexedDB
+      if (!handle) {
+        const hasDirectory = localStorage.getItem('nodenest_has_directory');
+        if (hasDirectory === 'true') {
+          const db = await openDB();
+          const tx = db.transaction('handles', 'readonly');
+          handle = await tx.objectStore('handles').get('directory');
+          await tx.done;
+          
+          if (handle) {
+            // Verify we still have permission
+            const permission = await handle.queryPermission({ mode: 'readwrite' });
+            if (permission === 'granted') {
+              setDirectoryHandle(handle);
+            } else if (permission === 'prompt') {
+              // Request permission again
+              const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+              if (newPermission === 'granted') {
+                setDirectoryHandle(handle);
+              } else {
+                console.error('Permission denied');
+                return [];
+              }
+            } else {
+              console.error('Permission denied');
+              return [];
+            }
+          } else {
+            // No handle found, need to select directory again
+            console.log('No directory handle found. Please select a folder again.');
+            return [];
+          }
+        } else {
           return [];
         }
       }
+      
+      return await readToolsFromDirectory(handle);
+    } catch (error) {
+      console.error('Error loading from filesystem:', error);
       return [];
     }
-    
-    return await readToolsFromDirectory(directoryHandle);
   };
 
   const readToolsFromDirectory = async (handle) => {
