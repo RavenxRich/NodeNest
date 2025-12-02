@@ -55,13 +55,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
               <div className="absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-40" />
               
               {/* Content */}
-              <div className="relative z-10 flex items-center justify-center w-full h-full p-1">
+              <div className="relative z-10 flex items-center justify-center w-full h-full p-2">
                 {tool.favicon ? (
                   <>
                     <img 
                       src={tool.favicon} 
                       alt={tool.title}
-                      className="w-6 h-6 rounded object-contain drop-shadow-lg"
+                      className="w-10 h-10 rounded object-contain drop-shadow-lg"
                       style={{ display: 'block' }}
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -69,13 +69,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
                         if (fallback) fallback.style.display = 'flex';
                       }}
                     />
-                    <div className="fallback-icon hidden w-6 h-6 rounded bg-gradient-to-br from-violet-500/40 to-cyan-500/40 flex items-center justify-center backdrop-blur-sm">
-                      <span className="text-sm font-bold text-white drop-shadow-lg">{tool.title.charAt(0).toUpperCase()}</span>
+                    <div className="fallback-icon hidden w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/40 to-cyan-500/40 flex items-center justify-center backdrop-blur-sm">
+                      <span className="text-2xl font-bold text-white drop-shadow-lg">{tool.title.charAt(0).toUpperCase()}</span>
                     </div>
                   </>
                 ) : (
-                  <div className="w-6 h-6 rounded bg-gradient-to-br from-violet-500/40 to-cyan-500/40 flex items-center justify-center backdrop-blur-sm">
-                    <span className="text-sm font-bold text-white drop-shadow-lg">{tool.title.charAt(0).toUpperCase()}</span>
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/40 to-cyan-500/40 flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-2xl font-bold text-white drop-shadow-lg">{tool.title.charAt(0).toUpperCase()}</span>
                   </div>
                 )}
               </div>
