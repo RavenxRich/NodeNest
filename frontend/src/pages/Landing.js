@@ -122,25 +122,22 @@ const Landing = () => {
               </div>
             </Card>
 
-            {/* Cloud Storage */}
-            <Card data-testid="cloud-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
-              <div className="flex flex-col items-center gap-4 text-white">
-                <div className="w-20 h-20 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
-                  <Cloud className="w-10 h-10 text-cyan-300" />
+            {/* Cloud Storage - Coming Soon */}
+            <Card data-testid="cloud-storage-card" className="glass p-8 relative overflow-hidden group opacity-75">
+              <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-500/30 rounded-full text-xs font-semibold text-white">
+                Coming Soon
+              </div>
+              <div className="flex flex-col items-center gap-4 text-white/70">
+                <div className="w-20 h-20 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                  <Cloud className="w-10 h-10 text-cyan-300/50" />
                 </div>
                 <h3 className="text-2xl font-semibold">Cloud Storage</h3>
-                <p className="text-violet-200 text-sm text-center mb-4">
+                <p className="text-violet-200/70 text-sm text-center">
                   Sync across devices with Google Sign-In. Access your tools anywhere.
                 </p>
-                <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    theme="filled_black"
-                    size="large"
-                    text="signin_with"
-                  />
-                </GoogleOAuthProvider>
+                <p className="text-xs text-violet-300/50 italic">
+                  Currently in development. Use local storage for now.
+                </p>
               </div>
             </Card>
           </motion.div>
