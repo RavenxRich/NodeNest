@@ -8,6 +8,8 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
   const [isDragging, setIsDragging] = useState(false);
   const [hoveredRingIndex, setHoveredRingIndex] = useState(null);
+  const [draggedTool, setDraggedTool] = useState(null);
+  const [ghostPosition, setGhostPosition] = useState(null);
 
   useEffect(() => {
     const updateDimensions = () => {
