@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { Loader2, Sparkles } from 'lucide-react';
 
 const AddNodeModal = ({ open, onClose }) => {
-  const { categories, addTool, extractMetadata } = useStorage();
+  const { categories, addTool, extractMetadata, loadTools } = useStorage();
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
   const [formData, setFormData] = useState({
