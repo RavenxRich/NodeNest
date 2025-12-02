@@ -24,6 +24,10 @@ export const StorageProvider = ({ children }) => {
   });
   const [tools, setTools] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [directoryHandle, setDirectoryHandle] = useState(null);
+  const [localStorageType, setLocalStorageType] = useState(() => {
+    return localStorage.getItem('nodenest_local_storage_type') || 'browser'; // 'browser' or 'filesystem'
+  });
 
   // Initialize storage mode
   const selectStorageMode = (mode, googleUser = null) => {
