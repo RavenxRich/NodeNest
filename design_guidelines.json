@@ -1,0 +1,132 @@
+{
+  "project_name": "NodeNest",
+  "design_philosophy": {
+    "persona": "E1: The Anti-AI Designer",
+    "core_concept": "The Orbit",
+    "emotional_tone": "Organized, Ethereal, Futuristic, Control Room",
+    "visual_style": "Glassmorphism meets Cosmic Data Visualization"
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Outfit, sans-serif",
+      "body": "Manrope, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-7xl font-bold tracking-tight",
+      "h2": "text-3xl md:text-4xl font-semibold tracking-tight",
+      "h3": "text-2xl font-medium",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm font-medium tracking-wide uppercase"
+    },
+    "installation": "Import fonts via Google Fonts in index.css: @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Outfit:wght@300;400;600;700&display=swap');"
+  },
+  "colors": {
+    "palette": {
+      "mode": "system",
+      "light": {
+        "background": "#F5F3FF",
+        "foreground": "#0F172A",
+        "card": "rgba(255, 255, 255, 0.6)",
+        "card_border": "rgba(124, 58, 237, 0.1)",
+        "primary": "#7C3AED",
+        "secondary": "#DDD6FE",
+        "accent": "#06B6D4"
+      },
+      "dark": {
+        "background": "#020617",
+        "foreground": "#F8FAFC",
+        "card": "rgba(15, 23, 42, 0.6)",
+        "card_border": "rgba(139, 92, 246, 0.2)",
+        "primary": "#8B5CF6",
+        "secondary": "#1E1B4B",
+        "accent": "#22D3EE"
+      }
+    },
+    "gradients": {
+      "nebula": "bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900",
+      "lavender_mist": "bg-gradient-to-br from-violet-50 via-white to-purple-50",
+      "glow_text": "bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400"
+    },
+    "usage_rules": {
+      "primary_action": "Use Primary Violet for main CTAs",
+      "rings": "Use varying opacities of the border color for concentric rings (10%, 20%, 30%)",
+      "nodes": "Nodes must have distinct category colors (Marketing=Pink, Dev=Cyan, Design=Violet)"
+    }
+  },
+  "layout_strategy": {
+    "type": "Radial Orbit",
+    "implementation": "Custom SVG + Framer Motion",
+    "structure": {
+      "center": "Category Hub (The Sun)",
+      "rings": "Concentric circles representing categories or usage frequency",
+      "nodes": "Planets (Tools) orbiting on specific rings"
+    },
+    "spacing": {
+      "container": "h-screen w-screen overflow-hidden relative flex items-center justify-center",
+      "node_size": "w-12 h-12 md:w-16 md:h-16"
+    },
+    "responsive": {
+      "mobile": "Stack rings vertically or use a 'List View' toggle. Radial is hard on mobile.",
+      "desktop": "Full radial canvas with pan/zoom capabilities"
+    }
+  },
+  "components": {
+    "NodeCard": {
+      "style": "Glassmorphic circle or rounded-xl square",
+      "interaction": "Hover scales up 1.2x, shows tooltip with usage stats",
+      "drag": "Draggable within the ring or to other rings (re-categorize)"
+    },
+    "RingSystem": {
+      "style": "SVG circles with dashed strokes, rotating slowly",
+      "z_index": "Behind nodes"
+    },
+    "AddModal": {
+      "style": "Centered glass panel with blur-xl",
+      "input": "Large, minimal input field with auto-paste detection"
+    },
+    "Sidebar": {
+      "style": "Floating panel on the right, collapsible",
+      "content": "Node details, usage charts (Recharts)"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/10 border border-white/20 shadow-xl",
+    "glow_effects": "box-shadow: 0 0 20px rgba(139, 92, 246, 0.3)",
+    "background_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1764350126614-2e529016729c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMG5lYnVsYSUyMHB1cnBsZSUyMGdyYWRpZW50JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NjQ2OTYwNjl8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Dark Mode Background (Overlay with 80% opacity black)",
+        "category": "background"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1761133929722-625cffda1b0a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMG5lYnVsYSUyMHB1cnBsZSUyMGdyYWRpZW50JTIwYmFja2dyb3VuZHxlbnwwfHx8fDE3NjQ2OTYwNjl8MA&ixlib=rb-4.1.0&q=85",
+        "usage": "Auth Page Hero",
+        "category": "hero"
+      }
+    ],
+    "icons": "Lucide React (default) or Phosphor Icons (for softer look)"
+  },
+  "motion": {
+    "library": "Framer Motion",
+    "transitions": {
+      "hover": "type: 'spring', stiffness: 300, damping: 20",
+      "modal": "initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}",
+      "orbit": "animate={{ rotate: 360 }} transition={{ duration: 100, repeat: Infinity, ease: 'linear' }}"
+    }
+  },
+  "instructions_to_main_agent": {
+    "math_helper": "To position nodes on a ring: x = radius * Math.cos(angle); y = radius * Math.sin(angle). Distribute angles evenly: (2 * Math.PI) / totalNodes.",
+    "drag_logic": "Use framer-motion's 'drag' prop. On dragEnd, calculate distance to center to determine which 'ring' (category) the node dropped into.",
+    "storage": "Implement a 'StorageContext' that checks localStorage first. If user logs in, sync to MongoDB.",
+    "theme_toggle": "Use 'next-themes' for seamless dark/light switching. Default to Dark for the 'Space' vibe.",
+    "critical_rule": "Do NOT use a library like React Flow for the main view unless you heavily customize it to look like the reference. A custom SVG/Div implementation is often easier for this specific 'concentric ring' look."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Avoid 'AI Slop': No generic purple gradients. Use deep, rich indigos or stark white/lavender.",
+    "Micro-interactions: Every node hover should feel 'magnetic'.",
+    "Spacing: Don't cram nodes. If a ring is full, create a new outer ring.",
+    "Data-TestId: Add data-testid to all interactive elements (e.g., 'node-card-chatgpt', 'add-node-btn').",
+    "Accessibility: Ensure keyboard users can tab through the nodes in the circle."
+  ]
+}
