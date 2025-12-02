@@ -166,21 +166,43 @@ const Dashboard = () => {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center h-full text-center px-6"
           >
-            <div className="w-24 h-24 rounded-full bg-violet-500/10 flex items-center justify-center mb-6">
-              <Plus className="w-12 h-12 text-violet-500" />
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-violet-500/20 to-cyan-500/20 flex items-center justify-center mb-8 backdrop-blur-xl border-2 border-white/20 shadow-2xl">
+              <Plus className="w-16 h-16 text-violet-400" />
             </div>
-            <h2 className="text-2xl font-semibold mb-2">No tools yet</h2>
-            <p className="text-muted-foreground mb-6 max-w-md">
-              {searchQuery ? 'No tools match your search.' : 'Start by adding your first AI tool to the collection!'}
+            <h2 className="text-3xl font-bold mb-3 gradient-text">Welcome to NodeNest!</h2>
+            <p className="text-muted-foreground mb-8 max-w-lg text-lg">
+              {searchQuery 
+                ? 'No tools match your search.' 
+                : 'Your personal AI tools bookmark manager. Add tools and watch them organize beautifully in the radial canvas!'}
             </p>
             {!searchQuery && (
-              <Button
-                onClick={() => setShowAddModal(true)}
-                className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add Your First Tool
-              </Button>
+              <>
+                <Button
+                  onClick={() => setShowAddModal(true)}
+                  className="bg-violet-600 hover:bg-violet-700 text-white gap-2 px-8 py-6 text-lg mb-6"
+                  data-testid="add-first-tool-btn"
+                >
+                  <Plus className="w-5 h-5" />
+                  Add Your First Tool
+                </Button>
+                <div className="mt-8 p-6 glass rounded-2xl max-w-xl border border-white/10">
+                  <p className="text-sm text-muted-foreground mb-3 font-semibold">Quick Start Examples:</p>
+                  <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="text-left">
+                      <span className="text-violet-400">•</span> ChatGPT / Claude
+                    </div>
+                    <div className="text-left">
+                      <span className="text-pink-400">•</span> Midjourney / DALL-E
+                    </div>
+                    <div className="text-left">
+                      <span className="text-cyan-400">•</span> GitHub Copilot
+                    </div>
+                    <div className="text-left">
+                      <span className="text-orange-400">•</span> Zapier / Make
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
           </motion.div>
         )}
