@@ -4,6 +4,21 @@ import { encryptData, decryptData } from '../utils/encryption';
 
 const StorageContext = createContext();
 
+// IndexedDB helper for storing file handles
+const openDB = () => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('NodeNestDB', 1);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains('handles')) {
+        db.createObjectStore('handles');
+      }
+    };
+  });
+};
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
