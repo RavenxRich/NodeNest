@@ -128,7 +128,7 @@ const Dashboard = () => {
               variant={showOnlyFavorites ? "default" : "ghost"}
               onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
               className={`gap-2 ${
-                showOnlyFavorites ? 'bg-amber-600 hover:bg-amber-700 text-white dark:bg-yellow-500 dark:hover:bg-yellow-600' : ''
+                showOnlyFavorites ? 'bg-orange-600 hover:bg-orange-700 text-white dark:bg-yellow-500 dark:hover:bg-yellow-600' : ''
               }`}
             >
               <Star className={`w-4 h-4 ${showOnlyFavorites ? 'fill-current' : ''}`} />
