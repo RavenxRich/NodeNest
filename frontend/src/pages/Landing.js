@@ -26,10 +26,18 @@ const Landing = () => {
     }
   }, [storageMode, navigate]);
 
-  const handleLocalStorage = () => {
-    selectStorageMode('local');
-    toast.success('Using encrypted local storage mode');
-    setTimeout(() => navigate('/dashboard'), 500);
+  const handleLocalStorage = async (storageType) => {
+    const result = await selectStorageMode('local', null, storageType);
+    if (result.success) {
+      if (storageType === 'filesystem') {
+        toast.success('Using folder storage - data saved to your selected folder');
+      } else {
+        toast.success('Using encrypted browser storage mode');
+      }
+      setTimeout(() => navigate('/dashboard'), 500);
+    } else {
+      toast.error(`Failed to set up storage: ${result.error}`);
+    }
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
