@@ -142,15 +142,75 @@ const Settings = () => {
                         <SelectItem value="anthropic">Claude Sonnet 4 (Recommended)</SelectItem>
                         <SelectItem value="openai">GPT-5.1</SelectItem>
                         <SelectItem value="gemini">Gemini 2.5 Flash</SelectItem>
+                        <SelectItem value="local">Local LLM (Ollama, LMStudio, etc.)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {llmProvider === 'local' && (
+                    <div className="space-y-4 p-4 bg-violet-50 dark:bg-violet-950/20 rounded-lg border border-violet-200 dark:border-violet-800">
+                      <div>
+                        <Label htmlFor="local-endpoint">OpenAI-Compatible Endpoint</Label>
+                        <Input
+                          id="local-endpoint"
+                          data-testid="local-endpoint-input"
+                          type="text"
+                          placeholder="http://localhost:11434 or http://localhost:1234"
+                          value={localEndpoint}
+                          onChange={(e) => setLocalEndpoint(e.target.value)}
+                          className="mt-1"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Works with Ollama, LM Studio, LocalAI, etc.
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="local-model">Model Name</Label>
+                        <Input
+                          id="local-model"
+                          data-testid="local-model-input"
+                          type="text"
+                          placeholder="llama3.2, mistral, qwen2.5, etc."
+                          value={localModel}
+                          onChange={(e) => setLocalModel(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="local-api-key">API Key (Optional)</Label>
+                        <Input
+                          id="local-api-key"
+                          data-testid="local-api-key-input"
+                          type="password"
+                          placeholder="Leave empty if not needed"
+                          value={localApiKey}
+                          onChange={(e) => setLocalApiKey(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   <p className="text-sm text-muted-foreground">
-                    Current: <span className="font-semibold">{llmProvider === 'anthropic' ? 'Claude' : llmProvider === 'openai' ? 'GPT' : 'Gemini'}</span>
+                    Current: <span className="font-semibold">
+                      {llmProvider === 'anthropic' ? 'Claude' : 
+                       llmProvider === 'openai' ? 'GPT' : 
+                       llmProvider === 'gemini' ? 'Gemini' : 
+                       'Local LLM'}
+                    </span>
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    Note: Using Emergent LLM Key for AI features
-                  </p>
+                  {llmProvider !== 'local' && (
+                    <p className="text-xs text-muted-foreground">
+                      Note: Using Emergent LLM Key for cloud AI features
+                    </p>
+                  )}
+                  <Button 
+                    onClick={handleSaveLlmSettings}
+                    className="w-full"
+                    data-testid="save-llm-settings-btn"
+                  >
+                    Save LLM Settings
+                  </Button>
                 </div>
               </CardContent>
             </Card>
