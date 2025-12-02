@@ -231,7 +231,11 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
               tool={tool}
               position={position}
               onClick={() => onToolClick(tool)}
-              onDragStart={() => setIsDragging(true)}
+              onDragStart={() => {
+                console.log('🎬 Drag started on canvas');
+                setIsDragging(true);
+                setDraggedTool(tool);
+              }}
               onDrag={(dragPosition) => {
                 // Calculate which ring is closest during drag
                 const dx = dragPosition.x - centerX;
@@ -249,11 +253,23 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
                   }
                 }
                 
+                // Calculate ghost position (snap to ring)
+                const angle = Math.atan2(dy, dx);
+                const snappedRadius = ringRadiuses[closestRingIndex];
+                const ghostX = centerX + snappedRadius * Math.cos(angle);
+                const ghostY = centerY + snappedRadius * Math.sin(angle);
+                
+                console.log('👻 Ghost position:', { ghostX, ghostY, ring: closestRingIndex });
+                
                 setHoveredRingIndex(closestRingIndex);
+                setGhostPosition({ x: ghostX, y: ghostY });
               }}
               onDragEnd={(newPosition) => {
+                console.log('🏁 Drag ended on canvas');
                 setIsDragging(false);
                 setHoveredRingIndex(null);
+                setGhostPosition(null);
+                setDraggedTool(null);
                 onToolMove(tool.id, newPosition, ringRadiuses, categories);
               }}
               isSelected={selectedTool?.id === tool.id}
