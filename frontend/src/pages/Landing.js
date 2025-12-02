@@ -22,8 +22,8 @@ const Landing = () => {
 
   const handleLocalStorage = () => {
     selectStorageMode('local');
-    toast.success('Using local storage mode');
-    navigate('/dashboard');
+    toast.success('Using encrypted local storage mode');
+    setTimeout(() => navigate('/dashboard'), 500);
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
