@@ -51,8 +51,19 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
               y: isDragging ? undefined : position.y - 28
             }}
             whileHover={{ scale: isDragging ? 1.1 : 1.15 }}
-            whileDrag={{ scale: 1.1, cursor: 'grabbing', zIndex: 50 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            whileDrag={{ 
+              scale: 1.15, 
+              cursor: 'grabbing', 
+              zIndex: 50,
+              boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)',
+              rotate: 5
+            }}
+            transition={{ 
+              type: 'spring', 
+              stiffness: 400, 
+              damping: 25,
+              mass: 0.5
+            }}
             className={`absolute w-14 h-14 cursor-grab active:cursor-grabbing z-10 ${
               isSelected ? 'glow-pulse' : ''
             }`}
