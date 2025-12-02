@@ -20,7 +20,12 @@ const Landing = () => {
 
   // Check browser support for File System Access API
   React.useEffect(() => {
-    setSupportsFileSystem('showDirectoryPicker' in window);
+    // Check if File System Access API is available
+    // This works in Chrome, Edge, Brave, and other Chromium-based browsers
+    const hasAPI = 'showDirectoryPicker' in window;
+    console.log('Browser supports File System Access API:', hasAPI);
+    console.log('User Agent:', navigator.userAgent);
+    setSupportsFileSystem(hasAPI);
   }, []);
 
   // Check if already has storage mode selected
