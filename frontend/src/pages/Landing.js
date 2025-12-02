@@ -16,6 +16,12 @@ const Landing = () => {
   const { selectStorageMode, storageMode } = useStorage();
   const [showOptions, setShowOptions] = useState(false);
   const [showLocalOptions, setShowLocalOptions] = useState(false);
+  const [supportsFileSystem, setSupportsFileSystem] = useState(false);
+
+  // Check browser support for File System Access API
+  React.useEffect(() => {
+    setSupportsFileSystem('showDirectoryPicker' in window);
+  }, []);
 
   // Check if already has storage mode selected
   React.useEffect(() => {
