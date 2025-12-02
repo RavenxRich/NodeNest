@@ -39,13 +39,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             style={{ touchAction: 'none' }}
           >
             {/* Node Container */}
-            <div className="w-full h-full rounded-xl glass flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group bg-slate-900/50 dark:bg-slate-800/50 border border-white/10">
+            <div className="w-full h-full rounded-2xl glass flex items-center justify-center shadow-xl hover:shadow-2xl transition-shadow group bg-slate-900/60 dark:bg-slate-800/60 border-2 border-white/20">
               {tool.favicon ? (
                 <>
                   <img 
                     src={tool.favicon} 
                     alt={tool.title}
-                    className="w-10 h-10 rounded-lg object-contain"
+                    className="w-16 h-16 rounded-lg object-contain"
                     style={{ display: 'block' }}
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -53,13 +53,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
                       if (fallback) fallback.style.display = 'flex';
                     }}
                   />
-                  <div className="fallback-icon hidden w-10 h-10 rounded-lg bg-violet-500/30 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
+                  <div className="fallback-icon hidden w-16 h-16 rounded-lg bg-violet-500/30 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
                   </div>
                 </>
               ) : (
-                <div className="w-10 h-10 rounded-lg bg-violet-500/30 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
+                <div className="w-16 h-16 rounded-lg bg-violet-500/30 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-white">{tool.title.charAt(0).toUpperCase()}</span>
                 </div>
               )}
               
