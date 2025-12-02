@@ -6,8 +6,9 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
+import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, X } from 'lucide-react';
 
 const AddNodeModal = ({ open, onClose }) => {
   const { categories, addTool, extractMetadata, loadTools } = useStorage();
@@ -23,6 +24,16 @@ const AddNodeModal = ({ open, onClose }) => {
     notes: '',
     favorite: false
   });
+  const [tagInput, setTagInput] = useState('');
+
+  const normalizeUrl = (url) => {
+    let normalized = url.trim();
+    // If no protocol, add https://
+    if (!normalized.match(/^https?:\/\//i)) {
+      normalized = 'https://' + normalized;
+    }
+    return normalized;
+  };
 
   const handleExtractMetadata = async () => {
     if (!formData.url) {
@@ -32,9 +43,11 @@ const AddNodeModal = ({ open, onClose }) => {
 
     setExtracting(true);
     try {
-      const metadata = await extractMetadata(formData.url);
+      const normalizedUrl = normalizeUrl(formData.url);
+      const metadata = await extractMetadata(normalizedUrl);
       setFormData(prev => ({
         ...prev,
+        url: normalizedUrl,
         title: metadata.title || prev.title,
         description: metadata.description || prev.description,
         category_id: metadata.category_id || prev.category_id,
@@ -42,7 +55,6 @@ const AddNodeModal = ({ open, onClose }) => {
         favicon: metadata.favicon || prev.favicon
       }));
       
-      // Show which LLM was used
       const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
       const providerName = llmProvider === 'local' ? 'Local LLM' : 
                           llmProvider === 'anthropic' ? 'Claude' : 
@@ -55,6 +67,24 @@ const AddNodeModal = ({ open, onClose }) => {
     }
   };
 
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const tag = tagInput.trim();
+      if (tag && !formData.tags.includes(tag)) {
+        setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
+        setTagInput('');
+      }
+    }
+  };
+
+  const removeTag = (tagToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -65,8 +95,9 @@ const AddNodeModal = ({ open, onClose }) => {
 
     setLoading(true);
     try {
-      await addTool(formData);
-      await loadTools(); // Reload tools to update canvas
+      const normalizedUrl = normalizeUrl(formData.url);
+      await addTool({ ...formData, url: normalizedUrl });
+      await loadTools();
       toast.success('Tool added successfully!');
       onClose();
       // Reset form
@@ -80,6 +111,7 @@ const AddNodeModal = ({ open, onClose }) => {
         notes: '',
         favorite: false
       });
+      setTagInput('');
     } catch (error) {
       toast.error('Failed to add tool');
       console.error('Error adding tool:', error);
@@ -94,7 +126,7 @@ const AddNodeModal = ({ open, onClose }) => {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add New Tool</DialogTitle>
           <DialogDescription>
-            Paste a URL and let AI extract the metadata, or fill in manually.
+            Paste a URL (e.g., claude.ai) and let AI extract the metadata, or fill in manually.
           </DialogDescription>
         </DialogHeader>
 
@@ -106,8 +138,8 @@ const AddNodeModal = ({ open, onClose }) => {
               <Input
                 id="url"
                 data-testid="url-input"
-                type="url"
-                placeholder="https://example.com"
+                type="text"
+                placeholder="claude.ai or https://example.com"
                 value={formData.url}
                 onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
                 required
@@ -129,6 +161,7 @@ const AddNodeModal = ({ open, onClose }) => {
                 AI Extract
               </Button>
             </div>
+            <p className="text-xs text-muted-foreground">Tip: You can type just "claude.ai" - https:// is added automatically</p>
           </div>
 
           {/* Title */}
@@ -181,20 +214,35 @@ const AddNodeModal = ({ open, onClose }) => {
             </Select>
           </div>
 
-          {/* Tags */}
+          {/* Tags as Badges */}
           <div className="space-y-2">
-            <Label htmlFor="tags">Tags (comma-separated)</Label>
+            <Label htmlFor="tags">Tags</Label>
+            {formData.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {formData.tags.map(tag => (
+                  <Badge key={tag} variant="secondary" className="gap-1">
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
             <Input
               id="tags"
               data-testid="tags-input"
               type="text"
-              placeholder="ai, chatbot, productivity"
-              value={formData.tags.join(', ')}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean)
-              }))}
+              placeholder="Type a tag and press Enter or comma"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleAddTag}
             />
+            <p className="text-xs text-muted-foreground">Press Enter or comma to add tags</p>
           </div>
 
           {/* Notes */}
