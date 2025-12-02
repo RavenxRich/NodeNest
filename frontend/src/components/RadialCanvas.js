@@ -142,10 +142,8 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
       {/* Tool Nodes */}
       {categories.map((category, categoryIndex) => {
         const categoryTools = toolsByCategory[category.id] || [];
-        console.log(`Category: ${category.name}, Tools: ${categoryTools.length}`, categoryTools.map(t => t.title));
         return categoryTools.map((tool, toolIdx) => {
           const position = getToolPosition(tool, categoryIndex);
-          console.log(`Rendering ${tool.title} at position:`, position);
           return (
             <ToolNode
               key={tool.id}
