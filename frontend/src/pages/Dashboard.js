@@ -204,10 +204,10 @@ const Dashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 glass px-6 py-3 rounded-full border border-yellow-500/30"
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 glass px-6 py-3 rounded-full border border-orange-500/30 dark:border-yellow-500/30"
               >
                 <div className="flex items-center gap-2 text-sm">
-                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <Star className="w-4 h-4 text-orange-600 dark:text-yellow-500 fill-current" />
                   <span className="font-medium">Showing {favoriteCount} favorite{favoriteCount !== 1 ? 's' : ''}</span>
                 </div>
               </motion.div>
