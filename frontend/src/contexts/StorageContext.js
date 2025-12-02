@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { encryptData, decryptData } from '../utils/encryption';
 
 const StorageContext = createContext();
 
@@ -16,10 +17,10 @@ export const useStorage = () => {
 
 export const StorageProvider = ({ children }) => {
   const [storageMode, setStorageMode] = useState(() => {
-    return localStorage.getItem('storageMode') || null; // null, 'local', or 'cloud'
+    return localStorage.getItem('nodenest_storage_mode') || null;
   });
   const [userId, setUserId] = useState(() => {
-    return localStorage.getItem('userId') || null;
+    return localStorage.getItem('nodenest_user_id') || null;
   });
   const [tools, setTools] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -27,15 +28,15 @@ export const StorageProvider = ({ children }) => {
   // Initialize storage mode
   const selectStorageMode = (mode, googleUser = null) => {
     setStorageMode(mode);
-    localStorage.setItem('storageMode', mode);
+    localStorage.setItem('nodenest_storage_mode', mode);
     
     if (mode === 'cloud' && googleUser) {
       const uid = googleUser.sub || googleUser.email;
       setUserId(uid);
-      localStorage.setItem('userId', uid);
+      localStorage.setItem('nodenest_user_id', uid);
     } else if (mode === 'local') {
-      setUserId(null);
-      localStorage.removeItem('userId');
+      setUserId('local_user');
+      localStorage.setItem('nodenest_user_id', 'local_user');
     }
   };
 
@@ -58,8 +59,9 @@ export const StorageProvider = ({ children }) => {
 
     try {
       if (storageMode === 'local') {
-        const localTools = JSON.parse(localStorage.getItem('nodenest_tools') || '[]');
-        setTools(localTools);
+        const encryptedData = localStorage.getItem('nodenest_tools_encrypted');
+        const localTools = encryptedData ? decryptData(encryptedData) : [];
+        setTools(localTools || []);
       } else if (storageMode === 'cloud') {
         const response = await axios.get(`${API}/tools`, {
           params: { user_id: userId }
@@ -68,6 +70,7 @@ export const StorageProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error loading tools:', error);
+      setTools([]);
     }
   };
 
@@ -76,9 +79,11 @@ export const StorageProvider = ({ children }) => {
     setTools(updatedTools);
 
     if (storageMode === 'local') {
-      localStorage.setItem('nodenest_tools', JSON.stringify(updatedTools));
+      const encrypted = encryptData(updatedTools);
+      if (encrypted) {
+        localStorage.setItem('nodenest_tools_encrypted', encrypted);
+      }
     }
-    // Cloud save happens via API calls
   };
 
   // Add tool
@@ -180,7 +185,6 @@ export const StorageProvider = ({ children }) => {
   // Extract metadata
   const extractMetadata = async (url) => {
     try {
-      // Get LLM settings from localStorage
       const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
       const llmModel = llmProvider === 'local' 
         ? localStorage.getItem('localLlmModel') || 'default'
@@ -194,7 +198,6 @@ export const StorageProvider = ({ children }) => {
         llm_model: llmModel
       };
 
-      // Add local LLM config if using local provider
       if (llmProvider === 'local') {
         payload.local_endpoint = localStorage.getItem('localLlmEndpoint') || '';
         payload.local_api_key = localStorage.getItem('localLlmApiKey') || '';
@@ -216,7 +219,6 @@ export const StorageProvider = ({ children }) => {
         if (format === 'json') {
           importedTools = JSON.parse(data);
         } else if (format === 'csv') {
-          // Simple CSV parsing
           const lines = data.trim().split('\n');
           const headers = lines[0].split(',');
           importedTools = lines.slice(1).map(line => {
