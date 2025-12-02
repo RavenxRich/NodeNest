@@ -168,13 +168,29 @@ export const StorageProvider = ({ children }) => {
   };
 
   // Extract metadata
-  const extractMetadata = async (url, llmProvider = 'anthropic', llmModel = 'claude-4-sonnet-20250514') => {
+  const extractMetadata = async (url) => {
     try {
-      const response = await axios.post(`${API}/tools/extract-metadata`, {
+      // Get LLM settings from localStorage
+      const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
+      const llmModel = llmProvider === 'local' 
+        ? localStorage.getItem('localLlmModel') || 'default'
+        : llmProvider === 'anthropic' ? 'claude-4-sonnet-20250514'
+        : llmProvider === 'openai' ? 'gpt-5.1'
+        : 'gemini-2.5-flash';
+      
+      const payload = {
         url,
         llm_provider: llmProvider,
         llm_model: llmModel
-      });
+      };
+
+      // Add local LLM config if using local provider
+      if (llmProvider === 'local') {
+        payload.local_endpoint = localStorage.getItem('localLlmEndpoint') || '';
+        payload.local_api_key = localStorage.getItem('localLlmApiKey') || '';
+      }
+
+      const response = await axios.post(`${API}/tools/extract-metadata`, payload);
       return response.data;
     } catch (error) {
       console.error('Error extracting metadata:', error);
