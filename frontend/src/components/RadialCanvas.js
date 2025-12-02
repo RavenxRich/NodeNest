@@ -22,12 +22,12 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
 
-  // Calculate ring radiuses to fit all rings on screen
-  // Use more space - increased to 48% to utilize available viewport better
-  const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.48; // Max 48% of smallest dimension
+  // Calculate ring radiuses with proper spacing for nodes
+  // Node size is 72px, so we need at least 80px spacing between rings
   const totalCategories = categories.length;
-  const ringSpacing = maxRadius / totalCategories;
-  const ringRadiuses = categories.map((_, idx) => ringSpacing * (idx + 1));
+  const nodeSize = 72; // Node diameter in pixels
+  const ringSpacing = nodeSize + 8; // 8px padding between rings
+  const ringRadiuses = categories.map((_, idx) => ringSpacing * (idx + 1.5)); // Start from 1.5 for inner padding
 
   // Distribute tools across their category rings
   const toolsByCategory = categories.reduce((acc, category) => {
