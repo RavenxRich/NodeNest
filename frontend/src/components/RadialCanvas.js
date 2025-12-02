@@ -52,8 +52,9 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
     const toolIndex = categoryTools.findIndex(t => t.id === tool.id);
     const totalInCategory = categoryTools.length;
     
-    const angle = (toolIndex / totalInCategory) * 2 * Math.PI;
-    const radius = ringRadiuses[categoryIndex] || baseRadius;
+    // Distribute tools evenly around the ring
+    const angle = (toolIndex / Math.max(totalInCategory, 1)) * 2 * Math.PI;
+    const radius = ringRadiuses[categoryIndex] || ringRadiuses[0];
 
     return {
       x: centerX + radius * Math.cos(angle),
