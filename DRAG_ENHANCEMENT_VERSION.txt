@@ -1,0 +1,9 @@
+Drag Enhancement Version: 2.0
+Features Added:
+- Ring highlighting with glow effect
+- Ghost preview showing snap position
+- Pulsing animation
+- Enhanced node effects (scale, rotate, shadow)
+- Spring physics
+
+Last Updated: 2024-12-03
