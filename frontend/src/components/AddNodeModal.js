@@ -74,7 +74,7 @@ const AddNodeModal = ({ open, onClose }) => {
         url: '',
         title: '',
         description: '',
-        category_id: 'chat-assistants',
+        category_id: 'ai-chat-writing',
         tags: [],
         favicon: '',
         notes: '',
