@@ -81,15 +81,78 @@ export const StorageProvider = ({ children }) => {
     loadCategories();
   }, []);
 
+  // Load tools from filesystem
+  const loadFromFileSystem = async () => {
+    if (!directoryHandle) {
+      // Try to request permission again
+      const hasDirectory = localStorage.getItem('nodenest_has_directory');
+      if (hasDirectory === 'true') {
+        try {
+          const handle = await window.showDirectoryPicker({
+            mode: 'readwrite',
+            startIn: 'documents'
+          });
+          setDirectoryHandle(handle);
+          return await readToolsFromDirectory(handle);
+        } catch (error) {
+          console.error('Error accessing directory:', error);
+          return [];
+        }
+      }
+      return [];
+    }
+    
+    return await readToolsFromDirectory(directoryHandle);
+  };
+
+  const readToolsFromDirectory = async (handle) => {
+    try {
+      const fileHandle = await handle.getFileHandle('nodenest_tools.json', { create: true });
+      const file = await fileHandle.getFile();
+      const content = await file.text();
+      if (content.trim()) {
+        return JSON.parse(content);
+      }
+      return [];
+    } catch (error) {
+      console.error('Error reading from file:', error);
+      return [];
+    }
+  };
+
+  // Save tools to filesystem
+  const saveToFileSystem = async (tools) => {
+    if (!directoryHandle) {
+      console.error('No directory handle available');
+      return false;
+    }
+    
+    try {
+      const fileHandle = await directoryHandle.getFileHandle('nodenest_tools.json', { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(JSON.stringify(tools, null, 2));
+      await writable.close();
+      return true;
+    } catch (error) {
+      console.error('Error saving to file:', error);
+      return false;
+    }
+  };
+
   // Load tools
   const loadTools = async () => {
     if (!storageMode) return;
 
     try {
       if (storageMode === 'local') {
-        const encryptedData = localStorage.getItem('nodenest_tools_encrypted');
-        const localTools = encryptedData ? decryptData(encryptedData) : [];
-        setTools(localTools || []);
+        if (localStorageType === 'filesystem') {
+          const fileTools = await loadFromFileSystem();
+          setTools(fileTools || []);
+        } else {
+          const encryptedData = localStorage.getItem('nodenest_tools_encrypted');
+          const localTools = encryptedData ? decryptData(encryptedData) : [];
+          setTools(localTools || []);
+        }
       } else if (storageMode === 'cloud') {
         const response = await axios.get(`${API}/tools`, {
           params: { user_id: userId }
