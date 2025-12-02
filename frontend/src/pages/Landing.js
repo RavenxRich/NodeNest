@@ -112,15 +112,29 @@ const Landing = () => {
             className="grid md:grid-cols-2 gap-6 mt-12"
           >
             {/* Local Storage */}
-            <Card data-testid="local-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 cursor-pointer group" onClick={handleLocalStorage}>
+            <Card data-testid="local-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
               <div className="flex flex-col items-center gap-4 text-white">
                 <div className="w-20 h-20 rounded-full bg-violet-500/20 flex items-center justify-center group-hover:bg-violet-500/30 transition-colors">
                   <HardDrive className="w-10 h-10 text-violet-300" />
                 </div>
                 <h3 className="text-2xl font-semibold">Local Storage</h3>
-                <p className="text-violet-200 text-sm text-center">
+                <p className="text-violet-200 text-sm text-center mb-4">
                   Store everything locally on your device. No account needed. Perfect for privacy.
                 </p>
+                <div className="w-full space-y-2">
+                  <Button
+                    onClick={handleLocalStorage}
+                    className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                  >
+                    Use Browser Storage
+                  </Button>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    🔒 Encrypted data stored in browser
+                  </p>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    💾 Export/import anytime in Settings
+                  </p>
+                </div>
               </div>
             </Card>
 
