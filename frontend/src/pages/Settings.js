@@ -15,8 +15,29 @@ const Settings = () => {
   const { storageMode, importTools, exportTools } = useStorage();
   const [importFormat, setImportFormat] = useState('json');
   const [importData, setImportData] = useState('');
-  const [llmProvider, setLlmProvider] = useState('anthropic');
+  const [llmProvider, setLlmProvider] = useState(() => {
+    return localStorage.getItem('llmProvider') || 'anthropic';
+  });
+  const [localEndpoint, setLocalEndpoint] = useState(() => {
+    return localStorage.getItem('localLlmEndpoint') || '';
+  });
+  const [localModel, setLocalModel] = useState(() => {
+    return localStorage.getItem('localLlmModel') || 'default';
+  });
+  const [localApiKey, setLocalApiKey] = useState(() => {
+    return localStorage.getItem('localLlmApiKey') || '';
+  });
   const [loading, setLoading] = useState(false);
+
+  const handleSaveLlmSettings = () => {
+    localStorage.setItem('llmProvider', llmProvider);
+    if (llmProvider === 'local') {
+      localStorage.setItem('localLlmEndpoint', localEndpoint);
+      localStorage.setItem('localLlmModel', localModel);
+      localStorage.setItem('localLlmApiKey', localApiKey);
+    }
+    toast.success('LLM settings saved!');
+  };
 
   const handleImport = async () => {
     if (!importData.trim()) {
