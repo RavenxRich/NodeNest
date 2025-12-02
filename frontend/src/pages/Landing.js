@@ -25,22 +25,7 @@ const Landing = () => {
     setTimeout(() => navigate('/dashboard'), 500);
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    try {
-      // Decode JWT token to get user info
-      const decoded = JSON.parse(atob(credentialResponse.credential.split('.')[1]));
-      selectStorageMode('cloud', decoded);
-      toast.success(`Welcome ${decoded.name}! Using cloud storage.`);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error decoding Google token:', error);
-      toast.error('Failed to sign in with Google');
-    }
-  };
-
-  const handleGoogleError = () => {
-    toast.error('Google sign-in failed');
-  };
+  // Google OAuth handlers removed - feature coming soon
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden flex items-center justify-center">
