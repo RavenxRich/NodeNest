@@ -38,26 +38,15 @@ const Landing = () => {
   const handleLocalStorage = async (storageType) => {
     const result = await selectStorageMode('local', null, storageType);
     if (result.success) {
-      if (storageType === 'filesystem') {
-        toast.success('Using folder storage - data saved to your selected folder');
-      } else {
-        toast.success('Using encrypted browser storage mode');
-      }
+      toast.success('✅ Folder selected! Data will be saved to your folder.');
       setTimeout(() => navigate('/dashboard'), 500);
     } else {
-      // If folder selection failed, offer browser storage as fallback
-      if (storageType === 'filesystem' && result.error && result.error.includes('not supported')) {
-        toast.error(`Folder selection not available. Using browser storage instead.`);
-        // Fallback to browser storage
-        const fallbackResult = await selectStorageMode('local', null, 'browser');
-        if (fallbackResult.success) {
-          setTimeout(() => navigate('/dashboard'), 500);
-        }
-      } else if (result.error && result.error.includes('cancelled')) {
-        // User cancelled folder selection - don't show error, just stay on page
-        toast.info('Folder selection cancelled');
+      if (result.error && result.error.includes('cancelled')) {
+        toast.info('Folder selection cancelled. Please try again.');
+      } else if (result.error && result.error.includes('not supported')) {
+        toast.error('Your browser does not support folder selection. Please use Chrome, Edge, or Brave.');
       } else {
-        toast.error(`Failed to set up storage: ${result.error}`);
+        toast.error(`Failed to select folder: ${result.error}`);
       }
     }
   };
