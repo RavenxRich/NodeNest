@@ -66,8 +66,24 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
     <div className="relative w-full h-full overflow-hidden" data-testid="radial-canvas">
       {/* SVG Rings */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <defs>
+          {categories.map((category, idx) => {
+            const radius = ringRadiuses[idx];
+            const pathId = `ring-path-${category.id}`;
+            return (
+              <path
+                key={pathId}
+                id={pathId}
+                d={`M ${centerX - radius}, ${centerY} a ${radius},${radius} 0 1,1 ${radius * 2},0 a ${radius},${radius} 0 1,1 -${radius * 2},0`}
+                fill="none"
+              />
+            );
+          })}
+        </defs>
+        
         {categories.map((category, idx) => {
           const radius = ringRadiuses[idx];
+          const pathId = `ring-path-${category.id}`;
           return (
             <g key={category.id}>
               {/* Ring circle */}
@@ -77,27 +93,26 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
                 r={radius}
                 fill="none"
                 stroke={category.color}
-                strokeWidth="1"
-                strokeOpacity="0.2"
+                strokeWidth="1.5"
+                strokeOpacity="0.3"
                 strokeDasharray="10 5"
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1, duration: 0.5 }}
               />
-              {/* Category label */}
+              {/* Category label on curved path */}
               <motion.text
-                x={centerX}
-                y={centerY - radius - 20}
-                textAnchor="middle"
                 fill={category.color}
-                fontSize="14"
+                fontSize="13"
                 fontWeight="600"
-                className="font-sans"
+                className="font-sans uppercase tracking-wider"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.7 }}
+                animate={{ opacity: 0.8 }}
                 transition={{ delay: idx * 0.1 + 0.2 }}
               >
-                {category.name}
+                <textPath href={`#${pathId}`} startOffset="25%">
+                  {category.name}
+                </textPath>
               </motion.text>
             </g>
           );
