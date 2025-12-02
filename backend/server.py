@@ -31,12 +31,25 @@ api_router = APIRouter(prefix="/api")
 # LLM Configuration
 LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 DEFAULT_CATEGORIES = [
-    {"id": "marketing", "name": "Marketing", "color": "#EC4899"},
-    {"id": "video-creation", "name": "Video Creation", "color": "#8B5CF6"},
-    {"id": "programming", "name": "Programming", "color": "#06B6D4"},
+    {"id": "chat-assistants", "name": "Chat & Assistants", "color": "#8B5CF6"},
+    {"id": "image-generation", "name": "Image Generation", "color": "#EC4899"},
+    {"id": "video-creation", "name": "Video & Animation", "color": "#F59E0B"},
+    {"id": "audio-voice", "name": "Audio & Voice", "color": "#10B981"},
+    {"id": "programming", "name": "Programming & Dev", "color": "#06B6D4"},
+    {"id": "writing-content", "name": "Writing & Content", "color": "#A855F7"},
+    {"id": "data-analytics", "name": "Data & Analytics", "color": "#3B82F6"},
+    {"id": "automation", "name": "Automation & Agents", "color": "#F97316"},
+    {"id": "mcp-tools", "name": "MCP Tools", "color": "#14B8A6"},
+    {"id": "research", "name": "Research & Knowledge", "color": "#8B5CF6"},
+    {"id": "design", "name": "Design & UI/UX", "color": "#EC4899"},
     {"id": "productivity", "name": "Productivity", "color": "#10B981"},
-    {"id": "design", "name": "Design", "color": "#F59E0B"},
-    {"id": "sales", "name": "Sales", "color": "#EF4444"}
+    {"id": "marketing", "name": "Marketing & SEO", "color": "#F59E0B"},
+    {"id": "sales-crm", "name": "Sales & CRM", "color": "#EF4444"},
+    {"id": "education", "name": "Education & Learning", "color": "#6366F1"},
+    {"id": "3d-modeling", "name": "3D & Modeling", "color": "#EC4899"},
+    {"id": "workflow", "name": "Workflow Tools", "color": "#14B8A6"},
+    {"id": "security", "name": "Security & Privacy", "color": "#EF4444"},
+    {"id": "other", "name": "Other", "color": "#6B7280"}
 ]
 
 # Models
