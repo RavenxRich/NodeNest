@@ -119,15 +119,10 @@ class ImportToolsRequest(BaseModel):
     user_id: Optional[str] = None
 
 # Helper functions
-async def extract_metadata_with_llm(url: str, provider: str = "anthropic", model: str = "claude-4-sonnet-20250514") -> Dict[str, Any]:
-    """Extract metadata from URL using LLM"""
+async def extract_metadata_with_llm(url: str, provider: str = "anthropic", model: str = "claude-4-sonnet-20250514", 
+                                   local_endpoint: Optional[str] = None, local_api_key: Optional[str] = None) -> Dict[str, Any]:
+    """Extract metadata from URL using LLM (cloud or local)"""
     try:
-        chat = LlmChat(
-            api_key=LLM_KEY,
-            session_id=f"metadata-extraction-{uuid.uuid4()}",
-            system_message="You are a metadata extraction assistant. Given a URL, extract the likely title, description, category, and relevant tags. Respond ONLY with valid JSON in this exact format: {\"title\": \"...\", \"description\": \"...\", \"category_id\": \"...\", \"tags\": [\"...\"], \"favicon\": \"...\"}"
-        ).with_model(provider, model)
-
         categories_str = ", ".join([f"{c['id']} ({c['name']})" for c in DEFAULT_CATEGORIES])
         prompt = f"""Extract metadata for this URL: {url}
 
@@ -142,11 +137,43 @@ Provide:
 
 Respond with ONLY the JSON object, no other text."""
 
-        message = UserMessage(text=prompt)
-        response = await chat.send_message(message)
+        if provider == "local" and local_endpoint:
+            # Local LLM via OpenAI-compatible endpoint
+            import aiohttp
+            headers = {"Content-Type": "application/json"}
+            if local_api_key:
+                headers["Authorization"] = f"Bearer {local_api_key}"
+            
+            payload = {
+                "model": model or "default",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a metadata extraction assistant. Given a URL, extract the likely title, description, category, and relevant tags. Respond ONLY with valid JSON."
+                    },
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 500
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.post(f"{local_endpoint}/v1/chat/completions", json=payload, headers=headers, timeout=30) as resp:
+                    result = await resp.json()
+                    response_text = result["choices"][0]["message"]["content"]
+        else:
+            # Cloud LLM via emergentintegrations
+            chat = LlmChat(
+                api_key=LLM_KEY,
+                session_id=f"metadata-extraction-{uuid.uuid4()}",
+                system_message="You are a metadata extraction assistant. Given a URL, extract the likely title, description, category, and relevant tags. Respond ONLY with valid JSON in this exact format: {\"title\": \"...\", \"description\": \"...\", \"category_id\": \"...\", \"tags\": [\"...\"], \"favicon\": \"...\"}"
+            ).with_model(provider, model)
+
+            message = UserMessage(text=prompt)
+            response_text = await chat.send_message(message)
         
         # Parse JSON from response
-        response_text = response.strip()
+        response_text = response_text.strip()
         # Remove markdown code blocks if present
         if response_text.startswith('```'):
             response_text = response_text.split('```')[1]
@@ -163,7 +190,7 @@ Respond with ONLY the JSON object, no other text."""
         return {
             "title": domain,
             "description": f"AI tool from {domain}",
-            "category_id": "productivity",
+            "category_id": "chat-assistants",
             "tags": ["ai", "tool"],
             "favicon": f"https://www.google.com/s2/favicons?domain={domain}&sz=64"
         }
