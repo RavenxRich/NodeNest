@@ -85,6 +85,16 @@ export const StorageProvider = ({ children }) => {
   const addTool = async (toolData) => {
     try {
       if (storageMode === 'local') {
+        // Auto-generate favicon if not provided
+        if (!toolData.favicon && toolData.url) {
+          try {
+            const urlObj = new URL(toolData.url);
+            toolData.favicon = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=64`;
+          } catch (e) {
+            console.error('Error generating favicon:', e);
+          }
+        }
+        
         const newTool = {
           ...toolData,
           id: `tool_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
