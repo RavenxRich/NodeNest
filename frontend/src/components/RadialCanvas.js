@@ -6,6 +6,8 @@ import { useStorage } from '../contexts/StorageContext';
 const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelectedTool }) => {
   const { categories } = useStorage();
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [hoveredRingIndex, setHoveredRingIndex] = useState(null);
 
   useEffect(() => {
     const updateDimensions = () => {
