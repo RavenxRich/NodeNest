@@ -23,8 +23,8 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
   const centerY = dimensions.height / 2;
 
   // Calculate ring radiuses to fit all rings on screen
-  // Use smaller percentage and tighter spacing to fit 10 categories
-  const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.42; // Max 42% of smallest dimension
+  // Use more space - increased to 48% to utilize available viewport better
+  const maxRadius = Math.min(dimensions.width, dimensions.height) * 0.48; // Max 48% of smallest dimension
   const totalCategories = categories.length;
   const ringSpacing = maxRadius / totalCategories;
   const ringRadiuses = categories.map((_, idx) => ringSpacing * (idx + 1));
