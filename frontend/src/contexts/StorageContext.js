@@ -56,14 +56,20 @@ export const StorageProvider = ({ children }) => {
       // If filesystem storage, prompt user to select directory FIRST
       if (storageType === 'filesystem') {
         try {
+          console.log('Starting folder selection...');
+          console.log('showDirectoryPicker available:', 'showDirectoryPicker' in window);
+          console.log('User Agent:', navigator.userAgent);
+          
           if (!('showDirectoryPicker' in window)) {
-            throw new Error('File System Access API not supported in your browser. Please use Chrome or Edge.');
+            throw new Error('File System Access API not supported in your browser. Please use Chrome, Edge, or Brave.');
           }
           
+          console.log('Calling showDirectoryPicker...');
           const handle = await window.showDirectoryPicker({
             mode: 'readwrite',
             startIn: 'documents'
           });
+          console.log('Folder selected successfully:', handle);
           
           // Store handle in IndexedDB for persistence
           const db = await openDB();
