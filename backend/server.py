@@ -209,7 +209,13 @@ async def get_categories():
 @api_router.post("/tools/extract-metadata", response_model=ExtractMetadataResponse)
 async def extract_metadata(request: ExtractMetadataRequest):
     """Extract metadata from URL using AI"""
-    metadata = await extract_metadata_with_llm(request.url, request.llm_provider, request.llm_model)
+    metadata = await extract_metadata_with_llm(
+        request.url, 
+        request.llm_provider, 
+        request.llm_model,
+        request.local_endpoint,
+        request.local_api_key
+    )
     return ExtractMetadataResponse(**metadata)
 
 @api_router.post("/tools", response_model=Tool)
