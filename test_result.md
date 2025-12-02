@@ -210,6 +210,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ VERIFIED: Drag-and-drop functionality working. Successfully simulated drag interactions on tool nodes. Tools can be moved and repositioned on the radial canvas."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE NEW FEATURE TESTING COMPLETED: Advanced node movement between category rings working perfectly! Successfully tested: 1) Drag nodes between different category rings with automatic snapping 2) Ring highlighting during drag operations (visual feedback) 3) Angular positioning on same ring 4) Multiple tool movements 5) All 8 category rings with curved labels visible and functional. The handleToolMove function correctly calculates closest ring and updates tool category. Radial canvas renders beautifully with proper ring spacing and curved text labels. Drag interactions are smooth and responsive."
 
   - task: "Favorites system"
     implemented: true
