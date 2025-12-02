@@ -103,13 +103,13 @@ const Settings = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Database className="w-5 h-5" />
-                  Storage Mode
+                  Storage Configuration
                 </CardTitle>
                 <CardDescription>
-                  Your current storage configuration
+                  Your current storage setup and data location
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className={`px-4 py-2 rounded-full ${
                     storageMode === 'local' ? 'bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300' : 'bg-cyan-100 dark:bg-cyan-950 text-cyan-700 dark:text-cyan-300'
@@ -117,6 +117,21 @@ const Settings = () => {
                     <span className="font-semibold capitalize">{storageMode} Storage</span>
                   </div>
                 </div>
+                
+                {storageMode === 'local' && (
+                  <div className="p-4 bg-violet-50 dark:bg-violet-950/20 rounded-lg border border-violet-200 dark:border-violet-800 space-y-2">
+                    <p className="text-sm font-semibold text-violet-900 dark:text-violet-100">📍 Data Location</p>
+                    <p className="text-xs text-violet-700 dark:text-violet-300">
+                      Browser Storage: <code className="bg-violet-200 dark:bg-violet-900 px-2 py-1 rounded">localStorage</code>
+                    </p>
+                    <p className="text-xs text-violet-700 dark:text-violet-300">
+                      Storage Key: <code className="bg-violet-200 dark:bg-violet-900 px-2 py-1 rounded">nodenest_tools_encrypted</code>
+                    </p>
+                    <p className="text-xs text-violet-600 dark:text-violet-400 mt-2">
+                      💡 To backup to your own folder: Use Export below, then save the file to your preferred location.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
