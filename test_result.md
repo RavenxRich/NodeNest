@@ -144,6 +144,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE TESTING COMPLETED: NEW folder selection feature working perfectly. Both options displayed correctly: 1) '📁 Choose Folder' button with text 'Save data to a folder you choose' 2) '🔒 Browser Storage' button with text 'Encrypted data in browser (no folder access)'. UI is properly implemented and functional. Browser storage mode works end-to-end."
+      - working: true
+        agent: "testing"
+        comment: "✅ RETESTED FIXED VERSION: Critical fixes verified working. IndexedDB transaction syntax fixed - no transaction errors detected. Async flow properly reordered - storage mode only set after successful folder selection. File System Access API properly invoked when 'Choose Folder' clicked. Browser storage baseline test successful with encrypted localStorage. UI displays both options correctly with proper descriptive text. Error handling works - shows 'Folder selection cancelled' when user cancels picker dialog. All success criteria met."
 
   - task: "Google OAuth login"
     implemented: true
