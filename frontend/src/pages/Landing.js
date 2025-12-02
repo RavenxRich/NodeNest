@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useStorage } from '../contexts/StorageContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
 import { HardDrive, Cloud, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const GOOGLE_CLIENT_ID = "1082802046846-t6deeo28omdvhbb5ps28h7dohe77vr0b.apps.googleusercontent.com";
 
 const Landing = () => {
   const navigate = useNavigate();
