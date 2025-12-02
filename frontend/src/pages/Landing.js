@@ -8,10 +8,8 @@ import { toast } from 'sonner';
 import { HardDrive, Cloud, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Google OAuth Client ID - Configure in Google Cloud Console
-// Authorized JavaScript origins: https://ai-dashboard-31.preview.emergentagent.com
-// Authorized redirect URIs: https://ai-dashboard-31.preview.emergentagent.com
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "1082802046846-t6deeo28omdvhbb5ps28h7dohe77vr0b.apps.googleusercontent.com";
+// Google OAuth Client ID from environment
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Landing = () => {
   const navigate = useNavigate();
