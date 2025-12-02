@@ -2,8 +2,21 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
-const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
+const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart, onDrag }) => {
   const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+    if (onDragStart) onDragStart();
+  };
+
+  const handleDrag = (event, info) => {
+    if (onDrag) {
+      const newX = position.x + info.offset.x;
+      const newY = position.y + info.offset.y;
+      onDrag({ x: newX, y: newY });
+    }
+  };
 
   const handleDragEnd = (event, info) => {
     setIsDragging(false);
