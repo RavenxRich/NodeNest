@@ -163,7 +163,61 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
             <stop offset="0%" stopColor="#8B5CF6" />
             <stop offset="100%" stopColor="#06B6D4" />
           </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
+        
+        {/* Ghost preview when dragging */}
+        {isDragging && ghostPosition && hoveredRingIndex !== null && (
+          <motion.g
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.6, scale: 1 }}
+            transition={{ duration: 0.2 }}
+          >
+            <circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="28"
+              fill={categories[hoveredRingIndex]?.color || '#8B5CF6'}
+              opacity="0.3"
+              filter="url(#glow)"
+            />
+            <circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="28"
+              fill="none"
+              stroke={categories[hoveredRingIndex]?.color || '#8B5CF6'}
+              strokeWidth="3"
+              strokeDasharray="5 5"
+              opacity="0.8"
+            />
+            {/* Pulsing animation */}
+            <motion.circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="28"
+              fill="none"
+              stroke={categories[hoveredRingIndex]?.color || '#8B5CF6'}
+              strokeWidth="2"
+              opacity="0.4"
+              animate={{ 
+                r: [28, 36, 28],
+                opacity: [0.4, 0, 0.4]
+              }}
+              transition={{ 
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.g>
+        )}
       </svg>
 
       {/* Tool Nodes */}
