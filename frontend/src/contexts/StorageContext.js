@@ -30,7 +30,7 @@ export const StorageProvider = ({ children }) => {
   });
 
   // Initialize storage mode
-  const selectStorageMode = (mode, googleUser = null) => {
+  const selectStorageMode = async (mode, googleUser = null, storageType = 'browser') => {
     setStorageMode(mode);
     localStorage.setItem('nodenest_storage_mode', mode);
     
@@ -41,7 +41,31 @@ export const StorageProvider = ({ children }) => {
     } else if (mode === 'local') {
       setUserId('local_user');
       localStorage.setItem('nodenest_user_id', 'local_user');
+      setLocalStorageType(storageType);
+      localStorage.setItem('nodenest_local_storage_type', storageType);
+      
+      // If filesystem storage, prompt user to select directory
+      if (storageType === 'filesystem') {
+        try {
+          if ('showDirectoryPicker' in window) {
+            const handle = await window.showDirectoryPicker({
+              mode: 'readwrite',
+              startIn: 'documents'
+            });
+            setDirectoryHandle(handle);
+            // Store directory handle reference
+            localStorage.setItem('nodenest_has_directory', 'true');
+            return { success: true };
+          } else {
+            throw new Error('File System Access API not supported');
+          }
+        } catch (error) {
+          console.error('Error selecting directory:', error);
+          return { success: false, error: error.message };
+        }
+      }
     }
+    return { success: true };
   };
 
   // Load categories
