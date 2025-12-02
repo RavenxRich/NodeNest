@@ -134,54 +134,30 @@ const Landing = () => {
             transition={{ duration: 0.3 }}
             className="grid md:grid-cols-2 gap-6 mt-12"
           >
-            {/* Local Storage */}
+            {/* Local Storage - Folder Only */}
             <Card data-testid="local-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
               <div className="flex flex-col items-center gap-4 text-white">
                 <div className="w-20 h-20 rounded-full bg-violet-500/20 flex items-center justify-center group-hover:bg-violet-500/30 transition-colors">
                   <HardDrive className="w-10 h-10 text-violet-300" />
                 </div>
-                <h3 className="text-2xl font-semibold">Local Storage</h3>
+                <h3 className="text-2xl font-semibold">Folder Storage</h3>
                 <p className="text-violet-200 text-sm text-center mb-4">
-                  Store everything locally on your device. No account needed. Perfect for privacy.
+                  Choose a folder on your computer. Your data will be saved as a JSON file in that folder.
                 </p>
-                {!showLocalOptions ? (
-                  <div className="w-full space-y-2">
-                    <Button
-                      onClick={() => setShowLocalOptions(true)}
-                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-                    >
-                      Choose Storage Type
-                    </Button>
-                    {!supportsFileSystem && (
-                      <p className="text-xs text-amber-300/70 text-center">
-                        ⚠️ Folder selection may not work in your browser
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="w-full space-y-3">
-                    <Button
-                      onClick={() => handleLocalStorage('filesystem')}
-                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-                    >
-                      📁 Choose Folder
-                    </Button>
-                    <p className="text-xs text-violet-300/70 text-center">
-                      Save data to a folder you choose
-                    </p>
-                    <div className="border-t border-violet-500/30 my-2" />
-                    <Button
-                      onClick={() => handleLocalStorage('browser')}
-                      variant="outline"
-                      className="w-full border-violet-500/50 text-violet-200 hover:bg-violet-500/10"
-                    >
-                      🔒 Browser Storage
-                    </Button>
-                    <p className="text-xs text-violet-300/70 text-center">
-                      Encrypted data in browser (no folder access)
-                    </p>
-                  </div>
-                )}
+                <div className="w-full space-y-2">
+                  <Button
+                    onClick={() => handleLocalStorage('filesystem')}
+                    className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6"
+                  >
+                    📁 Choose Folder
+                  </Button>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    Works in Brave, Chrome, and Edge
+                  </p>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    💾 Creates: nodenest_tools.json
+                  </p>
+                </div>
               </div>
             </Card>
 
