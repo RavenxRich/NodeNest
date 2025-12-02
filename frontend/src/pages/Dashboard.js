@@ -4,11 +4,12 @@ import { useStorage } from '../contexts/StorageContext';
 import { useTheme } from 'next-themes';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Badge } from '../components/ui/badge';
 import RadialCanvas from '../components/RadialCanvas';
 import AddNodeModal from '../components/AddNodeModal';
 import NodeDetailsSidebar from '../components/NodeDetailsSidebar';
 import { toast } from 'sonner';
-import { Plus, Settings, BarChart3, Moon, Sun, Search, LogOut } from 'lucide-react';
+import { Plus, Settings, BarChart3, Moon, Sun, Search, LogOut, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Dashboard = () => {
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [selectedTool, setSelectedTool] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTools, setFilteredTools] = useState([]);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
     if (!storageMode) {
@@ -31,19 +33,25 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    let result = tools;
+    
+    // Filter by favorites if enabled
+    if (showOnlyFavorites) {
+      result = result.filter(t => t.favorite);
+    }
+    
+    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      setFilteredTools(
-        tools.filter(t => 
-          t.title.toLowerCase().includes(query) ||
-          t.description?.toLowerCase().includes(query) ||
-          t.tags?.some(tag => tag.toLowerCase().includes(query))
-        )
+      result = result.filter(t => 
+        t.title.toLowerCase().includes(query) ||
+        t.description?.toLowerCase().includes(query) ||
+        t.tags?.some(tag => tag.toLowerCase().includes(query))
       );
-    } else {
-      setFilteredTools(tools);
     }
-  }, [searchQuery, tools]);
+    
+    setFilteredTools(result);
+  }, [searchQuery, tools, showOnlyFavorites]);
 
   const handleToolClick = async (tool) => {
     setSelectedTool(tool);
@@ -72,6 +80,8 @@ const Dashboard = () => {
     navigate('/');
     window.location.reload();
   };
+
+  const favoriteCount = tools.filter(t => t.favorite).length;
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden" data-testid="dashboard-page">
@@ -102,6 +112,24 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Favorites Toggle */}
+            <Button
+              data-testid="favorites-toggle-btn"
+              size="sm"
+              variant={showOnlyFavorites ? "default" : "ghost"}
+              onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+              className={`gap-2 ${
+                showOnlyFavorites ? 'bg-yellow-500 hover:bg-yellow-600 text-white' : ''
+              }`}
+            >
+              <Star className={`w-4 h-4 ${showOnlyFavorites ? 'fill-current' : ''}`} />
+              {favoriteCount > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {favoriteCount}
+                </Badge>
+              )}
+            </Button>
+            
             <Button
               data-testid="add-node-btn"
               size="sm"
@@ -153,13 +181,29 @@ const Dashboard = () => {
       {/* Main Canvas */}
       <div className="relative h-[calc(100vh-80px)]">
         {filteredTools.length > 0 ? (
-          <RadialCanvas
-            tools={filteredTools}
-            onToolClick={handleToolClick}
-            onToolMove={handleToolMove}
-            selectedTool={selectedTool}
-            setSelectedTool={setSelectedTool}
-          />
+          <>
+            <RadialCanvas
+              tools={filteredTools}
+              onToolClick={handleToolClick}
+              onToolMove={handleToolMove}
+              selectedTool={selectedTool}
+              setSelectedTool={setSelectedTool}
+            />
+            
+            {/* Status indicator */}
+            {showOnlyFavorites && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 glass px-6 py-3 rounded-full border border-yellow-500/30"
+              >
+                <div className="flex items-center gap-2 text-sm">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="font-medium">Showing {favoriteCount} favorite{favoriteCount !== 1 ? 's' : ''}</span>
+                </div>
+              </motion.div>
+            )}
+          </>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -167,15 +211,23 @@ const Dashboard = () => {
             className="flex flex-col items-center justify-center h-full text-center px-6"
           >
             <div className="w-32 h-32 rounded-full bg-gradient-to-br from-violet-500/20 to-cyan-500/20 flex items-center justify-center mb-8 backdrop-blur-xl border-2 border-white/20 shadow-2xl">
-              <Plus className="w-16 h-16 text-violet-400" />
+              {showOnlyFavorites ? (
+                <Star className="w-16 h-16 text-yellow-400" />
+              ) : (
+                <Plus className="w-16 h-16 text-violet-400" />
+              )}
             </div>
-            <h2 className="text-3xl font-bold mb-3 gradient-text">Welcome to NodeNest!</h2>
+            <h2 className="text-3xl font-bold mb-3 gradient-text">
+              {showOnlyFavorites ? 'No Favorites Yet' : 'Welcome to NodeNest!'}
+            </h2>
             <p className="text-muted-foreground mb-8 max-w-lg text-lg">
               {searchQuery 
                 ? 'No tools match your search.' 
+                : showOnlyFavorites
+                ? 'Star your frequently used tools to see them here!'
                 : 'Your personal AI tools bookmark manager. Add tools and watch them organize beautifully in the radial canvas!'}
             </p>
-            {!searchQuery && (
+            {!searchQuery && !showOnlyFavorites && (
               <>
                 <Button
                   onClick={() => setShowAddModal(true)}
