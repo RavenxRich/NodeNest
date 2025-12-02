@@ -133,20 +133,39 @@ const Landing = () => {
                 <p className="text-violet-200 text-sm text-center mb-4">
                   Store everything locally on your device. No account needed. Perfect for privacy.
                 </p>
-                <div className="w-full space-y-2">
-                  <Button
-                    onClick={handleLocalStorage}
-                    className="w-full bg-violet-600 hover:bg-violet-700 text-white"
-                  >
-                    Use Browser Storage
-                  </Button>
-                  <p className="text-xs text-violet-300/70 text-center">
-                    🔒 Encrypted data stored in browser
-                  </p>
-                  <p className="text-xs text-violet-300/70 text-center">
-                    💾 Export/import anytime in Settings
-                  </p>
-                </div>
+                {!showLocalOptions ? (
+                  <div className="w-full space-y-2">
+                    <Button
+                      onClick={() => setShowLocalOptions(true)}
+                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                    >
+                      Choose Storage Type
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="w-full space-y-3">
+                    <Button
+                      onClick={() => handleLocalStorage('filesystem')}
+                      className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+                    >
+                      📁 Choose Folder
+                    </Button>
+                    <p className="text-xs text-violet-300/70 text-center">
+                      Save data to a folder you choose
+                    </p>
+                    <div className="border-t border-violet-500/30 my-2" />
+                    <Button
+                      onClick={() => handleLocalStorage('browser')}
+                      variant="outline"
+                      className="w-full border-violet-500/50 text-violet-200 hover:bg-violet-500/10"
+                    >
+                      🔒 Browser Storage
+                    </Button>
+                    <p className="text-xs text-violet-300/70 text-center">
+                      Encrypted data in browser (no folder access)
+                    </p>
+                  </div>
+                )}
               </div>
             </Card>
 
