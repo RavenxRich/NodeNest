@@ -18,10 +18,10 @@ const NodeDetailsSidebar = ({ tool, onClose }) => {
   useEffect(() => {
     if (tool) {
       setFormData({
-        title: tool.title,
+        title: tool.title || '',
         description: tool.description || '',
         notes: tool.notes || '',
-        tags: tool.tags || [],
+        tags: Array.isArray(tool.tags) ? tool.tags : [],
         favorite: tool.favorite || false
       });
     }
