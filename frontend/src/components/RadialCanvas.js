@@ -150,7 +150,7 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
               tool={tool}
               position={position}
               onClick={() => onToolClick(tool)}
-              onDragEnd={(newPosition) => onToolMove(tool.id, newPosition)}
+              onDragEnd={(newPosition) => onToolMove(tool.id, newPosition, ringRadiuses, categories)}
               isSelected={selectedTool?.id === tool.id}
             />
           );
