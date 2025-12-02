@@ -20,7 +20,8 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             data-testid={`tool-node-${tool.id}`}
             drag
             dragMomentum={false}
-            dragElastic={0}
+            dragElastic={0.1}
+            dragConstraints={false}
             onDragStart={() => setIsDragging(true)}
             onDragEnd={handleDragEnd}
             onClick={!isDragging ? onClick : undefined}
@@ -28,12 +29,13 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             animate={{ 
               opacity: 1, 
               scale: isSelected ? 1.2 : 1,
-              x: position.x - 32,
-              y: position.y - 32
+              x: position.x - 28,
+              y: position.y - 28
             }}
             whileHover={{ scale: 1.15 }}
+            whileDrag={{ scale: 1.1, cursor: 'grabbing' }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className={`absolute w-16 h-16 cursor-pointer z-10 ${
+            className={`absolute w-14 h-14 cursor-grab active:cursor-grabbing z-10 ${
               isSelected ? 'glow-pulse' : ''
             }`}
             style={{ touchAction: 'none' }}
