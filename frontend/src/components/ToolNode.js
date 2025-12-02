@@ -89,16 +89,28 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected }) => {
             </div>
           </motion.div>
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <div className="text-sm space-y-1">
-            <p className="font-semibold">{tool.title}</p>
+        <TooltipContent side="top" className="max-w-xs bg-slate-900/95 border-violet-500/30 backdrop-blur-xl">
+          <div className="space-y-2">
+            {/* Tool Name - Prominent */}
+            <div className="text-center pb-2 border-b border-white/10">
+              <p className="text-lg font-bold text-white">{tool.title}</p>
+              {tool.url && (
+                <p className="text-xs text-violet-300 truncate">{new URL(tool.url).hostname}</p>
+              )}
+            </div>
+            
+            {/* Description */}
             {tool.description && (
-              <p className="text-xs text-muted-foreground">{tool.description}</p>
+              <p className="text-sm text-slate-300">{tool.description}</p>
             )}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1 border-t">
-              <span>🔗 {tool.click_count || 0} clicks</span>
+            
+            {/* Stats */}
+            <div className="flex items-center justify-center gap-3 text-xs text-slate-400 pt-1">
+              <span className="flex items-center gap-1">
+                <span className="text-violet-400">🔗</span> {tool.click_count || 0} clicks
+              </span>
               {tool.last_used && (
-                <span>• Last used: {new Date(tool.last_used).toLocaleDateString()}</span>
+                <span>• {new Date(tool.last_used).toLocaleDateString()}</span>
               )}
             </div>
           </div>
