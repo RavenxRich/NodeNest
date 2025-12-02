@@ -132,8 +132,12 @@ export const StorageProvider = ({ children }) => {
         if (hasDirectory === 'true') {
           const db = await openDB();
           const tx = db.transaction('handles', 'readonly');
-          handle = await tx.objectStore('handles').get('directory');
-          await tx.done;
+          const request = tx.objectStore('handles').get('directory');
+          
+          handle = await new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
           
           if (handle) {
             // Verify we still have permission
