@@ -8,7 +8,10 @@ import { toast } from 'sonner';
 import { HardDrive, Cloud, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const GOOGLE_CLIENT_ID = "1082802046846-t6deeo28omdvhbb5ps28h7dohe77vr0b.apps.googleusercontent.com";
+// Google OAuth Client ID - Configure in Google Cloud Console
+// Authorized JavaScript origins: https://workflow-template-1.preview.emergentagent.com
+// Authorized redirect URIs: https://workflow-template-1.preview.emergentagent.com
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || "1082802046846-t6deeo28omdvhbb5ps28h7dohe77vr0b.apps.googleusercontent.com";
 
 const Landing = () => {
   const navigate = useNavigate();
