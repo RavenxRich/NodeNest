@@ -41,7 +41,13 @@ const AddNodeModal = ({ open, onClose }) => {
         tags: metadata.tags || prev.tags,
         favicon: metadata.favicon || prev.favicon
       }));
-      toast.success('Metadata extracted successfully!');
+      
+      // Show which LLM was used
+      const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
+      const providerName = llmProvider === 'local' ? 'Local LLM' : 
+                          llmProvider === 'anthropic' ? 'Claude' : 
+                          llmProvider === 'openai' ? 'GPT' : 'Gemini';
+      toast.success(`Metadata extracted using ${providerName}!`);
     } catch (error) {
       toast.error('Failed to extract metadata');
     } finally {
