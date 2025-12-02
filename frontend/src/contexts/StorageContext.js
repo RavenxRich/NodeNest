@@ -171,19 +171,41 @@ export const StorageProvider = ({ children }) => {
 
   // Save tools to filesystem
   const saveToFileSystem = async (tools) => {
-    if (!directoryHandle) {
-      console.error('No directory handle available');
-      return false;
-    }
-    
     try {
-      const fileHandle = await directoryHandle.getFileHandle('nodenest_tools.json', { create: true });
+      let handle = directoryHandle;
+      
+      // If no handle, try to get from IndexedDB
+      if (!handle) {
+        const db = await openDB();
+        const tx = db.transaction('handles', 'readonly');
+        handle = await tx.objectStore('handles').get('directory');
+        await tx.done;
+        
+        if (handle) {
+          // Verify permission
+          const permission = await handle.queryPermission({ mode: 'readwrite' });
+          if (permission !== 'granted') {
+            const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+            if (newPermission !== 'granted') {
+              console.error('Permission denied for saving');
+              return false;
+            }
+          }
+          setDirectoryHandle(handle);
+        } else {
+          console.error('No directory handle available. Please select a folder.');
+          return false;
+        }
+      }
+      
+      const fileHandle = await handle.getFileHandle('nodenest_tools.json', { create: true });
       const writable = await fileHandle.createWritable();
       await writable.write(JSON.stringify(tools, null, 2));
       await writable.close();
+      console.log('Successfully saved to filesystem');
       return true;
     } catch (error) {
-      console.error('Error saving to file:', error);
+      console.error('Error saving to filesystem:', error);
       return false;
     }
   };
