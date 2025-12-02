@@ -170,9 +170,13 @@ export const StorageProvider = ({ children }) => {
     setTools(updatedTools);
 
     if (storageMode === 'local') {
-      const encrypted = encryptData(updatedTools);
-      if (encrypted) {
-        localStorage.setItem('nodenest_tools_encrypted', encrypted);
+      if (localStorageType === 'filesystem') {
+        await saveToFileSystem(updatedTools);
+      } else {
+        const encrypted = encryptData(updatedTools);
+        if (encrypted) {
+          localStorage.setItem('nodenest_tools_encrypted', encrypted);
+        }
       }
     }
   };
