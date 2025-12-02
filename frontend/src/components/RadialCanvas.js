@@ -158,7 +158,31 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
               tool={tool}
               position={position}
               onClick={() => onToolClick(tool)}
-              onDragEnd={(newPosition) => onToolMove(tool.id, newPosition, ringRadiuses, categories)}
+              onDragStart={() => setIsDragging(true)}
+              onDrag={(dragPosition) => {
+                // Calculate which ring is closest during drag
+                const dx = dragPosition.x - centerX;
+                const dy = dragPosition.y - centerY;
+                const dragRadius = Math.sqrt(dx * dx + dy * dy);
+                
+                let closestRingIndex = 0;
+                let minDistance = Math.abs(dragRadius - ringRadiuses[0]);
+                
+                for (let i = 1; i < ringRadiuses.length; i++) {
+                  const distance = Math.abs(dragRadius - ringRadiuses[i]);
+                  if (distance < minDistance) {
+                    minDistance = distance;
+                    closestRingIndex = i;
+                  }
+                }
+                
+                setHoveredRingIndex(closestRingIndex);
+              }}
+              onDragEnd={(newPosition) => {
+                setIsDragging(false);
+                setHoveredRingIndex(null);
+                onToolMove(tool.id, newPosition, ringRadiuses, categories);
+              }}
               isSelected={selectedTool?.id === tool.id}
             />
           );
