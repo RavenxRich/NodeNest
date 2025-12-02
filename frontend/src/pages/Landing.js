@@ -45,7 +45,20 @@ const Landing = () => {
       }
       setTimeout(() => navigate('/dashboard'), 500);
     } else {
-      toast.error(`Failed to set up storage: ${result.error}`);
+      // If folder selection failed, offer browser storage as fallback
+      if (storageType === 'filesystem' && result.error && result.error.includes('not supported')) {
+        toast.error(`Folder selection not available. Using browser storage instead.`);
+        // Fallback to browser storage
+        const fallbackResult = await selectStorageMode('local', null, 'browser');
+        if (fallbackResult.success) {
+          setTimeout(() => navigate('/dashboard'), 500);
+        }
+      } else if (result.error && result.error.includes('cancelled')) {
+        // User cancelled folder selection - don't show error, just stay on page
+        toast.info('Folder selection cancelled');
+      } else {
+        toast.error(`Failed to set up storage: ${result.error}`);
+      }
     }
   };
 
