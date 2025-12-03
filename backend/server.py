@@ -129,7 +129,6 @@ Respond with ONLY the JSON object, no other text."""
 
         if provider == "local" and local_endpoint:
             # Local LLM via OpenAI-compatible endpoint
-            import aiohttp
             headers = {"Content-Type": "application/json"}
             if local_api_key:
                 headers["Authorization"] = f"Bearer {local_api_key}"
