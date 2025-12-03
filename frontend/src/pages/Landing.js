@@ -150,50 +150,47 @@ const Landing = () => {
                 <div className="w-20 h-20 rounded-full bg-violet-500/20 flex items-center justify-center group-hover:bg-violet-500/30 transition-colors">
                   <HardDrive className="w-10 h-10 text-violet-300" />
                 </div>
-                <h3 className="text-2xl font-semibold">Local File Storage</h3>
+                <h3 className="text-2xl font-semibold">Folder Storage</h3>
                 <p className="text-violet-200 text-sm text-center mb-4">
-                  Save your data as a JSON file anywhere on your computer.
+                  Choose a folder on your computer to save your AI tools data.
                 </p>
                 
-                {!supportsFileSystem && (
-                  <div className="w-full mb-4 p-3 bg-amber-900/30 border border-amber-500/50 rounded-lg">
-                    <p className="text-amber-200 text-xs text-center mb-2">
-                      🔒 <strong>Brave Users:</strong> Enable folder access
-                    </p>
-                    <p className="text-amber-300/80 text-xs text-center">
-                      Go to: <code className="bg-black/30 px-1 rounded">brave://flags</code>
-                    </p>
-                    <p className="text-amber-300/80 text-xs text-center">
-                      Search: "File System Access API"
-                    </p>
-                    <p className="text-amber-300/80 text-xs text-center mb-2">
-                      Set to: <strong>Enabled</strong> → Restart Brave
-                    </p>
-                  </div>
-                )}
-                
-                <div className="w-full space-y-2">
-                  {supportsFileSystem ? (
-                    <Button
-                      onClick={() => handleLocalStorage('filesystem')}
-                      className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6"
-                    >
-                      📁 Choose Folder
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => handleLocalStorage('browser')}
-                      className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6"
-                    >
-                      💾 Use Local Storage (Works Now)
-                    </Button>
+                <div className="w-full space-y-3">
+                  <Button
+                    onClick={() => handleLocalStorage('filesystem')}
+                    className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6"
+                  >
+                    📁 Select Folder
+                  </Button>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    ✨ Your data, your folder, your control
+                  </p>
+                  <p className="text-xs text-violet-300/70 text-center">
+                    💾 Creates: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
+                  </p>
+                  
+                  {!supportsFileSystem && (
+                    <div className="w-full mt-4 p-3 bg-amber-900/30 border border-amber-500/50 rounded-lg">
+                      <p className="text-amber-200 text-xs text-center font-semibold mb-2">
+                        ⚠️ Folder Access Not Available
+                      </p>
+                      <p className="text-amber-300/80 text-xs text-center mb-2">
+                        <strong>For Brave/Chrome users:</strong>
+                      </p>
+                      <p className="text-amber-300/80 text-xs text-center">
+                        1. Go to: <code className="bg-black/30 px-1 rounded">brave://flags</code>
+                      </p>
+                      <p className="text-amber-300/80 text-xs text-center">
+                        2. Search: "File System Access API"
+                      </p>
+                      <p className="text-amber-300/80 text-xs text-center mb-2">
+                        3. Set to: <strong>Enabled</strong> → Restart browser
+                      </p>
+                      <p className="text-amber-300/80 text-xs text-center text-amber-200">
+                        Then try "Select Folder" again
+                      </p>
+                    </div>
                   )}
-                  <p className="text-xs text-violet-300/70 text-center">
-                    {supportsFileSystem ? '✨ Your data, your folder, your control' : '⚠️ Using browser storage (enable flag for folder access)'}
-                  </p>
-                  <p className="text-xs text-violet-300/70 text-center">
-                    💾 Saves as: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
-                  </p>
                 </div>
               </div>
             </Card>
