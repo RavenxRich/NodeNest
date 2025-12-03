@@ -100,16 +100,16 @@ export const StorageProvider = ({ children }) => {
           console.error('Error name:', error.name);
           console.error('Error message:', error.message);
           
-          // AUTOMATIC FALLBACK - Just use browser storage silently
-          console.log('🔄 Falling back to browser storage automatically...');
-          setUserId('local_user');
-          localStorage.setItem('nodenest_user_id', 'local_user');
-          setLocalStorageType('browser');
-          localStorage.setItem('nodenest_local_storage_type', 'browser');
-          setStorageMode(mode);
-          localStorage.setItem('nodenest_storage_mode', mode);
-          console.log('✅ Browser storage activated as fallback');
-          return { success: true };
+          // NO FALLBACK - User wants folder only
+          // Return error details so Landing page can show appropriate message
+          return { 
+            success: false, 
+            error: error.name === 'AbortError' 
+              ? 'Folder selection was cancelled.' 
+              : error.name === 'NotAllowedError'
+              ? 'Folder access was blocked. Please check your browser settings (e.g., Brave Shields).'
+              : `Folder access failed: ${error.message || 'File System Access API not supported in your browser.'}` 
+          };
         }
       } else {
         // Browser storage mode - set immediately
