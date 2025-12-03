@@ -258,10 +258,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All high priority tasks completed"
-  stuck_tasks: []
+    - "Drag-and-drop nodes"
+  stuck_tasks:
+    - "Drag-and-drop nodes"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
