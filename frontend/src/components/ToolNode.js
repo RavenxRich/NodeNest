@@ -40,36 +40,34 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <motion.div
-            data-testid={`tool-node-${tool.id}`}
-            drag
-            dragMomentum={false}
-            dragElastic={0}
-            onDragStart={handleDragStart}
-            onDrag={handleDrag}
-            onDragEnd={handleDragEnd}
-            onClick={handleClick}
-            style={{ 
-              position: 'absolute',
-              left: position.x - 28,
-              top: position.y - 28,
-              width: '56px',
-              height: '56px',
-              cursor: isDragging ? 'grabbing' : 'grab',
-              touchAction: 'none',
-              zIndex: isDragging ? 50 : 10
-            }}
-            whileDrag={{ 
-              scale: 1.15,
-              rotate: 5,
-              boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)'
-            }}
-            whileHover={{ scale: 1.1 }}
-            className={isSelected ? 'glow-pulse' : ''}
-          >
+    <motion.div
+      data-testid={`tool-node-${tool.id}`}
+      drag
+      dragMomentum={false}
+      dragElastic={0}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragEnd={handleDragEnd}
+      onClick={handleClick}
+      style={{ 
+        position: 'absolute',
+        left: position.x - 28,
+        top: position.y - 28,
+        width: '56px',
+        height: '56px',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        touchAction: 'none',
+        zIndex: isDragging ? 50 : 10
+      }}
+      whileDrag={{ 
+        scale: 1.15,
+        rotate: 5,
+        boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)'
+      }}
+      whileHover={{ scale: 1.1 }}
+      className={isSelected ? 'glow-pulse' : ''}
+      title={tool.title}
+    >
             {/* Node Container - Bubble Design */}
             <div className="w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
                           bg-gradient-to-br from-white/20 via-white/10 to-transparent
