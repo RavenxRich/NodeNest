@@ -146,6 +146,22 @@ const Landing = () => {
                   Choose a folder on your computer to save your AI tools data.
                 </p>
                 
+                {folderError && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-sm text-red-200 text-center"
+                  >
+                    <p className="font-semibold mb-1">⚠️ Folder Access Denied</p>
+                    <p className="text-xs">{folderError}</p>
+                    {folderError.includes('Brave Shields') && (
+                      <p className="text-xs mt-2">
+                        💡 <strong>Brave users:</strong> Click the Brave icon in the address bar → disable "Shields" for this site, then try again.
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+                
                 <div className="w-full space-y-3">
                   <Button
                     onClick={() => handleLocalStorage('filesystem')}
