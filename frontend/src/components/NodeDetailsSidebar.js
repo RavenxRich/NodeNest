@@ -246,8 +246,13 @@ const NodeDetailsSidebar = ({ tool, onClose }) => {
                   Edit
                 </Button>
                 <Button
+                  type="button"
                   variant="destructive"
-                  onClick={handleDelete}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDelete();
+                  }}
                   data-testid="delete-tool-btn"
                   className="gap-2"
                 >
