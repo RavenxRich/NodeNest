@@ -70,7 +70,7 @@ const RadialCanvas = ({ tools, onToolClick, onToolMove, selectedTool, setSelecte
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden" data-testid="radial-canvas">
+    <div className="relative w-full h-full" data-testid="radial-canvas">
       {/* SVG Rings */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none">
         <defs>
