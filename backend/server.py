@@ -163,27 +163,27 @@ Respond with ONLY the JSON object, no other text."""
                 "claude.ai": {
                     "title": "Claude",
                     "description": "Anthropic's AI assistant for complex tasks and conversations",
-                    "category_id": "ai-assistants"
+                    "category_id": "chat-assistants"
                 },
                 "chat.openai.com": {
                     "title": "ChatGPT",
                     "description": "OpenAI's conversational AI assistant",
-                    "category_id": "ai-assistants"
+                    "category_id": "chat-assistants"
                 },
                 "gemini.google.com": {
                     "title": "Gemini",
                     "description": "Google's advanced AI assistant",
-                    "category_id": "ai-assistants"
+                    "category_id": "chat-assistants"
                 },
                 "github.com": {
                     "title": "GitHub",
                     "description": "Code hosting and collaboration platform",
-                    "category_id": "dev-tools"
+                    "category_id": "code-dev"
                 },
                 "midjourney.com": {
                     "title": "Midjourney",
                     "description": "AI image generation tool",
-                    "category_id": "image-gen"
+                    "category_id": "image-video"
                 }
             }
             
