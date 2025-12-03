@@ -1,17 +1,28 @@
 # NodeNest - Vercel Deployment Guide
 
+## Tech Stack Clarification
+
+**NodeNest is NOT NestJS!** It's:
+- **Frontend**: React (built with Create React App)
+- **Backend**: Python FastAPI (serverless on Vercel)
+- **Database**: MongoDB (optional, works with browser storage too)
+
+The name "NodeNest" refers to organizing AI tool "nodes" visually, not Node.js framework.
+
 ## Structure Ready for Vercel
 
 The project is now configured for Vercel deployment:
 
 ```
 /app/
-├── index.html              ← Frontend entry point
-├── static/                 ← React build files
-├── backend/               ← API functions
-│   └── server.py
-├── vercel.json            ← Vercel configuration
-└── requirements.txt       ← Python dependencies (fixed)
+├── index.html              ← Frontend entry point (React build)
+├── static/                 ← React JS/CSS bundles
+├── api/                    ← Vercel serverless functions
+│   ├── index.py           ← Entry point for FastAPI
+│   └── requirements.txt   ← Python dependencies
+├── backend/               ← FastAPI application code
+│   └── server.py          ← Main FastAPI app
+└── vercel.json            ← Vercel configuration
 ```
 
 ## Changes Made for Vercel
