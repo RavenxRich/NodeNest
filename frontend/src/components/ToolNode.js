@@ -51,7 +51,7 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
-            onClick={!isDragging ? onClick : undefined}
+            onClick={handleClick}
             style={{ 
               position: 'absolute',
               left: position.x - 28,
