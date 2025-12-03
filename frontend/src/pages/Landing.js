@@ -38,12 +38,18 @@ const Landing = () => {
 
   const handleLocalStorage = async (storageType) => {
     console.log('🚀 Starting storage setup:', storageType);
+    setFolderError(null); // Clear any previous error
     const result = await selectStorageMode('local', null, storageType);
     console.log('📦 Storage setup result:', result);
     
-    // Always navigate - fallback is automatic now
-    console.log('✅ Navigating to dashboard...');
-    setTimeout(() => navigate('/dashboard'), 100);
+    if (result.success) {
+      console.log('✅ Navigating to dashboard...');
+      setTimeout(() => navigate('/dashboard'), 100);
+    } else {
+      console.error('❌ Folder selection failed:', result.error);
+      setFolderError(result.error);
+      toast.error(result.error);
+    }
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
