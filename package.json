@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "echo 'Files already built - no build needed'"
+    "build": "./build.sh"
   }
 }
