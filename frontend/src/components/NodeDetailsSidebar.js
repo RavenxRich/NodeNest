@@ -173,7 +173,27 @@ const NodeDetailsSidebar = ({ tool, onClose }) => {
                   <h3 className="font-semibold text-sm text-muted-foreground mb-2">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {formData.tags.map(tag => (
-                      <Badge key={tag} variant="secondary">{tag}</Badge>
+                      <Badge key={tag} variant="secondary" className="gap-1 pl-2 pr-1">
+                        {tag}
+                        <button
+                          onClick={async () => {
+                            const newTags = formData.tags.filter(t => t !== tag);
+                            setFormData(prev => ({ ...prev, tags: newTags }));
+                            try {
+                              await updateTool(tool.id, { tags: newTags });
+                              toast.success('Tag removed');
+                            } catch (error) {
+                              toast.error('Failed to remove tag');
+                              // Revert on error
+                              setFormData(prev => ({ ...prev, tags: formData.tags }));
+                            }
+                          }}
+                          className="ml-1 hover:text-destructive transition-colors"
+                          title="Remove tag"
+                        >
+                          <span className="text-xs">×</span>
+                        </button>
+                      </Badge>
                     ))}
                   </div>
                 </div>
