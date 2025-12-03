@@ -1,0 +1,33 @@
+# Exclude unnecessary files from Vercel deployment
+
+# Frontend source (only need build output)
+frontend/src
+frontend/node_modules
+frontend/.git
+frontend/package-lock.json
+
+# Backend cache and temp files
+backend/__pycache__
+backend/.pytest_cache
+backend/*.pyc
+backend/.ruff_cache
+
+# Development files
+.git
+.gitignore
+*.log
+*.md
+!README.md
+!VERCEL_DEPLOYMENT.md
+
+# Test files
+test_result.md
+backend/tests
+
+# Full requirements (use minimal)
+backend/requirements.full.txt
+
+# Other unnecessary files
+.emergent
+DRAG_ENHANCEMENT_VERSION.txt
+design_guidelines.json
