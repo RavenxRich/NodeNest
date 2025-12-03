@@ -295,18 +295,24 @@ export const StorageProvider = ({ children }) => {
 
   // Save tools
   const saveTools = async (updatedTools) => {
+    console.log('💾 saveTools called with', updatedTools.length, 'tools');
     setTools(updatedTools);
 
     if (storageMode === 'local') {
       if (localStorageType === 'filesystem') {
-        await saveToFileSystem(updatedTools);
+        console.log('📁 Saving to filesystem...');
+        const saved = await saveToFileSystem(updatedTools);
+        console.log('📁 Filesystem save result:', saved);
       } else {
+        console.log('🔒 Saving to browser storage...');
         const encrypted = encryptData(updatedTools);
         if (encrypted) {
           localStorage.setItem('nodenest_tools_encrypted', encrypted);
+          console.log('🔒 Browser storage save complete');
         }
       }
     }
+    console.log('✅ saveTools complete, tools state updated');
   };
 
   // Add tool
