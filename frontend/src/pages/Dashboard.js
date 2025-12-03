@@ -66,11 +66,9 @@ const Dashboard = () => {
     setFilteredTools(result);
   }, [searchQuery, tools, showOnlyFavorites]);
 
-  const handleToolClick = async (tool) => {
+  const handleToolClick = (tool) => {
+    // Just open the sidebar, don't track or open URL yet
     setSelectedTool(tool);
-    // Track click and open URL
-    await trackClick(tool.id);
-    window.open(tool.url, '_blank');
   };
 
   const handleToolMove = async (toolId, newPosition, ringRadiuses, categories) => {
