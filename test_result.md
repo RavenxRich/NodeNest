@@ -200,7 +200,7 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/src/pages/Dashboard.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: false
     status_history:
@@ -216,6 +216,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE FOUND: Drag functionality is NOT working. Comprehensive testing revealed: 1) Tool nodes are visible and accessible in radial canvas 2) Mouse drag operations do not trigger any drag events 3) No console logs generated (missing: 🟢 Drag started, 🔵 Dragging, 🎬 Drag started on canvas, 👻 Ghost position, 🔴 Drag ended, 🏁 Drag ended on canvas, 📍 handleToolMove called) 4) Node position does not change after drag attempts 5) Framer Motion drag functionality appears to be broken or not properly configured. The drag handlers in ToolNode.js are not being triggered despite mouse interactions. This is a critical functionality failure that contradicts previous test results."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL RENDERING ISSUE: Tools are being added successfully (toast notifications confirm 'Tool added successfully!') but tool nodes are NOT rendering in the UI. Found 0 tool nodes with data-testid selectors. This indicates a critical issue with: 1) RadialCanvas component not rendering tool nodes 2) Tool data not being passed correctly to the canvas 3) Possible CSS/styling issues hiding the nodes 4) Storage context not properly loading tools after addition. Cannot test drag functionality, click to open sidebar, or favorites because no tool nodes are visible. This is a blocking issue that prevents all node interaction testing. The radial canvas component exists but contains no tool nodes despite successful tool addition."
 
   - task: "Favorites system"
     implemented: true
