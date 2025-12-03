@@ -253,26 +253,42 @@ export const StorageProvider = ({ children }) => {
 
   // Load tools
   const loadTools = async () => {
-    if (!storageMode) return;
+    console.log('🔄 loadTools called, storageMode:', storageMode, 'localStorageType:', localStorageType);
+    
+    if (!storageMode) {
+      console.warn('⚠️ No storage mode set, cannot load tools');
+      return;
+    }
 
     try {
       if (storageMode === 'local') {
+        console.log('📦 Loading from local storage...');
+        
         if (localStorageType === 'filesystem') {
+          console.log('📁 Loading from filesystem...');
           const fileTools = await loadFromFileSystem();
+          console.log('📁 Loaded from filesystem:', fileTools);
           setTools(fileTools || []);
         } else {
+          console.log('🔒 Loading from browser storage...');
           const encryptedData = localStorage.getItem('nodenest_tools_encrypted');
+          console.log('🔒 Encrypted data found:', !!encryptedData);
           const localTools = encryptedData ? decryptData(encryptedData) : [];
+          console.log('🔒 Decrypted tools:', localTools);
           setTools(localTools || []);
         }
+        
+        console.log('✅ Tools loaded successfully, count:', tools.length);
       } else if (storageMode === 'cloud') {
+        console.log('☁️ Loading from cloud...');
         const response = await axios.get(`${API}/tools`, {
           params: { user_id: userId }
         });
+        console.log('☁️ Cloud tools:', response.data);
         setTools(response.data);
       }
     } catch (error) {
-      console.error('Error loading tools:', error);
+      console.error('❌ Error loading tools:', error);
       setTools([]);
     }
   };
