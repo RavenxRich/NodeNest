@@ -42,23 +42,14 @@ const Landing = () => {
     console.log('📦 Storage setup result:', result);
     
     if (result && result.success) {
-      if (storageType === 'filesystem') {
-        toast.success('✅ Folder selected! Data will be saved to your folder.');
-      } else {
-        toast.success('✅ Using local storage! Data is encrypted in your browser.');
-      }
       console.log('✅ Navigating to dashboard...');
-      setTimeout(() => navigate('/dashboard'), 500);
+      setTimeout(() => navigate('/dashboard'), 100);
     } else {
-      const error = result?.error || 'Unknown error';
-      console.error('❌ Storage setup failed:', error);
-      
-      if (error.includes('cancelled')) {
-        toast.info('Folder selection cancelled. Click "Select Folder" to try again.');
-      } else if (error.includes('not supported')) {
-        toast.error('⚠️ Folder selection not available in your browser. Please enable File System Access API (see instructions below).');
-      } else {
-        toast.error(`Failed to set up storage: ${error}`);
+      // Silent fallback to browser storage
+      console.log('⚠️ Folder storage failed, using browser storage automatically');
+      const fallback = await selectStorageMode('local', null, 'browser');
+      if (fallback && fallback.success) {
+        setTimeout(() => navigate('/dashboard'), 100);
       }
     }
   };
