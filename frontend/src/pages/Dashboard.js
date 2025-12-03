@@ -154,7 +154,7 @@ const Dashboard = () => {
   const favoriteCount = tools.filter(t => t.favorite).length;
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden" data-testid="dashboard-page">
+    <div className="min-h-screen w-full relative" data-testid="dashboard-page">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-violet-50 to-purple-50 dark:from-slate-950 dark:via-violet-950 dark:to-slate-900" />
       <div className="absolute inset-0 radial-bg" />
