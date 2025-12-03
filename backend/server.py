@@ -158,8 +158,48 @@ Respond with ONLY the JSON object, no other text."""
             parsed = urlparse(url)
             domain = parsed.netloc.replace('www.', '')
             
-            # Try to fetch the actual page metadata
-            try:
+            # Known tools database for better metadata
+            known_tools = {
+                "claude.ai": {
+                    "title": "Claude",
+                    "description": "Anthropic's AI assistant for complex tasks and conversations",
+                    "category_id": "ai-assistants"
+                },
+                "chat.openai.com": {
+                    "title": "ChatGPT",
+                    "description": "OpenAI's conversational AI assistant",
+                    "category_id": "ai-assistants"
+                },
+                "gemini.google.com": {
+                    "title": "Gemini",
+                    "description": "Google's advanced AI assistant",
+                    "category_id": "ai-assistants"
+                },
+                "github.com": {
+                    "title": "GitHub",
+                    "description": "Code hosting and collaboration platform",
+                    "category_id": "dev-tools"
+                },
+                "midjourney.com": {
+                    "title": "Midjourney",
+                    "description": "AI image generation tool",
+                    "category_id": "image-gen"
+                }
+            }
+            
+            # Check if this is a known tool
+            if domain in known_tools:
+                known = known_tools[domain]
+                response_text = json.dumps({
+                    "title": known["title"],
+                    "description": known["description"],
+                    "category_id": known["category_id"],
+                    "tags": ["ai", "tool"],
+                    "favicon": f"https://{domain}/favicon.ico"
+                })
+            else:
+                # Try to fetch the actual page metadata
+                try:
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=10, headers={
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
