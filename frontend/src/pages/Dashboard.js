@@ -35,15 +35,20 @@ const Dashboard = () => {
   }, [storageMode, navigate]);
 
   useEffect(() => {
+    console.log('🏁 Dashboard mounted, calling loadTools...');
     loadTools();
   }, []);
 
   useEffect(() => {
+    console.log('🔍 Tools updated in Dashboard:', tools.length, 'tools');
+    console.log('📋 Tools array:', tools);
+    
     let result = tools;
     
     // Filter by favorites if enabled
     if (showOnlyFavorites) {
       result = result.filter(t => t.favorite);
+      console.log('⭐ Filtered for favorites:', result.length);
     }
     
     // Filter by search query
@@ -54,8 +59,10 @@ const Dashboard = () => {
         t.description?.toLowerCase().includes(query) ||
         t.tags?.some(tag => tag.toLowerCase().includes(query))
       );
+      console.log('🔎 Filtered by search:', result.length);
     }
     
+    console.log('✅ Final filteredTools:', result.length);
     setFilteredTools(result);
   }, [searchQuery, tools, showOnlyFavorites]);
 
