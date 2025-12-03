@@ -152,15 +152,21 @@ Respond with ONLY the JSON object, no other text."""
                     result = await resp.json()
                     response_text = result["choices"][0]["message"]["content"]
         else:
-            # Cloud LLM via emergentintegrations
-            chat = LlmChat(
-                api_key=LLM_KEY,
-                session_id=f"metadata-extraction-{uuid.uuid4()}",
-                system_message="You are a metadata extraction assistant. Given a URL, extract the likely title, description, category, and relevant tags. Respond ONLY with valid JSON in this exact format: {\"title\": \"...\", \"description\": \"...\", \"category_id\": \"...\", \"tags\": [\"...\"], \"favicon\": \"...\"}"
-            ).with_model(provider, model)
-
-            message = UserMessage(text=prompt)
-            response_text = await chat.send_message(message)
+            # Cloud LLM - Using basic fallback for Vercel deployment
+            # emergentintegrations not available on PyPI
+            # For now, return a simple extraction from the URL
+            from urllib.parse import urlparse
+            parsed = urlparse(url)
+            domain = parsed.netloc.replace('www.', '')
+            title = domain.split('.')[0].title()
+            
+            response_text = json.dumps({
+                "title": title,
+                "description": f"AI tool from {domain}",
+                "category_id": "ai-assistants",
+                "tags": ["ai", "tool"],
+                "favicon": f"https://{domain}/favicon.ico"
+            })
         
         # Parse JSON from response
         response_text = response_text.strip()
