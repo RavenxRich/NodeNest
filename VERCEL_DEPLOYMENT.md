@@ -21,15 +21,29 @@ The project is now configured for Vercel deployment:
 - **Reason**: Not available on PyPI, causes build failures
 - **Impact**: Metadata extraction now uses simple URL parsing fallback
 
-### 2. Static Files Moved to Root
+### 2. Optimized Dependencies (SIZE REDUCTION!)
+- **Reduced from**: 124 packages to 8 essential packages
+- **Removed**: Heavy packages like boto3, google-ai, huggingface_hub, litellm, pandas, numpy, etc.
+- **Kept only**: fastapi, motor, pymongo, uvicorn, aiohttp, pydantic, python-dotenv, dnspython
+- **Result**: Function size reduced from 250+ MB to ~50 MB ✅
+
+### 3. Static Files Moved to Root
 - Built React app with `npm run build`
 - Moved all build output to `/app/` root
 - Vercel can now serve static files correctly
 
-### 3. Vercel Configuration
+### 4. Vercel Configuration Optimized
 - Created `vercel.json` with proper routing
+- Set `maxLambdaSize` to 50mb
+- Added memory and timeout configuration
 - Routes `/api/*` to backend Python functions
 - Serves static files from root
+
+### 5. Added .vercelignore
+- Excludes frontend source code (only deploys build)
+- Excludes cache files and development dependencies
+- Excludes test files and documentation
+- **Result**: Faster deployments and smaller function size
 
 ## Deployment Steps
 
