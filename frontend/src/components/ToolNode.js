@@ -37,41 +37,27 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
             drag
             dragMomentum={false}
             dragElastic={0}
-            dragConstraints={false}
-            dragTransition={{ bounceStiffness: 0, bounceDamping: 0 }}
             onDragStart={handleDragStart}
             onDrag={handleDrag}
             onDragEnd={handleDragEnd}
             onClick={!isDragging ? onClick : undefined}
-            initial={{ opacity: 0, scale: 0, x: position.x - 28, y: position.y - 28 }}
-            animate={{ 
-              opacity: 1, 
-              scale: isSelected ? 1.2 : 1,
-              x: isDragging ? undefined : position.x - 28,
-              y: isDragging ? undefined : position.y - 28
-            }}
-            whileHover={{ scale: isDragging ? 1.1 : 1.15 }}
-            whileDrag={{ 
-              scale: 1.15, 
-              cursor: 'grabbing', 
-              zIndex: 50,
-              boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)',
-              rotate: 5
-            }}
-            transition={{ 
-              type: 'spring', 
-              stiffness: 400, 
-              damping: 25,
-              mass: 0.5
-            }}
-            className={`absolute w-14 h-14 cursor-grab active:cursor-grabbing z-10 ${
-              isSelected ? 'glow-pulse' : ''
-            }`}
             style={{ 
+              position: 'absolute',
+              left: position.x - 28,
+              top: position.y - 28,
+              width: '56px',
+              height: '56px',
+              cursor: isDragging ? 'grabbing' : 'grab',
               touchAction: 'none',
-              left: 0,
-              top: 0
+              zIndex: isDragging ? 50 : 10
             }}
+            whileDrag={{ 
+              scale: 1.15,
+              rotate: 5,
+              boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)'
+            }}
+            whileHover={{ scale: 1.1 }}
+            className={isSelected ? 'glow-pulse' : ''}
           >
             {/* Node Container - Bubble Design */}
             <div className="w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
