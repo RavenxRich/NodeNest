@@ -75,8 +75,7 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
                           shadow-[0_8px_32px_0_rgba(139,92,246,0.25)]
                           hover:shadow-[0_12px_48px_0_rgba(139,92,246,0.4)]
                           hover:border-white/40
-                          transition-all duration-300"
-                 style={{ pointerEvents: 'none' }}>
+                          transition-all duration-300">
               
               {/* Inner glow effect */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
