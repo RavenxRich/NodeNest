@@ -21,20 +21,27 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
 
   const handleDragEnd = (event, info) => {
     console.log('🔴 Drag ended:', tool.title, 'offset:', info.offset);
-    const newX = position.x + info.offset.x;
-    const newY = position.y + info.offset.y;
-    onDragEnd({ x: newX, y: newY });
     
-    // Small delay to prevent click from firing
-    setTimeout(() => {
-      setIsDragging(false);
-    }, 100);
+    // Check if this was actually a drag or just a click
+    const wasDragged = Math.abs(info.offset.x) > 5 || Math.abs(info.offset.y) > 5;
+    
+    if (wasDragged) {
+      const newX = position.x + info.offset.x;
+      const newY = position.y + info.offset.y;
+      onDragEnd({ x: newX, y: newY });
+    }
+    
+    // Reset immediately for clicks
+    setIsDragging(false);
   };
 
   const handleClick = (e) => {
+    console.log('🖱️ Node click attempted. isDragging:', isDragging);
     if (!isDragging && onClick) {
-      console.log('🖱️ Node clicked:', tool.title);
-      onClick(e);
+      console.log('✅ Node clicked - opening sidebar:', tool.title);
+      onClick(tool);
+    } else {
+      console.log('❌ Click blocked - was dragging');
     }
   };
 
