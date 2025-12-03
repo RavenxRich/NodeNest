@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart, onDrag }) => {
   const [isDragging, setIsDragging] = useState(false);
