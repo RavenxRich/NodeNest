@@ -230,13 +230,17 @@ Respond with ONLY the JSON object, no other text."""
                     description = f"AI tool from {domain}"
                 
                 # Determine category based on domain
-                category_id = "ai-assistants"
-                if "github" in domain:
-                    category_id = "dev-tools"
-                elif "chat" in domain or "claude" in domain or "openai" in domain:
-                    category_id = "ai-assistants"
-                elif "midjourney" in domain or "dall-e" in domain or "stable" in domain:
-                    category_id = "image-gen"
+                category_id = "chat-assistants"
+                if "github" in domain or "code" in domain:
+                    category_id = "code-dev"
+                elif "chat" in domain or "claude" in domain or "openai" in domain or "gemini" in domain:
+                    category_id = "chat-assistants"
+                elif "midjourney" in domain or "dall-e" in domain or "stable" in domain or "image" in domain:
+                    category_id = "image-video"
+                elif "write" in domain or "blog" in domain or "content" in domain:
+                    category_id = "writing-content"
+                elif "voice" in domain or "audio" in domain:
+                    category_id = "audio-voice"
                 
                 response_text = json.dumps({
                     "title": title,
