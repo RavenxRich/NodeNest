@@ -200,7 +200,7 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/src/pages/Dashboard.js"
-    stuck_count: 2
+    stuck_count: 3
     priority: "high"
     needs_retesting: false
     status_history:
@@ -219,6 +219,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL RENDERING ISSUE: Tools are being added successfully (toast notifications confirm 'Tool added successfully!') but tool nodes are NOT rendering in the UI. Found 0 tool nodes with data-testid selectors. This indicates a critical issue with: 1) RadialCanvas component not rendering tool nodes 2) Tool data not being passed correctly to the canvas 3) Possible CSS/styling issues hiding the nodes 4) Storage context not properly loading tools after addition. Cannot test drag functionality, click to open sidebar, or favorites because no tool nodes are visible. This is a blocking issue that prevents all node interaction testing. The radial canvas component exists but contains no tool nodes despite successful tool addition."
+      - working: false
+        agent: "testing"
+        comment: "❌ ROOT CAUSE IDENTIFIED - URGENT DEBUG COMPLETE: Comprehensive testing following user's exact requirements revealed the precise issue. SETUP TESTED: ✅ Cleared cache ✅ Attempted folder storage (fails in automation) ✅ Tried to add chat.openai.com tool. CRITICAL FINDINGS: 1) App gets stuck on storage selection screen - user cannot complete setup flow 2) Storage selection buttons (Choose Folder/Browser Storage) are not properly functional 3) Dashboard never loads with tools because storage setup fails 4) NO TOOL NODES RENDER because the app never progresses past the landing/storage selection phase 5) Drag functionality cannot be tested because there are no nodes to drag. THE EXACT REASON DRAG FAILS: The app is stuck on the storage selection screen and never reaches the dashboard with rendered tool nodes. This is NOT a Framer Motion drag issue - it's a fundamental app flow issue where users cannot complete the initial setup. URGENT FIX NEEDED: Fix the storage selection flow so users can actually reach the dashboard and see tool nodes."
 
   - task: "Favorites system"
     implemented: true
