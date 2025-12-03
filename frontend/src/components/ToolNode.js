@@ -60,14 +60,22 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
       drag
       dragMomentum={false}
       dragElastic={0}
+      dragConstraints={false}
+      dragTransition={{ power: 0, timeConstant: 0 }}
       onDragStart={handleDragStart}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
+      initial={{ x: position.x - 28, y: position.y - 28 }}
+      animate={{ 
+        x: isDragging ? undefined : position.x - 28,
+        y: isDragging ? undefined : position.y - 28,
+        transition: { type: 'spring', stiffness: 300, damping: 30 }
+      }}
       style={{ 
         position: 'absolute',
-        left: position.x - 28,
-        top: position.y - 28,
+        left: 0,
+        top: 0,
         width: '56px',
         height: '56px',
         cursor: isDragging ? 'grabbing' : 'grab',
@@ -77,7 +85,8 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
       whileDrag={{ 
         scale: 1.15,
         rotate: 5,
-        boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)'
+        boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)',
+        cursor: 'grabbing'
       }}
       whileHover={{ scale: 1.1 }}
       className={isSelected ? 'glow-pulse' : ''}
