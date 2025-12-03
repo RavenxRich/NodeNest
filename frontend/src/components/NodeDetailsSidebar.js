@@ -63,6 +63,19 @@ const NodeDetailsSidebar = ({ tool, onClose }) => {
     }
   };
 
+  const handleRemoveTag = async (tagToRemove) => {
+    const newTags = formData.tags.filter(t => t !== tagToRemove);
+    setFormData(prev => ({ ...prev, tags: newTags }));
+    try {
+      await updateTool(tool.id, { tags: newTags });
+      toast.success('Tag removed');
+    } catch (error) {
+      toast.error('Failed to remove tag');
+      // Revert on error
+      setFormData(prev => ({ ...prev, tags: formData.tags }));
+    }
+  };
+
   return (
     <Sheet open={!!tool} onOpenChange={onClose}>
       <SheetContent data-testid="node-details-sidebar" className="w-full sm:max-w-lg overflow-y-auto">
