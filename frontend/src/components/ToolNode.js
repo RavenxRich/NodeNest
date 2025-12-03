@@ -66,16 +66,10 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
-      initial={{ x: position.x - 28, y: position.y - 28 }}
-      animate={{ 
-        x: isDragging ? undefined : position.x - 28,
-        y: isDragging ? undefined : position.y - 28,
-        transition: { type: 'spring', stiffness: 300, damping: 30 }
-      }}
       style={{ 
         position: 'absolute',
-        left: 0,
-        top: 0,
+        left: position.x - 28,
+        top: position.y - 28,
         width: '56px',
         height: '56px',
         cursor: isDragging ? 'grabbing' : 'grab',
