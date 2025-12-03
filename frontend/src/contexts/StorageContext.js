@@ -316,6 +316,8 @@ export const StorageProvider = ({ children }) => {
         };
         const updatedTools = [...tools, newTool];
         await saveTools(updatedTools);
+        // Reload tools to update UI
+        await loadTools();
         return newTool;
       } else if (storageMode === 'cloud') {
         const response = await axios.post(`${API}/tools`, {
