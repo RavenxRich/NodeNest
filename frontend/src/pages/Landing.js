@@ -153,45 +153,14 @@ const Landing = () => {
                     onClick={() => handleLocalStorage('filesystem')}
                     className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6"
                   >
-                    📁 Select Folder
+                    📁 Start Using NodeNest
                   </Button>
                   <p className="text-xs text-violet-300/70 text-center">
                     ✨ Your data, your folder, your control
                   </p>
                   <p className="text-xs text-violet-300/70 text-center">
-                    💾 Creates: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
+                    💾 Saves as: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
                   </p>
-                  
-                  <div className="w-full mt-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg">
-                    <p className="text-red-200 text-xs text-center font-semibold mb-3">
-                      ⚠️ BRAVE USERS - MUST DO THIS FIRST:
-                    </p>
-                    <p className="text-red-300/90 text-sm text-center font-bold mb-2">
-                      1. Click Brave Shields icon (🦁) in address bar
-                    </p>
-                    <p className="text-red-300/90 text-sm text-center font-bold mb-2">
-                      2. Turn Shields DOWN for this site
-                    </p>
-                    <p className="text-red-300/90 text-sm text-center font-bold mb-3">
-                      3. Refresh page
-                    </p>
-                    <div className="border-t border-red-500/30 my-2" />
-                    <p className="text-red-200 text-xs text-center font-semibold mb-2">
-                      ALSO Enable File System Access:
-                    </p>
-                    <p className="text-red-300/80 text-xs text-center">
-                      1. Go to: <code className="bg-black/30 px-1 rounded">brave://flags</code>
-                    </p>
-                    <p className="text-red-300/80 text-xs text-center">
-                      2. Search: "File System Access API"
-                    </p>
-                    <p className="text-red-300/80 text-xs text-center">
-                      3. Set to: <strong>Enabled</strong>
-                    </p>
-                    <p className="text-red-300/80 text-xs text-center">
-                      4. <strong>Restart Brave</strong>
-                    </p>
-                  </div>
                 </div>
               </div>
             </Card>
