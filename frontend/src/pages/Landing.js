@@ -171,38 +171,36 @@ const Landing = () => {
                     💾 Creates: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
                   </p>
                   
-                  <div className="border-t border-violet-500/30 my-3" />
-                  
-                  <p className="text-xs text-violet-300/70 text-center font-semibold">
-                    Can't select folder?
-                  </p>
-                  <Button
-                    onClick={() => handleLocalStorage('browser')}
-                    variant="outline"
-                    className="w-full border-violet-500/50 text-violet-200 hover:bg-violet-500/10"
-                  >
-                    🔒 Use Browser Storage Instead
-                  </Button>
-                  <p className="text-xs text-violet-300/70 text-center">
-                    Works on all browsers (encrypted in browser)
-                  </p>
-                  
-                  {!supportsFileSystem && (
-                    <div className="w-full mt-4 p-3 bg-amber-900/30 border border-amber-500/50 rounded-lg">
-                      <p className="text-amber-200 text-xs text-center font-semibold mb-2">
-                        ℹ️ To enable folder selection:
-                      </p>
-                      <p className="text-amber-300/80 text-xs text-center">
-                        1. Go to: <code className="bg-black/30 px-1 rounded">brave://flags</code>
-                      </p>
-                      <p className="text-amber-300/80 text-xs text-center">
-                        2. Search: "File System Access API"
-                      </p>
-                      <p className="text-amber-300/80 text-xs text-center">
-                        3. Set to: <strong>Enabled</strong> → Restart browser
-                      </p>
-                    </div>
-                  )}
+                  <div className="w-full mt-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg">
+                    <p className="text-red-200 text-xs text-center font-semibold mb-3">
+                      ⚠️ BRAVE USERS - MUST DO THIS FIRST:
+                    </p>
+                    <p className="text-red-300/90 text-sm text-center font-bold mb-2">
+                      1. Click Brave Shields icon (🦁) in address bar
+                    </p>
+                    <p className="text-red-300/90 text-sm text-center font-bold mb-2">
+                      2. Turn Shields DOWN for this site
+                    </p>
+                    <p className="text-red-300/90 text-sm text-center font-bold mb-3">
+                      3. Refresh page
+                    </p>
+                    <div className="border-t border-red-500/30 my-2" />
+                    <p className="text-red-200 text-xs text-center font-semibold mb-2">
+                      ALSO Enable File System Access:
+                    </p>
+                    <p className="text-red-300/80 text-xs text-center">
+                      1. Go to: <code className="bg-black/30 px-1 rounded">brave://flags</code>
+                    </p>
+                    <p className="text-red-300/80 text-xs text-center">
+                      2. Search: "File System Access API"
+                    </p>
+                    <p className="text-red-300/80 text-xs text-center">
+                      3. Set to: <strong>Enabled</strong>
+                    </p>
+                    <p className="text-red-300/80 text-xs text-center">
+                      4. <strong>Restart Brave</strong>
+                    </p>
+                  </div>
                 </div>
               </div>
             </Card>
