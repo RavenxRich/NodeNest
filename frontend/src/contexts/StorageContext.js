@@ -341,6 +341,9 @@ export const StorageProvider = ({ children }) => {
           t.id === toolId ? { ...t, ...updates } : t
         );
         await saveTools(updatedTools);
+        // Reload tools to update UI
+        await loadTools();
+        await saveTools(updatedTools);
       } else if (storageMode === 'cloud') {
         await axios.put(`${API}/tools/${toolId}`, updates);
         await loadTools();
