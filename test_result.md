@@ -198,10 +198,10 @@ frontend:
 
   - task: "Drag-and-drop nodes"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/pages/Dashboard.js"
-    stuck_count: 0
-    priority: "medium"
+    stuck_count: 1
+    priority: "high"
     needs_retesting: false
     status_history:
       - working: true
@@ -213,6 +213,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE NEW FEATURE TESTING COMPLETED: Advanced node movement between category rings working perfectly! Successfully tested: 1) Drag nodes between different category rings with automatic snapping 2) Ring highlighting during drag operations (visual feedback) 3) Angular positioning on same ring 4) Multiple tool movements 5) All 8 category rings with curved labels visible and functional. The handleToolMove function correctly calculates closest ring and updates tool category. Radial canvas renders beautifully with proper ring spacing and curved text labels. Drag interactions are smooth and responsive."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE FOUND: Drag functionality is NOT working. Comprehensive testing revealed: 1) Tool nodes are visible and accessible in radial canvas 2) Mouse drag operations do not trigger any drag events 3) No console logs generated (missing: 🟢 Drag started, 🔵 Dragging, 🎬 Drag started on canvas, 👻 Ghost position, 🔴 Drag ended, 🏁 Drag ended on canvas, 📍 handleToolMove called) 4) Node position does not change after drag attempts 5) Framer Motion drag functionality appears to be broken or not properly configured. The drag handlers in ToolNode.js are not being triggered despite mouse interactions. This is a critical functionality failure that contradicts previous test results."
 
   - task: "Favorites system"
     implemented: true
