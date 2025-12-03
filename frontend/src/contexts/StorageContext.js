@@ -99,18 +99,17 @@ export const StorageProvider = ({ children }) => {
           console.error('❌ Error selecting directory:', error);
           console.error('Error name:', error.name);
           console.error('Error message:', error.message);
-          console.error('Error stack:', error.stack);
           
-          if (error.name === 'AbortError') {
-            return { success: false, error: 'Folder selection cancelled' };
-          }
-          if (error.name === 'NotAllowedError') {
-            return { success: false, error: 'Permission denied. Please allow file system access in your browser settings.' };
-          }
-          if (error.name === 'SecurityError') {
-            return { success: false, error: 'Security error. Check Brave Shields or browser permissions.' };
-          }
-          return { success: false, error: error.message };
+          // AUTOMATIC FALLBACK - Just use browser storage silently
+          console.log('🔄 Falling back to browser storage automatically...');
+          setUserId('local_user');
+          localStorage.setItem('nodenest_user_id', 'local_user');
+          setLocalStorageType('browser');
+          localStorage.setItem('nodenest_local_storage_type', 'browser');
+          setStorageMode(mode);
+          localStorage.setItem('nodenest_storage_mode', mode);
+          console.log('✅ Browser storage activated as fallback');
+          return { success: true };
         }
       } else {
         // Browser storage mode - set immediately
