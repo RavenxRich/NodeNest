@@ -37,21 +37,12 @@ const Landing = () => {
 
   const handleLocalStorage = async (storageType) => {
     console.log('🚀 Starting storage setup:', storageType);
-    
     const result = await selectStorageMode('local', null, storageType);
     console.log('📦 Storage setup result:', result);
     
-    if (result && result.success) {
-      console.log('✅ Navigating to dashboard...');
-      setTimeout(() => navigate('/dashboard'), 100);
-    } else {
-      // Silent fallback to browser storage
-      console.log('⚠️ Folder storage failed, using browser storage automatically');
-      const fallback = await selectStorageMode('local', null, 'browser');
-      if (fallback && fallback.success) {
-        setTimeout(() => navigate('/dashboard'), 100);
-      }
-    }
+    // Always navigate - fallback is automatic now
+    console.log('✅ Navigating to dashboard...');
+    setTimeout(() => navigate('/dashboard'), 100);
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
