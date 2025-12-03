@@ -200,7 +200,7 @@ Respond with ONLY the JSON object, no other text."""
             else:
                 # Try to fetch the actual page metadata
                 try:
-                async with aiohttp.ClientSession() as session:
+                    async with aiohttp.ClientSession() as session:
                     async with session.get(url, timeout=10, headers={
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
                     }) as resp:
