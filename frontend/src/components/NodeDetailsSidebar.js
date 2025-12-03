@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
-import { ExternalLink, Trash2, Save, Star } from 'lucide-react';
+import { ExternalLink, Trash2, Save, Star, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const NodeDetailsSidebar = ({ tool, onClose }) => {
