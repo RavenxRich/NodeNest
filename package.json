@@ -1,0 +1,9 @@
+{
+  "name": "nodenest",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Build already complete'",
+    "start": "echo 'Static site'"
+  }
+}
