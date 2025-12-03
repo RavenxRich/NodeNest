@@ -22,10 +22,21 @@ const ToolNode = ({ tool, position, onClick, onDragEnd, isSelected, onDragStart,
 
   const handleDragEnd = (event, info) => {
     console.log('🔴 Drag ended:', tool.title, 'offset:', info.offset);
-    setIsDragging(false);
     const newX = position.x + info.offset.x;
     const newY = position.y + info.offset.y;
     onDragEnd({ x: newX, y: newY });
+    
+    // Small delay to prevent click from firing
+    setTimeout(() => {
+      setIsDragging(false);
+    }, 100);
+  };
+
+  const handleClick = (e) => {
+    if (!isDragging && onClick) {
+      console.log('🖱️ Node clicked:', tool.title);
+      onClick(e);
+    }
   };
 
   return (
