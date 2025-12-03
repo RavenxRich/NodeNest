@@ -17,6 +17,7 @@ const Landing = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [showLocalOptions, setShowLocalOptions] = useState(false);
   const [supportsFileSystem, setSupportsFileSystem] = useState(false);
+  const [folderError, setFolderError] = useState(null);
 
   // Check browser support for File System Access API
   React.useEffect(() => {
