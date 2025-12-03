@@ -204,25 +204,25 @@ Respond with ONLY the JSON object, no other text."""
                         async with session.get(url, timeout=10, headers={
                             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
                         }) as resp:
-                        html = await resp.text()
-                        
-                        # Extract title
-                        title_match = re.search(r'<title[^>]*>([^<]+)</title>', html, re.IGNORECASE)
-                        og_title_match = re.search(r'<meta[^>]*property=["\']og:title["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
-                        title = (og_title_match.group(1) if og_title_match else 
-                                title_match.group(1) if title_match else 
-                                domain.split('.')[0].title())
-                        
-                        # Extract description
-                        desc_match = re.search(r'<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
-                        og_desc_match = re.search(r'<meta[^>]*property=["\']og:description["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
-                        description = (og_desc_match.group(1) if og_desc_match else 
-                                      desc_match.group(1) if desc_match else 
-                                      f"AI tool from {domain}")
-                        
-                        # Clean up text
-                        title = re.sub(r'\s+', ' ', title).strip()
-                        description = re.sub(r'\s+', ' ', description).strip()[:200]
+                            html = await resp.text()
+                            
+                            # Extract title
+                            title_match = re.search(r'<title[^>]*>([^<]+)</title>', html, re.IGNORECASE)
+                            og_title_match = re.search(r'<meta[^>]*property=["\']og:title["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
+                            title = (og_title_match.group(1) if og_title_match else 
+                                    title_match.group(1) if title_match else 
+                                    domain.split('.')[0].title())
+                            
+                            # Extract description
+                            desc_match = re.search(r'<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
+                            og_desc_match = re.search(r'<meta[^>]*property=["\']og:description["\'][^>]*content=["\']([^"\']+)["\']', html, re.IGNORECASE)
+                            description = (og_desc_match.group(1) if og_desc_match else 
+                                          desc_match.group(1) if desc_match else 
+                                          f"AI tool from {domain}")
+                            
+                            # Clean up text
+                            title = re.sub(r'\s+', ' ', title).strip()
+                            description = re.sub(r'\s+', ' ', description).strip()[:200]
                         
                 except Exception as e:
                     logging.warning(f"Failed to fetch page metadata: {e}")
