@@ -309,13 +309,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Drag-and-drop nodes"
-    - "Folder selection for local storage"
+    - "Tag badges with delete functionality"
+    - "Sidebar opening on node click"
   stuck_tasks:
-    - "Drag-and-drop nodes"
-    - "Folder selection for local storage"
+    - "Google OAuth login"
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
