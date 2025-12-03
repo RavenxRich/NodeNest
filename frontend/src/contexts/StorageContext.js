@@ -336,20 +336,22 @@ export const StorageProvider = ({ children }) => {
   // Update tool
   const updateTool = async (toolId, updates) => {
     try {
+      console.log('📝 Updating tool:', toolId, 'with updates:', updates);
       if (storageMode === 'local') {
         const updatedTools = tools.map(t => 
           t.id === toolId ? { ...t, ...updates } : t
         );
+        console.log('💾 Saving updated tools to storage');
         await saveTools(updatedTools);
-        // Reload tools to update UI
-        await loadTools();
-        await saveTools(updatedTools);
+        console.log('✅ Save complete');
       } else if (storageMode === 'cloud') {
+        console.log('☁️ Updating cloud storage');
         await axios.put(`${API}/tools/${toolId}`, updates);
         await loadTools();
+        console.log('✅ Cloud update complete');
       }
     } catch (error) {
-      console.error('Error updating tool:', error);
+      console.error('❌ Error updating tool:', error);
       throw error;
     }
   };
