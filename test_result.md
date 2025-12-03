@@ -262,8 +262,10 @@ metadata:
 test_plan:
   current_focus:
     - "Drag-and-drop nodes"
+    - "Folder selection for local storage"
   stuck_tasks:
     - "Drag-and-drop nodes"
+    - "Folder selection for local storage"
   test_all: false
   test_priority: "stuck_first"
 
