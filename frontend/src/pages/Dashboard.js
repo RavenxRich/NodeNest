@@ -126,15 +126,12 @@ const Dashboard = () => {
         category_id: newCategory.id
       });
       
-      console.log('✅ Tool updated successfully');
+      console.log('✅ Tool updated successfully - state should be updated by saveTools');
 
       // Show feedback toast
       if (tool && oldCategory !== newCategory.id) {
         toast.success(`Moved to ${newCategory.name}`);
       }
-      
-      // Reload tools to show updated position
-      await loadTools();
     } catch (error) {
       console.error('❌ Error updating tool:', error);
       toast.error('Failed to move node');
