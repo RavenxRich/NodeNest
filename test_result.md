@@ -132,9 +132,9 @@ backend:
 frontend:
   - task: "Folder selection for local storage"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/contexts/StorageContext.js, /app/frontend/src/pages/Landing.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -147,6 +147,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ RETESTED FIXED VERSION: Critical fixes verified working. IndexedDB transaction syntax fixed - no transaction errors detected. Async flow properly reordered - storage mode only set after successful folder selection. File System Access API properly invoked when 'Choose Folder' clicked. Browser storage baseline test successful with encrypted localStorage. UI displays both options correctly with proper descriptive text. Error handling works - shows 'Folder selection cancelled' when user cancels picker dialog. All success criteria met."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL STORAGE SETUP FAILURE: Comprehensive testing revealed that the storage selection flow is broken and prevents users from reaching the dashboard. ISSUES FOUND: 1) Storage selection screen appears correctly after clicking 'Get Started' 2) Only 'Choose Folder' button is visible (no browser storage fallback option) 3) Clicking 'Choose Folder' fails in automation (expected) but no fallback to browser storage 4) App gets stuck on storage selection screen - never navigates to dashboard 5) Users cannot complete the setup flow to add tools and test drag functionality. This is the ROOT CAUSE of why drag testing fails - the app never progresses past the storage selection phase. URGENT: Need to fix the storage selection flow to ensure users can reach the dashboard, especially when File System Access API is not available or fails."
 
   - task: "Google OAuth login"
     implemented: true
