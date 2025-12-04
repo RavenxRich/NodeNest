@@ -8,6 +8,7 @@ import { Upload, Download, QrCode, X } from 'lucide-react';
 const MobileQRCode = () => {
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const exportLocalStorage = () => {
     try {
