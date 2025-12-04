@@ -156,10 +156,11 @@ const Landing = () => {
           console.log('✅ Found existing handle, requesting permission...');
           const permission = await handle.requestPermission({ mode: 'readwrite' });
           if (permission === 'granted') {
-            console.log('✅ Permission granted! Setting up storage...');
-            localStorage.setItem('nodenest_storage_mode', 'local');
-            localStorage.setItem('nodenest_local_storage_type', 'filesystem');
-            localStorage.setItem('nodenest_user_id', 'local_user');
+            console.log('✅ Permission granted! Setting storage mode in context...');
+            
+            // CRITICAL FIX: Call selectStorageMode to update context properly
+            await selectStorageMode('local', null, 'filesystem');
+            
             toast.success('Using your saved folder location');
             navigate('/dashboard');
             return;
