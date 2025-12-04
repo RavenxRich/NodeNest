@@ -76,3 +76,5 @@
 ## Agent Communication
 - **agent**: "testing"
 - **message**: "Starting comprehensive test of folder persistence logic. Will examine Landing.js checkExistingStorage function and StorageContext.js folder handle storage."
+- **agent**: "testing"
+- **message**: "TESTING COMPLETE - CRITICAL ISSUES IDENTIFIED: The folder persistence failure is caused by multiple timing and browser security issues: 1) Race condition between StorageContext and Landing page initialization, 2) Full page reload navigation (window.location.href) causes context loss, 3) Automatic permission requests in useEffect are blocked by browser security policies, 4) useEffect dependency on 'navigate' causes multiple executions. The core logic is sound but execution timing prevents proper folder restoration."
