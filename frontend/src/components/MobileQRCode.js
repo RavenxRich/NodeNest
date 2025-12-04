@@ -25,6 +25,9 @@ const MobileQRCode = () => {
       // Create URL with data
       const url = `${window.location.origin}${window.location.pathname}#import=${encoded}`;
       
+      console.log('QR Code URL generated:', url);
+      console.log('QR Code URL length:', url.length);
+      
       setQrData(url);
       setShowQR(true);
       toast.success('QR Code generated! Scan with your mobile device.');
