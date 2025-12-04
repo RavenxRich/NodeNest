@@ -1,5 +1,82 @@
 # NodeNest
 
+**Visual AI Tools Bookmark Manager**
+
+A personal, radial dashboard for organizing and managing your AI tools bookmarks.
+
+🔗 **Live Site:** https://ravenxrich.github.io/NodeNest/
+
+---
+
+## Features
+
+- 🎯 **Visual Organization**: Radial layout for tool management
+- 💾 **Local Storage**: Browser storage or folder-based storage using File System Access API
+- ☁️ **Cloud Sync**: Optional Google OAuth for cloud storage
+- 📱 **Mobile Sync**: QR code export/import for cross-device access
+- 🎨 **Modern UI**: Built with React, TailwindCSS, and Framer Motion
+
+---
+
+## Repository Structure
+
+```
+NodeNest/
+├── .github/workflows/    # GitHub Actions for deployment
+├── frontend/             # React application source
+│   ├── public/          # Static assets
+│   ├── src/             # React components and logic
+│   └── package.json     # Dependencies
+├── .gitignore           # Git ignore rules
+├── .nojekyll            # GitHub Pages config
+└── README.md            # This file
+```
+
+---
+
+## Development
+
+### Prerequisites
+- Node.js 18+
+- Yarn
+
+### Local Development
+```bash
+cd frontend
+yarn install
+yarn start
+```
+
+### Build
+```bash
+cd frontend
+yarn build
+```
+
+---
+
+## Deployment
+
+This site automatically deploys to GitHub Pages via GitHub Actions when you push to the `main` branch.
+
+**Deployment URL:** https://ravenxrich.github.io/NodeNest/
+
+---
+
+## Tech Stack
+
+- **Frontend**: React 18, React Router
+- **Styling**: TailwindCSS, Framer Motion
+- **Storage**: IndexedDB, File System Access API, localStorage
+- **Build**: Create React App (with CRACO)
+- **Deployment**: GitHub Pages via GitHub Actions
+
+---
+
+## License
+
+MIT
+
 A visual AI tools bookmark manager with radial interface for organizing your favorite tools.
 
 🌐 **Live Site**: [https://ravenxrich.github.io/NodeNest/](https://ravenxrich.github.io/NodeNest/)
