@@ -114,86 +114,65 @@ const MobileQRCode = () => {
 
       {showQR && (
         <div 
-          style={{ 
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            zIndex: 99999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            overflow: 'auto'
-          }}
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }}
           onClick={() => setShowQR(false)}
         >
           <div 
             onClick={e => e.stopPropagation()}
-            style={{ 
-              backgroundColor: '#ffffff', 
-              borderRadius: '16px', 
-              padding: '24px',
-              maxWidth: '500px',
-              width: '100%',
-              maxHeight: '90vh',
-              overflow: 'auto',
-              margin: 'auto'
-            }}
+            className="bg-white rounded-2xl p-6 w-full max-w-md"
+            style={{ maxHeight: '90vh', overflow: 'auto' }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', margin: 0 }}>Scan QR Code</h3>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Scan QR Code</h3>
               <button
                 onClick={() => setShowQR(false)}
-                style={{ fontSize: '28px', lineHeight: '28px', border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', padding: '0 8px' }}
+                className="text-gray-500 hover:text-gray-700 text-2xl leading-none p-2"
+                aria-label="Close"
               >
                 ×
               </button>
             </div>
             
             {qrData ? (
-              <>
+              <div className="flex flex-col items-center justify-center space-y-4">
+                {/* QR Code Container */}
                 <div 
-                  style={{ 
-                    backgroundColor: '#FFFFFF',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    border: '3px solid #8b5cf6',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}
+                  className="bg-white p-6 rounded-xl flex items-center justify-center"
+                  style={{ border: '3px solid #8b5cf6' }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={260} 
+                    size={220} 
                     level="M"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
-                    style={{ display: 'block' }}
+                    style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
                   />
                 </div>
                 
-                <p style={{ textAlign: 'center', color: '#374151', fontWeight: '600', marginTop: '16px', fontSize: '14px' }}>
-                  Scan with your phone camera
-                </p>
-                <p style={{ textAlign: 'center', fontSize: '11px', color: '#6b7280', marginTop: '6px' }}>
-                  Your tools data will be imported automatically
-                </p>
+                {/* Instructions */}
+                <div className="text-center">
+                  <p className="text-gray-700 font-semibold text-sm mb-1">
+                    Scan with your phone camera
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    Your tools data will be imported automatically
+                  </p>
+                </div>
                 
                 {/* Debug info */}
-                <details style={{ marginTop: '16px', fontSize: '10px', color: '#999' }}>
-                  <summary style={{ cursor: 'pointer' }}>Debug Info</summary>
-                  <p>QR Data Length: {qrData.length}</p>
-                  <p>QR Data: {qrData.substring(0, 100)}...</p>
+                <details className="text-xs text-gray-400 w-full">
+                  <summary className="cursor-pointer">Debug Info</summary>
+                  <p className="mt-2">QR Data Length: {qrData.length}</p>
+                  <p className="break-all">QR Data: {qrData.substring(0, 100)}...</p>
                 </details>
-              </>
+              </div>
             ) : (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                 <p>Loading QR code...</p>
-                <p style={{ fontSize: '12px', marginTop: '8px' }}>qrData is empty</p>
+                <p className="text-xs mt-2">qrData is empty</p>
               </div>
             )}
           </div>
