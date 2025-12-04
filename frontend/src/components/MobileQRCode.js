@@ -85,28 +85,28 @@ const MobileQRCode = () => {
       </div>
 
       {showQR && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-8" onClick={() => setShowQR(false)}>
-          <Card className="p-8 bg-white dark:bg-slate-900 w-full max-w-2xl mx-auto overflow-hidden" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold dark:text-white">Scan to Import on Mobile</h3>
-              <Button
-                onClick={() => setShowQR(false)}
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex justify-center items-center py-16 px-8 bg-white dark:bg-slate-800 rounded-xl">
-              <div className="p-4 bg-white rounded-lg">
-                <QRCodeSVG value={qrData} size={240} level="M" includeMargin={true} />
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setShowQR(false)}>
+          <div className="relative w-full max-w-md mx-auto my-auto">
+            <Card className="p-6 bg-white dark:bg-slate-900 w-full" onClick={e => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold dark:text-white">Scan to Import on Mobile</h3>
+                <Button
+                  onClick={() => setShowQR(false)}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-            </div>
-            <p className="text-sm text-muted-foreground dark:text-slate-400 text-center mt-6 leading-relaxed">
-              Scan this QR code with your mobile device's camera to import your tools data
-            </p>
-          </Card>
+              <div className="flex justify-center items-center p-8 bg-white dark:bg-slate-800 rounded-lg">
+                <QRCodeSVG value={qrData} size={220} level="M" includeMargin={true} />
+              </div>
+              <p className="text-xs text-muted-foreground dark:text-slate-400 text-center mt-4">
+                Scan this QR code with your mobile device's camera to import your tools data
+              </p>
+            </Card>
+          </div>
         </div>
       )}
     </div>
