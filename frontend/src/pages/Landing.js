@@ -132,11 +132,18 @@ const Landing = () => {
       }
     };
     
-    // Only check if storageMode is already set (avoids permission requests in useEffect)
-    if (storageMode) {
+    // CRITICAL FIX: Check for existing storage even when context storageMode is null
+    // This is essential for returning users whose context hasn't initialized yet
+    const hasDirectory = localStorage.getItem('nodenest_has_directory');
+    const storedMode = localStorage.getItem('nodenest_storage_mode');
+    
+    if (storedMode || hasDirectory === 'true') {
+      console.log('🔍 Detected existing storage, checking folder handle...');
       checkExistingStorage();
+    } else if (storageMode === 'cloud') {
+      navigate('/dashboard');
     }
-  }, [storageMode, navigate]);
+  }, [navigate, selectStorageMode]);
 
   const handleLocalStorage = async (storageType) => {
     console.log('🚀 Starting storage setup:', storageType);
