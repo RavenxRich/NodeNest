@@ -111,9 +111,8 @@ const Landing = () => {
       }
     };
     
-    if (storageMode) {
-      checkExistingStorage();
-    }
+    // Always check, even if storageMode is empty (might have folder handle from previous session)
+    checkExistingStorage();
   }, [storageMode, navigate]);
 
   const handleLocalStorage = async (storageType) => {
