@@ -32,7 +32,9 @@ const Landing = () => {
   // Check if already has storage mode selected
   React.useEffect(() => {
     if (storageMode) {
-      navigate('/dashboard');
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 100);
     }
   }, [storageMode, navigate]);
 
