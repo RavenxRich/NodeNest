@@ -119,22 +119,34 @@ const MobileQRCode = () => {
 
       {showQR && (
         <div 
-          className="fixed inset-0 flex items-center justify-center p-4"
           style={{ 
-            backgroundColor: 'rgba(0, 0, 0, 0.85)',
-            zIndex: 99999,
             position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            overflow: 'auto'
           }}
           onClick={() => setShowQR(false)}
         >
           <div 
-            className="relative w-full max-w-lg mx-auto"
             onClick={e => e.stopPropagation()}
-            style={{ backgroundColor: '#ffffff', borderRadius: '16px', padding: '32px' }}
+            style={{ 
+              backgroundColor: '#ffffff', 
+              borderRadius: '16px', 
+              padding: '24px',
+              maxWidth: '500px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              margin: 'auto'
+            }}
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-gray-900">Scan QR Code</h3>
