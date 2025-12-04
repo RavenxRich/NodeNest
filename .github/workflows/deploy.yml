@@ -11,11 +11,26 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+      
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: yarn install --frozen-lockfile
+      
+      - name: Build React app
+        working-directory: ./frontend
+        run: yarn build
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -23,7 +38,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: './frontend/build'
       
       - name: Deploy to GitHub Pages
         id: deployment
