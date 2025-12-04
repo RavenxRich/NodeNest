@@ -44,14 +44,17 @@ const Landing = () => {
     });
   }, []);
 
-  // Check if already has storage mode selected
+  // Check if already has storage mode selected or has previous folder selection
   React.useEffect(() => {
 
     const checkExistingStorage = async () => {
-      // Check if folder handle exists even if storageMode not set (after logout)
+      // Check if folder handle exists even if storageMode not set (after logout/reload)
       const hasDirectory = localStorage.getItem('nodenest_has_directory');
+      const storedMode = localStorage.getItem('nodenest_storage_mode');
       
-      if (storageMode === 'local' || (!storageMode && hasDirectory === 'true')) {
+      // CRITICAL FIX: Check for folder even when storageMode in context is null
+      // This handles the case where user returns and context hasn't initialized yet
+      if (storedMode === 'local' || hasDirectory === 'true') {
         if (hasDirectory === 'true') {
           // Check if we can verify folder access without re-selection
           try {
