@@ -24,3 +24,7 @@ frontend/build/
 
 # Testing
 test_result.md
+-e 
+# Environment files
+*.env
+*.env.*
