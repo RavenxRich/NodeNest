@@ -25,14 +25,18 @@ const Dashboard = () => {
 
   useEffect(() => {
     const mode = localStorage.getItem('nodenest_storage_mode');
-    if (!mode) {
+    
+    // CRITICAL FIX: Give context time to initialize from localStorage
+    // Don't redirect immediately if storageMode is null - it might just be initializing
+    if (!mode && !storageMode) {
+      // No storage mode in localStorage AND no storageMode in context
+      // This means user hasn't set up storage yet
       navigate('/');
       return;
     }
-    // If we have a mode but context doesn't, reload it
-    if (!storageMode && mode) {
-      window.location.reload();
-    }
+    
+    // If localStorage has mode but context doesn't yet, wait for context to sync
+    // Don't force reload - context will initialize from localStorage naturally
   }, [storageMode, navigate]);
 
   useEffect(() => {
