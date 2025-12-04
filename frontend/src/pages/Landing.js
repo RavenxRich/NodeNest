@@ -165,7 +165,7 @@ const Landing = () => {
             </h1>
           </div>
           <p className="text-xl md:text-2xl text-violet-200 max-w-2xl mx-auto leading-relaxed">
-            Your visual AI tools bookmark manager. Save, organize, and access all your favorite AI tools in one beautiful radial interface.
+            Your visual AI tools bookmark manager. Save, organize, and access all your favorite AI tools in a single radial interface.
           </p>
         </motion.div>
 
