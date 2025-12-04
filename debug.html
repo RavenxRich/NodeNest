@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Debug Test</title>
+    <style>
+        body { 
+            background: #1a1a2e; 
+            color: white; 
+            font-family: sans-serif; 
+            padding: 40px;
+        }
+        .test { 
+            background: #16213e; 
+            padding: 20px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            border-left: 4px solid #0f3460;
+        }
+        .success { border-left-color: #22c55e; }
+        .error { border-left-color: #ef4444; }
+    </style>
+</head>
+<body>
+    <h1>🔍 NodeNest Debug Test</h1>
+    
+    <div class="test" id="html-test">
+        ✅ HTML is loading
+    </div>
+    
+    <div class="test" id="js-test">
+        ⏳ Testing JavaScript...
+    </div>
+    
+    <div class="test" id="css-test">
+        ⏳ Testing CSS...
+    </div>
+    
+    <div class="test" id="react-test">
+        ⏳ Testing React bundle...
+    </div>
+
+    <div class="test" id="paths-test">
+        <strong>File Paths:</strong><br>
+        JS: <span id="js-path"></span><br>
+        CSS: <span id="css-path"></span>
+    </div>
+
+    <div class="test" id="console-test">
+        <strong>Console Output:</strong>
+        <pre id="console-output" style="margin-top:10px; background:#000; padding:10px; border-radius:4px; font-size:11px;"></pre>
+    </div>
+
+    <script>
+        // Capture console
+        const logs = [];
+        const originalLog = console.log;
+        const originalError = console.error;
+        console.log = (...args) => { 
+            logs.push('LOG: ' + args.join(' ')); 
+            originalLog(...args); 
+        };
+        console.error = (...args) => { 
+            logs.push('ERROR: ' + args.join(' ')); 
+            originalError(...args); 
+        };
+
+        // Test 1: JavaScript works
+        document.getElementById('js-test').innerHTML = '✅ JavaScript is running';
+        document.getElementById('js-test').className = 'test success';
+
+        // Test 2: Check paths
+        const jsPath = '/NodeNest/static/js/main.099d06eb.js';
+        const cssPath = '/NodeNest/static/css/main.0782e8bc.css';
+        document.getElementById('js-path').textContent = jsPath;
+        document.getElementById('css-path').textContent = cssPath;
+
+        // Test 3: Try loading CSS
+        fetch(cssPath)
+            .then(res => {
+                if (res.ok) {
+                    document.getElementById('css-test').innerHTML = '✅ CSS file loads (200 OK)';
+                    document.getElementById('css-test').className = 'test success';
+                } else {
+                    document.getElementById('css-test').innerHTML = '❌ CSS file not found (' + res.status + ')';
+                    document.getElementById('css-test').className = 'test error';
+                }
+            })
+            .catch(err => {
+                document.getElementById('css-test').innerHTML = '❌ CSS failed: ' + err.message;
+                document.getElementById('css-test').className = 'test error';
+            });
+
+        // Test 4: Try loading React JS
+        fetch(jsPath)
+            .then(res => {
+                if (res.ok) {
+                    document.getElementById('react-test').innerHTML = '✅ React JS file loads (200 OK)';
+                    document.getElementById('react-test').className = 'test success';
+                    return res.text();
+                } else {
+                    document.getElementById('react-test').innerHTML = '❌ React JS not found (' + res.status + ')';
+                    document.getElementById('react-test').className = 'test error';
+                }
+            })
+            .then(text => {
+                if (text) {
+                    console.log('JS file size:', (text.length / 1024).toFixed(2) + ' KB');
+                }
+            })
+            .catch(err => {
+                document.getElementById('react-test').innerHTML = '❌ React JS failed: ' + err.message;
+                document.getElementById('react-test').className = 'test error';
+            });
+
+        // Show console after 2 seconds
+        setTimeout(() => {
+            document.getElementById('console-output').textContent = logs.join('\n') || 'No console output';
+        }, 2000);
+    </script>
+</body>
+</html>
