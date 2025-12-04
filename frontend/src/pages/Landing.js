@@ -132,8 +132,10 @@ const Landing = () => {
       }
     };
     
-    // Always check, even if storageMode is empty (might have folder handle from previous session)
-    checkExistingStorage();
+    // Only check if storageMode is already set (avoids permission requests in useEffect)
+    if (storageMode) {
+      checkExistingStorage();
+    }
   }, [storageMode, navigate]);
 
   const handleLocalStorage = async (storageType) => {
