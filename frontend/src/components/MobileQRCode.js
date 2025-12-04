@@ -117,61 +117,53 @@ const MobileQRCode = () => {
         </Button>
       </div>
 
-      {showQR && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setShowQR(false)}>
-          <div className="relative w-full max-w-md mx-auto my-auto">
-            <Card className="p-6 bg-white w-full shadow-2xl" onClick={e => e.stopPropagation()}>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Scan to Import on Mobile</h3>
-                <Button
+      {showQR && qrData && (
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.8)' }}
+          onClick={() => setShowQR(false)}
+        >
+          <div 
+            className="relative w-full max-w-lg mx-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="bg-white rounded-2xl p-8 shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Scan QR Code</h3>
+                <button
                   onClick={() => setShowQR(false)}
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
+                  className="text-gray-500 hover:text-gray-700"
+                  style={{ fontSize: '24px', lineHeight: '24px' }}
                 >
-                  <X className="w-4 h-4" />
-                </Button>
+                  ×
+                </button>
               </div>
-              <div className="flex flex-col justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[320px]">
-                {qrReady && qrData ? (
-                  <>
-                    <div 
-                      ref={qrRef}
-                      style={{ 
-                        backgroundColor: '#FFFFFF', 
-                        padding: '20px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        border: '2px solid #e5e7eb'
-                      }}
-                    >
-                      <QRCodeCanvas 
-                        value={qrData} 
-                        size={240} 
-                        level="M" 
-                        includeMargin={true}
-                        fgColor="#000000"
-                        bgColor="#FFFFFF"
-                        style={{ display: 'block' }}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-700 font-semibold mt-4">✓ QR Code Ready to Scan</p>
-                    <p className="text-xs text-gray-500 mt-2">Open camera app on your phone and scan</p>
-                  </>
-                ) : (
-                  <div className="text-gray-500 text-center">
-                    <div className="animate-pulse">
-                      <div className="w-48 h-48 bg-gray-200 rounded mb-4"></div>
-                      <p>Generating QR code...</p>
-                    </div>
-                  </div>
-                )}
+              
+              <div 
+                className="flex justify-center items-center"
+                style={{ 
+                  backgroundColor: '#FFFFFF',
+                  padding: '32px',
+                  borderRadius: '12px',
+                  border: '4px solid #8b5cf6'
+                }}
+              >
+                <QRCodeCanvas 
+                  value={qrData} 
+                  size={280} 
+                  level="M"
+                  fgColor="#000000"
+                  bgColor="#FFFFFF"
+                />
               </div>
-              <p className="text-sm text-gray-600 text-center mt-4 leading-relaxed">
-                Scan this QR code with your mobile device's camera to import your tools data
+              
+              <p className="text-center text-gray-700 font-medium mt-6">
+                Scan with your phone camera
               </p>
-            </Card>
+              <p className="text-center text-sm text-gray-500 mt-2">
+                Your tools data will be imported automatically
+              </p>
+            </div>
           </div>
         </div>
       )}
