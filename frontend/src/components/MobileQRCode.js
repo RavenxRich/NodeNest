@@ -112,16 +112,21 @@ const MobileQRCode = () => {
                   <X className="w-4 h-4" />
                 </Button>
               </div>
-              <div className="flex justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[300px]">
+              <div className="flex flex-col justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[320px]">
                 {qrData ? (
-                  <QRCodeSVG 
-                    value={qrData} 
-                    size={220} 
-                    level="M" 
-                    includeMargin={true}
-                    fgColor="#000000"
-                    bgColor="#FFFFFF"
-                  />
+                  <>
+                    <div style={{ backgroundColor: '#FFFFFF', padding: '16px' }}>
+                      <QRCodeSVG 
+                        value={qrData} 
+                        size={220} 
+                        level="M" 
+                        includeMargin={true}
+                        fgColor="#000000"
+                        bgColor="#FFFFFF"
+                      />
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">QR Code Generated</p>
+                  </>
                 ) : (
                   <div className="text-gray-500 text-center">
                     <p>Generating QR code...</p>
