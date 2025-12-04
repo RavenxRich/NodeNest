@@ -36,3 +36,7 @@ asset-manifest.json
 .emergent/
 .gitconfig
 .deploy-timestamp
+-e 
+# Environment files
+*.env
+*.env.*
