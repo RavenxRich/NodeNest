@@ -54,19 +54,21 @@ export const StorageProvider = ({ children }) => {
     const storedType = localStorage.getItem('nodenest_local_storage_type');
     const storedUserId = localStorage.getItem('nodenest_user_id');
     
-    if (storedMode && !storageMode) {
-      console.log('🔄 Context initializing from localStorage:', storedMode);
+    console.log('🔄 Context initializing from localStorage - mode:', storedMode, 'type:', storedType);
+    
+    if (storedMode) {
       setStorageMode(storedMode);
     }
-    if (storedType && localStorageType !== storedType) {
+    if (storedType) {
       setLocalStorageType(storedType);
     }
-    if (storedUserId && !userId) {
+    if (storedUserId) {
       setUserId(storedUserId);
     }
     
     // Mark as initialized after syncing with localStorage
     setIsInitialized(true);
+    console.log('✅ Context initialized');
   }, []);
 
   // Initialize storage mode
