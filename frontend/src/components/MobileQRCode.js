@@ -102,15 +102,21 @@ const MobileQRCode = () => {
                   <X className="w-4 h-4" />
                 </Button>
               </div>
-              <div className="flex justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl">
-                <QRCodeSVG 
-                  value={qrData} 
-                  size={220} 
-                  level="M" 
-                  includeMargin={true}
-                  fgColor="#000000"
-                  bgColor="#FFFFFF"
-                />
+              <div className="flex justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[300px]">
+                {qrData ? (
+                  <QRCodeSVG 
+                    value={qrData} 
+                    size={220} 
+                    level="M" 
+                    includeMargin={true}
+                    fgColor="#000000"
+                    bgColor="#FFFFFF"
+                  />
+                ) : (
+                  <div className="text-gray-500 text-center">
+                    <p>Generating QR code...</p>
+                  </div>
+                )}
               </div>
               <p className="text-sm text-gray-600 text-center mt-4 leading-relaxed">
                 Scan this QR code with your mobile device's camera to import your tools data
