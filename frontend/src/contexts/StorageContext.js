@@ -57,7 +57,7 @@ export const StorageProvider = ({ children }) => {
       // If filesystem storage, check for existing handle first
       if (storageType === 'filesystem') {
         try {
-          console.log('Starting folder selection...');
+          console.log('🔧 selectStorageMode called with filesystem mode');
           console.log('showDirectoryPicker available:', 'showDirectoryPicker' in window);
           console.log('User Agent:', navigator.userAgent);
           console.log('Is in iframe:', window.self !== window.top);
@@ -72,12 +72,14 @@ export const StorageProvider = ({ children }) => {
           }
           
           // Check if we already have a folder handle from previous session
-          let handle = null;
+          let handle = directoryHandle; // Try in-memory handle first
           const hasDirectory = localStorage.getItem('nodenest_has_directory');
           
           console.log('📁 hasDirectory flag:', hasDirectory);
+          console.log('📁 In-memory handle exists:', !!handle);
           
-          if (hasDirectory === 'true') {
+          // Only check IndexedDB if we don't have in-memory handle
+          if (!handle && hasDirectory === 'true') {
             console.log('📂 Checking for existing folder handle in IndexedDB...');
             try {
               const db = await openDB();
@@ -98,24 +100,20 @@ export const StorageProvider = ({ children }) => {
               });
               
               if (handle) {
-                console.log('✅ Found existing folder handle! Requesting permission...');
-                console.log('Handle details:', handle);
+                console.log('✅ Found existing folder handle in IndexedDB');
                 
+                // Verify permission (but don't request if not granted - let caller handle it)
                 try {
-                  const permission = await handle.requestPermission({ mode: 'readwrite' });
-                  console.log('📝 Permission result:', permission);
+                  const permission = await handle.queryPermission({ mode: 'readwrite' });
+                  console.log('📝 Permission status:', permission);
                   
-                  if (permission === 'granted') {
-                    console.log('✅ Permission GRANTED! Using existing handle');
-                    toast.success('Using your saved folder location');
-                  } else {
-                    console.log('❌ Permission DENIED. Will prompt for new folder');
-                    toast.info('Please select your folder again');
-                    handle = null;
-                    localStorage.removeItem('nodenest_has_directory');
+                  if (permission !== 'granted') {
+                    console.log('⚠️ Permission not granted. Handle needs permission request from user gesture.');
+                    // Don't request permission here - caller should have already done it
+                    // Just use the handle - caller verified permission
                   }
                 } catch (permError) {
-                  console.error('❌ Error requesting permission:', permError);
+                  console.error('❌ Error checking permission:', permError);
                   handle = null;
                   localStorage.removeItem('nodenest_has_directory');
                 }
@@ -128,36 +126,34 @@ export const StorageProvider = ({ children }) => {
               handle = null;
               localStorage.removeItem('nodenest_has_directory');
             }
-          } else {
-            console.log('ℹ️ No hasDirectory flag, this is first time setup');
           }
           
-          // If no existing handle or permission denied, prompt user
+          // If no existing handle, prompt user
           if (!handle) {
-            console.log('📂 Prompting user to select folder...');
+            console.log('📂 No existing handle, prompting user to select folder...');
             toast.info('Please select a folder to store your tools');
             handle = await window.showDirectoryPicker({
               mode: 'readwrite',
               startIn: 'documents'
             });
             console.log('✅ Folder selected successfully:', handle.name);
+            
+            // Store new handle in IndexedDB for persistence
+            const db = await openDB();
+            const tx = db.transaction('handles', 'readwrite');
+            tx.objectStore('handles').put(handle, 'directory');
+            
+            // Wait for transaction to complete
+            await new Promise((resolve, reject) => {
+              tx.oncomplete = () => resolve();
+              tx.onerror = () => reject(tx.error);
+            });
+            
+            localStorage.setItem('nodenest_has_directory', 'true');
           }
           
-          // Store handle in IndexedDB for persistence
-          const db = await openDB();
-          const tx = db.transaction('handles', 'readwrite');
-          tx.objectStore('handles').put(handle, 'directory');
-          
-          // Wait for transaction to complete
-          await new Promise((resolve, reject) => {
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => reject(tx.error);
-          });
-          
+          // Set all state variables
           setDirectoryHandle(handle);
-          localStorage.setItem('nodenest_has_directory', 'true');
-          
-          // Only set storage mode after successful folder selection
           setUserId('local_user');
           localStorage.setItem('nodenest_user_id', 'local_user');
           setLocalStorageType(storageType);
@@ -168,7 +164,7 @@ export const StorageProvider = ({ children }) => {
           console.log('✅ Folder storage setup complete!');
           return { success: true };
         } catch (error) {
-          console.error('❌ Error selecting directory:', error);
+          console.error('❌ Error in selectStorageMode:', error);
           console.error('Error name:', error.name);
           console.error('Error message:', error.message);
           
