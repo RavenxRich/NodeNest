@@ -148,12 +148,11 @@ const MobileQRCode = () => {
               margin: 'auto'
             }}
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Scan QR Code</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', color: '#111827', margin: 0 }}>Scan QR Code</h3>
               <button
                 onClick={() => setShowQR(false)}
-                className="text-gray-500 hover:text-gray-700"
-                style={{ fontSize: '32px', lineHeight: '32px', border: 'none', background: 'none', cursor: 'pointer' }}
+                style={{ fontSize: '28px', lineHeight: '28px', border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', padding: '0 8px' }}
               >
                 ×
               </button>
@@ -164,29 +163,28 @@ const MobileQRCode = () => {
                 <div 
                   style={{ 
                     backgroundColor: '#FFFFFF',
-                    padding: '32px',
+                    padding: '24px',
                     borderRadius: '12px',
-                    border: '4px solid #8b5cf6',
+                    border: '3px solid #8b5cf6',
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '320px'
+                    alignItems: 'center'
                   }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={280} 
+                    size={260} 
                     level="M"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
-                    style={{ display: 'block', margin: '0 auto' }}
+                    style={{ display: 'block' }}
                   />
                 </div>
                 
-                <p style={{ textAlign: 'center', color: '#374151', fontWeight: '600', marginTop: '24px' }}>
+                <p style={{ textAlign: 'center', color: '#374151', fontWeight: '600', marginTop: '16px', fontSize: '14px' }}>
                   Scan with your phone camera
                 </p>
-                <p style={{ textAlign: 'center', fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>
+                <p style={{ textAlign: 'center', fontSize: '11px', color: '#6b7280', marginTop: '6px' }}>
                   Your tools data will be imported automatically
                 </p>
                 
