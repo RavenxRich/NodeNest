@@ -618,7 +618,6 @@ export const StorageProvider = ({ children }) => {
   }, [storageMode, userId]);
 
   const value = {
-    isInitialized,
     storageMode,
     userId,
     tools,
