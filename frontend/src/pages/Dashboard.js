@@ -149,9 +149,10 @@ const Dashboard = () => {
     localStorage.removeItem('nodenest_storage_mode');
     localStorage.removeItem('nodenest_user_id');
     localStorage.removeItem('nodenest_tools_encrypted');
+    localStorage.removeItem('nodenest_local_storage_type');
+    localStorage.removeItem('nodenest_has_directory');
     toast.success('Logged out successfully');
-    navigate('/');
-    setTimeout(() => window.location.reload(), 100);
+    navigate('/', { replace: true });
   };
 
   const favoriteCount = tools.filter(t => t.favorite).length;
