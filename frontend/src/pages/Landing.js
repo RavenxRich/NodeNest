@@ -68,11 +68,21 @@ const Landing = () => {
               if (permission === 'granted') {
                 // Permission already granted, SET STORAGE MODE then navigate
                 console.log('✅ Folder permission already granted, setting storage mode');
+                console.log('📝 Setting localStorage items...');
                 localStorage.setItem('nodenest_storage_mode', 'local');
                 localStorage.setItem('nodenest_local_storage_type', 'filesystem');
                 localStorage.setItem('nodenest_user_id', 'local_user');
+                console.log('✅ localStorage set:', {
+                  storageMode: localStorage.getItem('nodenest_storage_mode'),
+                  localStorageType: localStorage.getItem('nodenest_local_storage_type'),
+                  userId: localStorage.getItem('nodenest_user_id'),
+                  hasDirectory: localStorage.getItem('nodenest_has_directory')
+                });
+                console.log('🔄 Navigating to dashboard...');
                 // Force reload to update context
-                window.location.href = window.location.origin + window.location.pathname + '/dashboard';
+                const dashboardUrl = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/dashboard';
+                console.log('Dashboard URL:', dashboardUrl);
+                window.location.href = dashboardUrl;
               } else if (permission === 'prompt') {
                 // Request permission here
                 try {
