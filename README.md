@@ -27,16 +27,21 @@ A visual AI tools bookmark manager with radial interface for organizing your fav
 
 ```
 /
+├── .github/
+│   └── workflows/     # GitHub Actions for auto-deploy
 ├── frontend/          # React source code
 │   ├── src/
 │   │   ├── components/  # Reusable components
-│   │   ├── pages/       # Page components
-│   │   ├── contexts/    # React contexts
+│   │   ├── pages/       # Page components (Landing, Dashboard, Settings, Stats)
+│   │   ├── contexts/    # React contexts (StorageContext)
 │   │   └── utils/       # Utility functions
-│   └── public/          # Static assets
-├── static/            # Built assets (deployed)
+│   └── public/        # Static assets
+├── static/            # Built assets (deployed to GitHub Pages)
+│   ├── css/           # Compiled CSS
+│   └── js/            # Compiled JavaScript
 ├── index.html         # Main HTML (deployed)
-└── 404.html           # Fallback for SPA routing
+├── 404.html           # Fallback for SPA client-side routing
+└── README.md          # This file
 ```
 
 ## Development
