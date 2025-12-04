@@ -62,14 +62,8 @@
 - **created_by**: "testing_agent"
 - **version**: "1.0"
 - **test_sequence**: 1
-- **run_ui**: false
+- **run_ui**: true
 
 ## Agent Communication
 - **agent**: "testing"
-- **message**: "Starting comprehensive test of folder persistence logic. Will examine Landing.js checkExistingStorage function and StorageContext.js folder handle storage."
-- **agent**: "testing"
-- **message**: "TESTING COMPLETE - CRITICAL ISSUES IDENTIFIED: The folder persistence failure is caused by multiple timing and browser security issues: 1) Race condition between StorageContext and Landing page initialization, 2) Full page reload navigation (window.location.href) causes context loss, 3) Automatic permission requests in useEffect are blocked by browser security policies, 4) useEffect dependency on 'navigate' causes multiple executions. The core logic is sound but execution timing prevents proper folder restoration."
-- **agent**: "testing"
-- **message**: "BUG FIX TESTING COMPLETE - ISSUE STILL EXISTS: Tested the folder persistence bug fix but the issue persists. The fix correctly calls selectStorageMode before navigation, but there's a fundamental logic flaw: Landing.js useEffect (lines 132-136) only runs checkExistingStorage() if storageMode is set, but StorageContext clears localStorage when no IndexedDB handle found. This creates a chicken-and-egg problem where folder persistence logic never executes. Need to modify the condition to check for has_directory flag even when storageMode is null."
-- **agent**: "testing"
-- **message**: "✅ FOLDER PERSISTENCE FIX VERIFICATION COMPLETE: The critical logic update in Landing.js is working correctly! The useEffect now properly checks localStorage flags BEFORE context storageMode (lines 137-142), resolving the chicken-and-egg problem. Testing confirms: checkExistingStorage() executes on page load for returning users, console shows '🔍 Detected existing storage, checking folder handle...', invalid localStorage flags are properly cleaned up when no IndexedDB handle exists, no redirect loops occur, and landing page renders correctly. The fix successfully enables folder persistence logic to run even when StorageContext hasn't initialized yet."
+- **message**: "Starting QR code display fix testing. Will test Export to Mobile button, QR code modal display, sizing (220px), purple border styling, and modal interactions."
