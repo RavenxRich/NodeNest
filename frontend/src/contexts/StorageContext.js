@@ -47,8 +47,25 @@ export const StorageProvider = ({ children }) => {
     return localStorage.getItem('nodenest_local_storage_type') || 'browser'; // 'browser' or 'filesystem'
   });
   
-  // Mark context as initialized after first render
+  // Initialize storage from localStorage and mark as initialized
   useEffect(() => {
+    // Re-check localStorage on mount in case it was set by another tab or script
+    const storedMode = localStorage.getItem('nodenest_storage_mode');
+    const storedType = localStorage.getItem('nodenest_local_storage_type');
+    const storedUserId = localStorage.getItem('nodenest_user_id');
+    
+    if (storedMode && !storageMode) {
+      console.log('🔄 Context initializing from localStorage:', storedMode);
+      setStorageMode(storedMode);
+    }
+    if (storedType && localStorageType !== storedType) {
+      setLocalStorageType(storedType);
+    }
+    if (storedUserId && !userId) {
+      setUserId(storedUserId);
+    }
+    
+    // Mark as initialized after syncing with localStorage
     setIsInitialized(true);
   }, []);
 
