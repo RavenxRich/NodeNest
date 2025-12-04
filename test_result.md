@@ -22,15 +22,18 @@
 ### Task: Folder Persistence Logic
 - **task**: "Test folder persistence after browser close/reload"
 - **implemented**: true
-- **working**: "NA" 
+- **working**: false
 - **file**: "/app/frontend/src/pages/Landing.js"
 - **stuck_count**: 0
 - **priority**: "high"
-- **needs_retesting**: true
+- **needs_retesting**: false
 - **status_history**:
   - **working**: "NA"
   - **agent**: "testing"
   - **comment**: "Initial test - examining folder persistence flow"
+  - **working**: false
+  - **agent**: "testing"
+  - **comment**: "CRITICAL ISSUE: Multiple problems identified in folder persistence logic: 1) Race condition between StorageContext initialization and Landing page useEffect, 2) Full page reload navigation causes context reinitialization, 3) Automatic permission requests in useEffect may be blocked by browser, 4) useEffect runs multiple times due to navigate dependency changes. The checkExistingStorage function logic is sound but execution timing issues prevent proper folder restoration."
 
 ### Task: IndexedDB Handle Storage
 - **task**: "Test IndexedDB folder handle storage and retrieval"
