@@ -133,7 +133,7 @@ const Landing = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="grid md:grid-cols-2 gap-6 mt-12"
+            className="max-w-md mx-auto mt-12"
           >
             {/* Local Storage - Folder Only */}
             <Card data-testid="local-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
@@ -176,29 +176,6 @@ const Landing = () => {
                     💾 Saves as: <span className="text-cyan-300 font-mono">nodenest_tools.json</span>
                   </p>
                 </div>
-              </div>
-            </Card>
-
-            {/* Cloud Storage */}
-            <Card data-testid="cloud-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
-              <div className="flex flex-col items-center gap-4 text-white">
-                <div className="w-20 h-20 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
-                  <Cloud className="w-10 h-10 text-cyan-300" />
-                </div>
-                <h3 className="text-2xl font-semibold">Cloud Storage</h3>
-                <p className="text-violet-200 text-sm text-center mb-4">
-                  Sync across devices with Google Sign-In. Access your tools anywhere.
-                </p>
-                <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    theme="filled_black"
-                    size="large"
-                    text="signin_with"
-                    useOneTap={false}
-                  />
-                </GoogleOAuthProvider>
               </div>
             </Card>
           </motion.div>
