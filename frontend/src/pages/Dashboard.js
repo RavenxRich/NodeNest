@@ -152,7 +152,8 @@ const Dashboard = () => {
     localStorage.removeItem('nodenest_local_storage_type');
     // NOTE: We do NOT remove 'nodenest_has_directory' - folder handle persists!
     toast.success('Logged out successfully');
-    navigate('/', { replace: true });
+    // Force full page reload to reset all React state
+    window.location.href = window.location.origin + window.location.pathname.replace(/dashboard.*/, '');
   };
 
   const favoriteCount = tools.filter(t => t.favorite).length;
