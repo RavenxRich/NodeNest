@@ -31,51 +31,72 @@ const Landing = () => {
 
   // Check if already has storage mode selected
   React.useEffect(() => {
+    const openDB = () => {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('NodeNestDB', 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('handles')) {
+            db.createObjectStore('handles');
+          }
+        };
+      });
+    };
+
     const checkExistingStorage = async () => {
       if (storageMode === 'local') {
         const hasDirectory = localStorage.getItem('nodenest_has_directory');
         if (hasDirectory === 'true') {
           // Check if we can verify folder access without re-selection
           try {
-            const db = await indexedDB.open('NodeNestDB', 1);
+            const db = await openDB();
             const tx = db.transaction('handles', 'readonly');
             const request = tx.objectStore('handles').get('directory');
             
-            request.onsuccess = async () => {
-              const handle = request.result;
-              if (handle) {
-                // Check permission status
-                const permission = await handle.queryPermission({ mode: 'readwrite' });
-                if (permission === 'granted') {
-                  // Permission already granted, go directly to dashboard
-                  navigate('/dashboard');
-                } else if (permission === 'prompt') {
-                  // Request permission here
-                  try {
-                    const newPermission = await handle.requestPermission({ mode: 'readwrite' });
-                    if (newPermission === 'granted') {
-                      navigate('/dashboard');
-                    } else {
-                      // Permission denied, clear state and stay on landing
-                      localStorage.removeItem('nodenest_storage_mode');
-                      localStorage.removeItem('nodenest_has_directory');
-                    }
-                  } catch (error) {
-                    console.error('Permission request failed:', error);
+            const handle = await new Promise((resolve, reject) => {
+              request.onsuccess = () => resolve(request.result);
+              request.onerror = () => reject(request.error);
+            });
+
+            if (handle) {
+              // Check permission status
+              const permission = await handle.queryPermission({ mode: 'readwrite' });
+              if (permission === 'granted') {
+                // Permission already granted, go directly to dashboard
+                console.log('✅ Folder permission already granted, navigating to dashboard');
+                navigate('/dashboard');
+              } else if (permission === 'prompt') {
+                // Request permission here
+                try {
+                  console.log('📂 Requesting folder permission...');
+                  const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+                  if (newPermission === 'granted') {
+                    console.log('✅ Permission granted, navigating to dashboard');
+                    navigate('/dashboard');
+                  } else {
+                    console.log('❌ Permission denied');
                     localStorage.removeItem('nodenest_storage_mode');
                     localStorage.removeItem('nodenest_has_directory');
                   }
-                } else {
-                  // Permission denied, clear state
+                } catch (error) {
+                  console.error('Permission request failed:', error);
                   localStorage.removeItem('nodenest_storage_mode');
                   localStorage.removeItem('nodenest_has_directory');
                 }
               } else {
-                // No handle found, clear state and stay on landing page
+                // Permission denied, clear state
+                console.log('❌ Permission already denied');
                 localStorage.removeItem('nodenest_storage_mode');
                 localStorage.removeItem('nodenest_has_directory');
               }
-            };
+            } else {
+              // No handle found, clear state and stay on landing page
+              console.log('⚠️ No folder handle found in IndexedDB');
+              localStorage.removeItem('nodenest_storage_mode');
+              localStorage.removeItem('nodenest_has_directory');
+            }
           } catch (error) {
             console.error('Error checking folder access:', error);
             // Clear invalid state
