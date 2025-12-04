@@ -29,21 +29,23 @@ const Landing = () => {
     setSupportsFileSystem(hasAPI);
   }, []);
 
+  // Helper to open IndexedDB
+  const openDB = React.useCallback(() => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('NodeNestDB', 1);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('handles')) {
+          db.createObjectStore('handles');
+        }
+      };
+    });
+  }, []);
+
   // Check if already has storage mode selected
   React.useEffect(() => {
-    const openDB = () => {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open('NodeNestDB', 1);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-        request.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains('handles')) {
-            db.createObjectStore('handles');
-          }
-        };
-      });
-    };
 
     const checkExistingStorage = async () => {
       // Check if folder handle exists even if storageMode not set (after logout)
