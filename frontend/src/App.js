@@ -1,0 +1,31 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from 'next-themes';
+import Landing from './pages/Landing';
+import Dashboard from './pages/Dashboard';
+import Settings from './pages/Settings';
+import Stats from './pages/Stats';
+import { StorageProvider } from './contexts/StorageContext';
+import { Toaster } from './components/ui/sonner';
+import '@/App.css';
+
+function App() {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <StorageProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/stats" element={<Stats />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+        <Toaster position="top-right" richColors />
+      </StorageProvider>
+    </ThemeProvider>
+  );
+}
+
+export default App;
