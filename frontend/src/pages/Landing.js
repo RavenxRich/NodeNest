@@ -66,17 +66,25 @@ const Landing = () => {
               // Check permission status
               const permission = await handle.queryPermission({ mode: 'readwrite' });
               if (permission === 'granted') {
-                // Permission already granted, go directly to dashboard
-                console.log('✅ Folder permission already granted, navigating to dashboard');
-                navigate('/dashboard');
+                // Permission already granted, SET STORAGE MODE then navigate
+                console.log('✅ Folder permission already granted, setting storage mode');
+                localStorage.setItem('nodenest_storage_mode', 'local');
+                localStorage.setItem('nodenest_local_storage_type', 'filesystem');
+                localStorage.setItem('nodenest_user_id', 'local_user');
+                // Force reload to update context
+                window.location.href = window.location.origin + window.location.pathname + '/dashboard';
               } else if (permission === 'prompt') {
                 // Request permission here
                 try {
                   console.log('📂 Requesting folder permission...');
                   const newPermission = await handle.requestPermission({ mode: 'readwrite' });
                   if (newPermission === 'granted') {
-                    console.log('✅ Permission granted, navigating to dashboard');
-                    navigate('/dashboard');
+                    console.log('✅ Permission granted, setting storage mode');
+                    localStorage.setItem('nodenest_storage_mode', 'local');
+                    localStorage.setItem('nodenest_local_storage_type', 'filesystem');
+                    localStorage.setItem('nodenest_user_id', 'local_user');
+                    // Force reload to update context
+                    window.location.href = window.location.origin + window.location.pathname + '/dashboard';
                   } else {
                     console.log('❌ Permission denied');
                     localStorage.removeItem('nodenest_storage_mode');
