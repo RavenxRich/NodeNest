@@ -29,10 +29,39 @@ const Landing = () => {
     setSupportsFileSystem(hasAPI);
   }, []);
 
-  // Check if already has storage mode selected
+  // Check if already has storage mode selected AND has valid folder access
   React.useEffect(() => {
+    const checkStorageAccess = async () => {
+      if (storageMode === 'local') {
+        // Verify folder access exists in IndexedDB
+        const hasDirectory = localStorage.getItem('nodenest_has_directory');
+        if (hasDirectory === 'true') {
+          try {
+            const db = await indexedDB.open('NodeNestDB', 1);
+            const request = db.transaction('handles', 'readonly').objectStore('handles').get('directory');
+            request.onsuccess = () => {
+              if (request.result) {
+                navigate('/dashboard');
+              } else {
+                // No folder handle found, clear storage mode and force re-selection
+                console.warn('No folder handle found, clearing storage mode');
+                localStorage.removeItem('nodenest_storage_mode');
+                localStorage.removeItem('nodenest_has_directory');
+              }
+            };
+          } catch (error) {
+            console.error('Error checking folder access:', error);
+            localStorage.removeItem('nodenest_storage_mode');
+            localStorage.removeItem('nodenest_has_directory');
+          }
+        }
+      } else if (storageMode === 'cloud') {
+        navigate('/dashboard');
+      }
+    };
+    
     if (storageMode) {
-      navigate('/dashboard');
+      checkStorageAccess();
     }
   }, [storageMode, navigate]);
 
