@@ -32,44 +32,21 @@ export const useStorage = () => {
 };
 
 export const StorageProvider = ({ children }) => {
-  // CRITICAL FIX: Add isInitialized state to prevent premature Dashboard redirects
-  const [isInitialized, setIsInitialized] = useState(false);
+  // CRITICAL FIX: Initialize all state synchronously from localStorage to avoid race conditions
   const [storageMode, setStorageMode] = useState(() => {
-    return localStorage.getItem('nodenest_storage_mode') || null;
+    const mode = localStorage.getItem('nodenest_storage_mode');
+    console.log('🔄 StorageProvider initializing - storageMode from localStorage:', mode);
+    return mode;
   });
   const [userId, setUserId] = useState(() => {
-    return localStorage.getItem('nodenest_user_id') || null;
+    return localStorage.getItem('nodenest_user_id');
   });
   const [tools, setTools] = useState([]);
   const [categories, setCategories] = useState([]);
   const [directoryHandle, setDirectoryHandle] = useState(null);
   const [localStorageType, setLocalStorageType] = useState(() => {
-    return localStorage.getItem('nodenest_local_storage_type') || 'browser'; // 'browser' or 'filesystem'
+    return localStorage.getItem('nodenest_local_storage_type') || 'browser';
   });
-  
-  // Initialize storage from localStorage and mark as initialized
-  useEffect(() => {
-    // Re-check localStorage on mount in case it was set by another tab or script
-    const storedMode = localStorage.getItem('nodenest_storage_mode');
-    const storedType = localStorage.getItem('nodenest_local_storage_type');
-    const storedUserId = localStorage.getItem('nodenest_user_id');
-    
-    console.log('🔄 Context initializing from localStorage - mode:', storedMode, 'type:', storedType);
-    
-    if (storedMode) {
-      setStorageMode(storedMode);
-    }
-    if (storedType) {
-      setLocalStorageType(storedType);
-    }
-    if (storedUserId) {
-      setUserId(storedUserId);
-    }
-    
-    // Mark as initialized after syncing with localStorage
-    setIsInitialized(true);
-    console.log('✅ Context initialized');
-  }, []);
 
   // Initialize storage mode
   const selectStorageMode = async (mode, googleUser = null, storageType = 'browser') => {
