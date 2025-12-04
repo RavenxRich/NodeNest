@@ -46,8 +46,10 @@ const Landing = () => {
     };
 
     const checkExistingStorage = async () => {
-      if (storageMode === 'local') {
-        const hasDirectory = localStorage.getItem('nodenest_has_directory');
+      // Check if folder handle exists even if storageMode not set (after logout)
+      const hasDirectory = localStorage.getItem('nodenest_has_directory');
+      
+      if (storageMode === 'local' || (!storageMode && hasDirectory === 'true')) {
         if (hasDirectory === 'true') {
           // Check if we can verify folder access without re-selection
           try {
