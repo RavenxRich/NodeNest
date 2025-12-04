@@ -138,13 +138,46 @@ const Landing = () => {
 
   const handleLocalStorage = async (storageType) => {
     console.log('🚀 Starting storage setup:', storageType);
-    setFolderError(null); // Clear any previous error
+    setFolderError(null);
+    
+    // Check for existing folder handle FIRST (before calling selectStorageMode)
+    const hasDirectory = localStorage.getItem('nodenest_has_directory');
+    if (hasDirectory === 'true' && storageType === 'filesystem') {
+      console.log('📂 Found existing folder flag, checking IndexedDB...');
+      try {
+        const db = await openDB();
+        const tx = db.transaction('handles', 'readonly');
+        const request = tx.objectStore('handles').get('directory');
+        const handle = await new Promise((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+        
+        if (handle) {
+          console.log('✅ Found existing handle, requesting permission...');
+          const permission = await handle.requestPermission({ mode: 'readwrite' });
+          if (permission === 'granted') {
+            console.log('✅ Permission granted! Setting up storage...');
+            localStorage.setItem('nodenest_storage_mode', 'local');
+            localStorage.setItem('nodenest_local_storage_type', 'filesystem');
+            localStorage.setItem('nodenest_user_id', 'local_user');
+            toast.success('Using your saved folder location');
+            navigate('/dashboard');
+            return;
+          }
+        }
+      } catch (error) {
+        console.log('⚠️ Could not use existing handle:', error);
+      }
+    }
+    
+    // If no existing handle or permission denied, proceed with normal flow
     const result = await selectStorageMode('local', null, storageType);
     console.log('📦 Storage setup result:', result);
     
     if (result.success) {
       console.log('✅ Navigating to dashboard...');
-      setTimeout(() => navigate('/dashboard'), 100);
+      navigate('/dashboard');
     } else {
       console.error('❌ Folder selection failed:', result.error);
       setFolderError(result.error);
