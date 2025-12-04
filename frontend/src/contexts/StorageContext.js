@@ -60,9 +60,15 @@ export const StorageProvider = ({ children }) => {
           console.log('Starting folder selection...');
           console.log('showDirectoryPicker available:', 'showDirectoryPicker' in window);
           console.log('User Agent:', navigator.userAgent);
+          console.log('Is in iframe:', window.self !== window.top);
           
           if (!('showDirectoryPicker' in window)) {
             throw new Error('File System Access API not supported in your browser. Please use Chrome, Edge, or Brave.');
+          }
+          
+          // Check if running in iframe (preview environments)
+          if (window.self !== window.top) {
+            throw new Error('Folder storage cannot be used in preview mode. Please open the app in a new tab: Right-click → "Open in New Tab" or use Cloud Storage instead.');
           }
           
           console.log('Calling showDirectoryPicker...');
