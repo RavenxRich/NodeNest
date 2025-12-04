@@ -75,42 +75,72 @@ export const StorageProvider = ({ children }) => {
           let handle = null;
           const hasDirectory = localStorage.getItem('nodenest_has_directory');
           
+          console.log('📁 hasDirectory flag:', hasDirectory);
+          
           if (hasDirectory === 'true') {
-            console.log('Checking for existing folder handle...');
+            console.log('📂 Checking for existing folder handle in IndexedDB...');
             try {
               const db = await openDB();
+              console.log('✅ IndexedDB opened successfully');
+              
               const tx = db.transaction('handles', 'readonly');
               const request = tx.objectStore('handles').get('directory');
               
               handle = await new Promise((resolve, reject) => {
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                  console.log('✅ IndexedDB query success, handle:', request.result);
+                  resolve(request.result);
+                };
+                request.onerror = () => {
+                  console.error('❌ IndexedDB query error:', request.error);
+                  reject(request.error);
+                };
               });
               
               if (handle) {
-                console.log('Found existing folder handle, requesting permission...');
-                const permission = await handle.requestPermission({ mode: 'readwrite' });
-                if (permission !== 'granted') {
-                  console.log('Permission denied, will prompt for new folder');
+                console.log('✅ Found existing folder handle! Requesting permission...');
+                console.log('Handle details:', handle);
+                
+                try {
+                  const permission = await handle.requestPermission({ mode: 'readwrite' });
+                  console.log('📝 Permission result:', permission);
+                  
+                  if (permission === 'granted') {
+                    console.log('✅ Permission GRANTED! Using existing handle');
+                    toast.success('Using your saved folder location');
+                  } else {
+                    console.log('❌ Permission DENIED. Will prompt for new folder');
+                    toast.info('Please select your folder again');
+                    handle = null;
+                    localStorage.removeItem('nodenest_has_directory');
+                  }
+                } catch (permError) {
+                  console.error('❌ Error requesting permission:', permError);
                   handle = null;
+                  localStorage.removeItem('nodenest_has_directory');
                 }
+              } else {
+                console.log('⚠️ No handle found in IndexedDB');
+                localStorage.removeItem('nodenest_has_directory');
               }
             } catch (error) {
-              console.error('Error checking existing handle:', error);
+              console.error('❌ Error accessing IndexedDB:', error);
               handle = null;
+              localStorage.removeItem('nodenest_has_directory');
             }
+          } else {
+            console.log('ℹ️ No hasDirectory flag, this is first time setup');
           }
           
           // If no existing handle or permission denied, prompt user
           if (!handle) {
-            console.log('Prompting user to select folder...');
+            console.log('📂 Prompting user to select folder...');
+            toast.info('Please select a folder to store your tools');
             handle = await window.showDirectoryPicker({
               mode: 'readwrite',
               startIn: 'documents'
             });
-            console.log('Folder selected successfully:', handle);
-          } else {
-            console.log('Using existing folder handle');
+            console.log('✅ Folder selected successfully:', handle.name);
           }
           
           // Store handle in IndexedDB for persistence
