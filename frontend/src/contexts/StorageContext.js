@@ -54,7 +54,7 @@ export const StorageProvider = ({ children }) => {
       setStorageMode(mode);
       localStorage.setItem('nodenest_storage_mode', mode);
     } else if (mode === 'local') {
-      // If filesystem storage, prompt user to select directory FIRST
+      // If filesystem storage, check for existing handle first
       if (storageType === 'filesystem') {
         try {
           console.log('Starting folder selection...');
@@ -71,12 +71,47 @@ export const StorageProvider = ({ children }) => {
             throw new Error('Folder storage cannot be used in preview mode. Please open the app in a new tab: Right-click → "Open in New Tab" or use Cloud Storage instead.');
           }
           
-          console.log('Calling showDirectoryPicker...');
-          const handle = await window.showDirectoryPicker({
-            mode: 'readwrite',
-            startIn: 'documents'
-          });
-          console.log('Folder selected successfully:', handle);
+          // Check if we already have a folder handle from previous session
+          let handle = null;
+          const hasDirectory = localStorage.getItem('nodenest_has_directory');
+          
+          if (hasDirectory === 'true') {
+            console.log('Checking for existing folder handle...');
+            try {
+              const db = await openDB();
+              const tx = db.transaction('handles', 'readonly');
+              const request = tx.objectStore('handles').get('directory');
+              
+              handle = await new Promise((resolve, reject) => {
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+              });
+              
+              if (handle) {
+                console.log('Found existing folder handle, requesting permission...');
+                const permission = await handle.requestPermission({ mode: 'readwrite' });
+                if (permission !== 'granted') {
+                  console.log('Permission denied, will prompt for new folder');
+                  handle = null;
+                }
+              }
+            } catch (error) {
+              console.error('Error checking existing handle:', error);
+              handle = null;
+            }
+          }
+          
+          // If no existing handle or permission denied, prompt user
+          if (!handle) {
+            console.log('Prompting user to select folder...');
+            handle = await window.showDirectoryPicker({
+              mode: 'readwrite',
+              startIn: 'documents'
+            });
+            console.log('Folder selected successfully:', handle);
+          } else {
+            console.log('Using existing folder handle');
+          }
           
           // Store handle in IndexedDB for persistence
           const db = await openDB();
