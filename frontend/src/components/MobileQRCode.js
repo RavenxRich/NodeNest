@@ -116,8 +116,17 @@ const MobileQRCode = () => {
               <div className="flex flex-col justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[320px]">
                 {qrData ? (
                   <>
-                    <div style={{ backgroundColor: '#FFFFFF', padding: '16px' }}>
-                      <QRCodeSVG 
+                    <div 
+                      ref={qrRef}
+                      style={{ 
+                        backgroundColor: '#FFFFFF', 
+                        padding: '16px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <QRCodeCanvas 
                         value={qrData} 
                         size={220} 
                         level="M" 
@@ -126,7 +135,8 @@ const MobileQRCode = () => {
                         bgColor="#FFFFFF"
                       />
                     </div>
-                    <p className="text-xs text-gray-400 mt-2">QR Code Generated</p>
+                    <p className="text-xs text-gray-600 font-semibold mt-3">✓ QR Code Ready</p>
+                    <p className="text-xs text-gray-400 mt-1">Scan with your phone camera</p>
                   </>
                 ) : (
                   <div className="text-gray-500 text-center">
