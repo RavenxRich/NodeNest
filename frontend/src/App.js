@@ -13,7 +13,7 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark">
       <StorageProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="/NodeNest">
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/dashboard" element={<Dashboard />} />
