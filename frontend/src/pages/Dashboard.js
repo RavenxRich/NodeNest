@@ -24,20 +24,27 @@ const Dashboard = () => {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
+    // CRITICAL FIX: Wait for context to initialize before making redirect decisions
+    if (!isInitialized) {
+      console.log('⏳ Waiting for context to initialize...');
+      return; // Don't do anything until context is initialized
+    }
+    
     const mode = localStorage.getItem('nodenest_storage_mode');
     
-    // CRITICAL FIX: Give context time to initialize from localStorage
-    // Don't redirect immediately if storageMode is null - it might just be initializing
+    // Now that context is initialized, check if user has storage set up
     if (!mode && !storageMode) {
       // No storage mode in localStorage AND no storageMode in context
       // This means user hasn't set up storage yet
+      console.log('❌ No storage mode found, redirecting to landing');
       navigate('/');
       return;
     }
     
-    // If localStorage has mode but context doesn't yet, wait for context to sync
-    // Don't force reload - context will initialize from localStorage naturally
-  }, [storageMode, navigate]);
+    if (storageMode) {
+      console.log('✅ Storage mode confirmed:', storageMode);
+    }
+  }, [isInitialized, storageMode, navigate]);
 
   useEffect(() => {
     console.log('🏁 Dashboard mounted, calling loadTools...');
