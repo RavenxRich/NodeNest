@@ -32,6 +32,8 @@ export const useStorage = () => {
 };
 
 export const StorageProvider = ({ children }) => {
+  // CRITICAL FIX: Add isInitialized state to prevent premature Dashboard redirects
+  const [isInitialized, setIsInitialized] = useState(false);
   const [storageMode, setStorageMode] = useState(() => {
     return localStorage.getItem('nodenest_storage_mode') || null;
   });
@@ -44,6 +46,11 @@ export const StorageProvider = ({ children }) => {
   const [localStorageType, setLocalStorageType] = useState(() => {
     return localStorage.getItem('nodenest_local_storage_type') || 'browser'; // 'browser' or 'filesystem'
   });
+  
+  // Mark context as initialized after first render
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
 
   // Initialize storage mode
   const selectStorageMode = async (mode, googleUser = null, storageType = 'browser') => {
