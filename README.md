@@ -26,23 +26,31 @@ A visual AI tools bookmark manager with radial interface for organizing your fav
 ## Project Structure
 
 ```
-/
+NodeNest/                    (GitHub Pages Deployment)
 ├── .github/
-│   └── workflows/     # GitHub Actions for auto-deploy
-├── frontend/          # React source code
+│   └── workflows/          # Auto-deployment via GitHub Actions
+├── frontend/               # React source code (for development)
 │   ├── src/
-│   │   ├── components/  # Reusable components
-│   │   ├── pages/       # Page components (Landing, Dashboard, Settings, Stats)
-│   │   ├── contexts/    # React contexts (StorageContext)
-│   │   └── utils/       # Utility functions
-│   └── public/        # Static assets
-├── static/            # Built assets (deployed to GitHub Pages)
-│   ├── css/           # Compiled CSS
-│   └── js/            # Compiled JavaScript
-├── index.html         # Main HTML (deployed)
-├── 404.html           # Fallback for SPA client-side routing
-└── README.md          # This file
+│   │   ├── components/    # Reusable UI components
+│   │   ├── pages/         # Landing, Dashboard, Settings, Stats
+│   │   ├── contexts/      # StorageContext (folder/cloud storage)
+│   │   └── utils/         # Helper functions
+│   ├── public/            # Static assets
+│   └── package.json       # Dependencies
+├── static/                # Built assets (served by GitHub Pages)
+│   ├── css/              # Compiled stylesheets
+│   └── js/               # Compiled React bundle
+├── index.html             # Main entry point
+├── 404.html               # SPA routing fallback
+├── .gitignore             # Excludes node_modules, build artifacts
+├── .nojekyll              # Disables Jekyll processing
+└── README.md              # Documentation
 ```
+
+**Only 4 essential items on GitHub:**
+- `index.html` & `404.html` - Entry points
+- `static/` - Compiled app
+- `.github/workflows/` - Auto-deployment
 
 ## Development
 
