@@ -5,7 +5,7 @@ import { useStorage } from '../contexts/StorageContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { HardDrive, Cloud, Sparkles } from 'lucide-react';
+import { HardDrive, Cloud, Sparkles, QrCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Google OAuth Client ID from environment
