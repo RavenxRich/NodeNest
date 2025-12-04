@@ -93,8 +93,11 @@ const Landing = () => {
                     localStorage.setItem('nodenest_storage_mode', 'local');
                     localStorage.setItem('nodenest_local_storage_type', 'filesystem');
                     localStorage.setItem('nodenest_user_id', 'local_user');
+                    console.log('✅ localStorage set after permission request');
                     // Force reload to update context
-                    window.location.href = window.location.origin + window.location.pathname + '/dashboard';
+                    const dashboardUrl = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/dashboard';
+                    console.log('🔄 Navigating to:', dashboardUrl);
+                    window.location.href = dashboardUrl;
                   } else {
                     console.log('❌ Permission denied');
                     localStorage.removeItem('nodenest_storage_mode');
