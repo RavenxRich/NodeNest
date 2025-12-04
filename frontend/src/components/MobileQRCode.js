@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState, useEffect, useRef } from 'react';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ const MobileQRCode = () => {
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const qrRef = useRef(null);
 
   const exportLocalStorage = () => {
     try {
