@@ -125,17 +125,21 @@ export const StorageProvider = ({ children }) => {
     return { success: true };
   };
 
-  // Load categories
+  // Initialize default categories
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await axios.get(`${API}/categories`);
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error loading categories:', error);
-      }
-    };
-    loadCategories();
+    // Use default categories since we don't have a backend
+    const defaultCategories = [
+      'AI Tools',
+      'Productivity',
+      'Design',
+      'Development',
+      'Writing',
+      'Research',
+      'Automation',
+      'Communication',
+      'Other'
+    ];
+    setCategories(defaultCategories);
   }, []);
 
   // Load tools from filesystem
