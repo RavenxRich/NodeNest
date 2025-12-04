@@ -133,33 +133,38 @@ const MobileQRCode = () => {
                 </Button>
               </div>
               <div className="flex flex-col justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl min-h-[320px]">
-                {qrData ? (
+                {qrReady && qrData ? (
                   <>
                     <div 
                       ref={qrRef}
                       style={{ 
                         backgroundColor: '#FFFFFF', 
-                        padding: '16px',
+                        padding: '20px',
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        border: '2px solid #e5e7eb'
                       }}
                     >
                       <QRCodeCanvas 
                         value={qrData} 
-                        size={220} 
+                        size={240} 
                         level="M" 
                         includeMargin={true}
                         fgColor="#000000"
                         bgColor="#FFFFFF"
+                        style={{ display: 'block' }}
                       />
                     </div>
-                    <p className="text-xs text-gray-600 font-semibold mt-3">✓ QR Code Ready</p>
-                    <p className="text-xs text-gray-400 mt-1">Scan with your phone camera</p>
+                    <p className="text-sm text-gray-700 font-semibold mt-4">✓ QR Code Ready to Scan</p>
+                    <p className="text-xs text-gray-500 mt-2">Open camera app on your phone and scan</p>
                   </>
                 ) : (
                   <div className="text-gray-500 text-center">
-                    <p>Generating QR code...</p>
+                    <div className="animate-pulse">
+                      <div className="w-48 h-48 bg-gray-200 rounded mb-4"></div>
+                      <p>Generating QR code...</p>
+                    </div>
                   </div>
                 )}
               </div>
