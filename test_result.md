@@ -24,7 +24,7 @@
 - **implemented**: true
 - **working**: false
 - **file**: "/app/frontend/src/pages/Landing.js"
-- **stuck_count**: 0
+- **stuck_count**: 1
 - **priority**: "high"
 - **needs_retesting**: false
 - **status_history**:
@@ -34,6 +34,9 @@
   - **working**: false
   - **agent**: "testing"
   - **comment**: "CRITICAL ISSUE: Multiple problems identified in folder persistence logic: 1) Race condition between StorageContext initialization and Landing page useEffect, 2) Full page reload navigation causes context reinitialization, 3) Automatic permission requests in useEffect may be blocked by browser, 4) useEffect runs multiple times due to navigate dependency changes. The checkExistingStorage function logic is sound but execution timing issues prevent proper folder restoration."
+  - **working**: false
+  - **agent**: "testing"
+  - **comment**: "CRITICAL ISSUE PERSISTS: After testing the bug fix, the folder persistence is still not working. The fix addresses selectStorageMode timing but has a fundamental logic flaw. The useEffect in Landing.js (lines 132-136) only runs checkExistingStorage() if storageMode is already set, but StorageContext clears localStorage flags when no IndexedDB handle is found, creating a chicken-and-egg problem. The app should check for existing folder handles even when storageMode is null if has_directory flag exists. Console shows: 'No folder handle found in IndexedDB' and localStorage flags get cleared on reload."
 
 ### Task: IndexedDB Handle Storage
 - **task**: "Test IndexedDB folder handle storage and retrieval"
