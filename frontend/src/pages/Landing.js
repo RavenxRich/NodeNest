@@ -68,38 +68,33 @@ const Landing = () => {
               // Check permission status
               const permission = await handle.queryPermission({ mode: 'readwrite' });
               if (permission === 'granted') {
-                // Permission already granted, SET STORAGE MODE then navigate
-                console.log('✅ Folder permission already granted, setting storage mode');
-                console.log('📝 Setting localStorage items...');
-                localStorage.setItem('nodenest_storage_mode', 'local');
-                localStorage.setItem('nodenest_local_storage_type', 'filesystem');
-                localStorage.setItem('nodenest_user_id', 'local_user');
-                console.log('✅ localStorage set:', {
-                  storageMode: localStorage.getItem('nodenest_storage_mode'),
-                  localStorageType: localStorage.getItem('nodenest_local_storage_type'),
-                  userId: localStorage.getItem('nodenest_user_id'),
-                  hasDirectory: localStorage.getItem('nodenest_has_directory')
-                });
+                // Permission already granted, SET STORAGE MODE FIRST
+                console.log('✅ Folder permission already granted, setting storage mode in context');
+                
+                // CRITICAL FIX: Call selectStorageMode to update context BEFORE navigation
+                await selectStorageMode('local', null, 'filesystem');
+                
+                console.log('✅ Storage mode set in context');
                 console.log('🔄 Navigating to dashboard...');
-                // Force reload to update context
-                const dashboardUrl = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/dashboard';
-                console.log('Dashboard URL:', dashboardUrl);
-                window.location.href = dashboardUrl;
+                
+                // Navigate using React Router (no full page reload)
+                navigate('/dashboard');
               } else if (permission === 'prompt') {
                 // Request permission here
                 try {
                   console.log('📂 Requesting folder permission...');
                   const newPermission = await handle.requestPermission({ mode: 'readwrite' });
                   if (newPermission === 'granted') {
-                    console.log('✅ Permission granted, setting storage mode');
-                    localStorage.setItem('nodenest_storage_mode', 'local');
-                    localStorage.setItem('nodenest_local_storage_type', 'filesystem');
-                    localStorage.setItem('nodenest_user_id', 'local_user');
-                    console.log('✅ localStorage set after permission request');
-                    // Force reload to update context
-                    const dashboardUrl = window.location.origin + window.location.pathname.replace(/\/$/, '') + '/dashboard';
-                    console.log('🔄 Navigating to:', dashboardUrl);
-                    window.location.href = dashboardUrl;
+                    console.log('✅ Permission granted, setting storage mode in context');
+                    
+                    // CRITICAL FIX: Call selectStorageMode to update context BEFORE navigation
+                    await selectStorageMode('local', null, 'filesystem');
+                    
+                    console.log('✅ Storage mode set in context');
+                    console.log('🔄 Navigating to dashboard...');
+                    
+                    // Navigate using React Router (no full page reload)
+                    navigate('/dashboard');
                   } else {
                     console.log('❌ Permission denied');
                     localStorage.removeItem('nodenest_storage_mode');
