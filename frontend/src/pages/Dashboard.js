@@ -218,6 +218,7 @@ const Dashboard = () => {
               <Plus className="w-4 h-4" />
               Add Tool
             </Button>
+            <MobileQRCode />
             <Button
               data-testid="stats-btn"
               size="sm"
