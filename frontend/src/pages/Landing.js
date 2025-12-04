@@ -32,7 +32,10 @@ const Landing = () => {
   // Check if already has storage mode selected
   React.useEffect(() => {
     if (storageMode) {
-      navigate('/dashboard');
+      // Small delay to ensure router is ready
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 100);
     }
   }, [storageMode, navigate]);
 
