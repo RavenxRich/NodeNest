@@ -50,9 +50,14 @@ const Landing = () => {
                   // Permission already granted, go directly to dashboard
                   navigate('/dashboard');
                 } else {
-                  // Need to request permission - will happen in dashboard
+                  // Permission not granted, will request when user enters dashboard
+                  // For now, go to dashboard and it will handle permission request
                   navigate('/dashboard');
                 }
+              } else {
+                // No handle found, clear state and stay on landing page
+                localStorage.removeItem('nodenest_storage_mode');
+                localStorage.removeItem('nodenest_has_directory');
               }
             };
           } catch (error) {
