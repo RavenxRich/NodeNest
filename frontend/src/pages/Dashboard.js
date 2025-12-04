@@ -15,7 +15,7 @@ import { motion } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { storageMode, tools, loadTools, trackClick, updateTool } = useStorage();
+  const { isInitialized, storageMode, tools, loadTools, trackClick, updateTool } = useStorage();
   const { theme, setTheme } = useTheme();
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
