@@ -9,7 +9,26 @@ const MobileQRCode = () => {
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [qrReady, setQrReady] = useState(false);
   const qrRef = useRef(null);
+  
+  // Debug: Log when QR data changes
+  useEffect(() => {
+    if (qrData) {
+      console.log('✅ QR Data set:', qrData.substring(0, 50) + '...');
+      console.log('QR Data length:', qrData.length);
+      setQrReady(true);
+    }
+  }, [qrData]);
+  
+  // Debug: Log when modal shows
+  useEffect(() => {
+    if (showQR) {
+      console.log('📱 QR Modal opened');
+      console.log('QR Data exists:', !!qrData);
+      console.log('QR Ready:', qrReady);
+    }
+  }, [showQR, qrData, qrReady]);
 
   const exportLocalStorage = () => {
     try {
