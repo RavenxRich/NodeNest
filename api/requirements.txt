@@ -1,5 +1,0 @@
-fastapi==0.110.1
-uvicorn==0.25.0
-pydantic==2.12.4
-aiohttp==3.13.2
-mangum==0.17.0
