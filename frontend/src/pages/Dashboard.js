@@ -145,12 +145,12 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    // Clear all NodeNest data
+    // Clear session data but KEEP folder handle in IndexedDB for next login
     localStorage.removeItem('nodenest_storage_mode');
     localStorage.removeItem('nodenest_user_id');
     localStorage.removeItem('nodenest_tools_encrypted');
     localStorage.removeItem('nodenest_local_storage_type');
-    localStorage.removeItem('nodenest_has_directory');
+    // NOTE: We do NOT remove 'nodenest_has_directory' - folder handle persists!
     toast.success('Logged out successfully');
     navigate('/', { replace: true });
   };
