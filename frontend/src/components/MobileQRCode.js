@@ -12,6 +12,8 @@ const MobileQRCode = () => {
 
   const exportLocalStorage = () => {
     try {
+      setIsGenerating(true);
+      
       // Export all nodenest data from localStorage
       const data = {
         tools: localStorage.getItem('nodenest_tools_encrypted'),
@@ -20,21 +22,28 @@ const MobileQRCode = () => {
         localStorageType: localStorage.getItem('nodenest_local_storage_type')
       };
       
+      console.log('Exporting data:', data);
+      
       const jsonString = JSON.stringify(data);
       const encoded = btoa(encodeURIComponent(jsonString));
       
       // Create URL with data
       const url = `${window.location.origin}${window.location.pathname}#import=${encoded}`;
       
-      console.log('QR Code URL generated:', url);
-      console.log('QR Code URL length:', url.length);
+      console.log('✅ QR Code URL generated:', url);
+      console.log('✅ QR Code URL length:', url.length);
       
+      // Set data first, then show modal after a tick
       setQrData(url);
-      setShowQR(true);
-      toast.success('QR Code generated! Scan with your mobile device.');
+      setTimeout(() => {
+        setShowQR(true);
+        setIsGenerating(false);
+        toast.success('QR Code ready! Scan with your mobile device.');
+      }, 100);
     } catch (error) {
-      console.error('Error generating QR code:', error);
-      toast.error('Failed to generate QR code');
+      console.error('❌ Error generating QR code:', error);
+      setIsGenerating(false);
+      toast.error('Failed to generate QR code: ' + error.message);
     }
   };
 
