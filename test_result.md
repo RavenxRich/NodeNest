@@ -4,7 +4,7 @@
 **Issue**: After closing browser/returning to site, folder handle should be remembered but user is being asked to select folder again.
 
 **Test Date**: $(date)
-**Frontend URL**: https://tool-orbit.preview.emergentagent.com
+**Frontend URL**: https://nodenest.preview.emergentagent.com
 **Application Type**: Frontend-only React application (no backend)
 
 ## Test Plan

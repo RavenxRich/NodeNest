@@ -7,7 +7,7 @@
 
 const puppeteer = require('puppeteer');
 
-const FRONTEND_URL = 'https://tool-orbit.preview.emergentagent.com';
+const FRONTEND_URL = 'https://nodenest.preview.emergentagent.com';
 
 class FolderPersistenceTest {
     constructor() {

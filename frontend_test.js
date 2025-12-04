@@ -1,7 +1,7 @@
 // NodeNest Folder Persistence Test
 // This test examines the folder persistence logic issue
 
-const FRONTEND_URL = 'https://tool-orbit.preview.emergentagent.com';
+const FRONTEND_URL = 'https://nodenest.preview.emergentagent.com';
 
 console.log('🧪 Starting NodeNest Folder Persistence Test');
 console.log('Frontend URL:', FRONTEND_URL);
