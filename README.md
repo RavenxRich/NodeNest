@@ -1,35 +1,27 @@
 # NodeNest 🎯
 
-Visual AI Tools Dashboard with Mobile Support
+Visual AI Tools Dashboard with Mobile QR Code Sync
 
 **Live**: https://ravenxrich.github.io/NodeNest/
 
-## ✨ Features
+## Features
+- 🎯 Radial dashboard (8 category rings)
+- 📁 Folder storage (File System API)
+- ☁️ Google Cloud sync
+- 📱 Mobile QR code (data encoded in QR!)
+- 🏷️ Tags with delete
+- ⭐ Favorites
+- 🔍 Search
+- 🎨 Drag & drop
 
-- 🎯 **Radial Dashboard**: Organize tools in 8 category rings
-- 📁 **Folder Storage**: Save data to your computer
-- ☁️ **Google Cloud**: Sync across devices with Google sign-in
-- 📱 **Mobile QR Code**: Connect your mobile device instantly
-- 🏷️ **Smart Tags**: Tag and categorize tools
-- ⭐ **Favorites**: Quick access to most-used tools
-- 🔍 **Search**: Find tools instantly
-- 🎨 **Drag & Drop**: Rearrange between categories
-- 📤 **Export/Import**: Backup as JSON or CSV
+## Mobile Sync
+- Click "Mobile" button in dashboard
+- QR code contains your data (browser storage)
+- Scan on mobile → data imports automatically
+- Works with folder & cloud storage too
 
-## 📱 Mobile Access
-
-1. Click the "Mobile" button in dashboard header
-2. Scan QR code with your phone camera
-3. Access NodeNest on your mobile device
-4. Use same storage (folder or cloud)
-
-## ☁️ Google Sign-In
-
-- Click "Sign in with Google"
-- Use your Google account
-- Data syncs to Google Drive
-- Access from any device
-
-## 🚀 Deployment
-
-Auto-deploys to GitHub Pages on push to main.
+## Tech
+- React 18 + Framer Motion
+- TailwindCSS + Shadcn UI
+- Google OAuth
+- QR Code with embedded data
