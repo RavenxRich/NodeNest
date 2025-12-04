@@ -236,6 +236,7 @@ const Dashboard = () => {
             >
               <Settings className="w-4 h-4" />
             </Button>
+            <MobileQRCode />
             <Button
               data-testid="theme-toggle-btn"
               size="sm"
