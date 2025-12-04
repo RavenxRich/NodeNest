@@ -29,17 +29,19 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies
-        run: |
-          cd frontend
-          yarn install --frozen-lockfile
+        working-directory: frontend
+        run: yarn install --frozen-lockfile
 
       - name: Build
-        run: |
-          cd frontend
-          yarn build
+        working-directory: frontend
+        run: yarn build
         env:
           CI: false
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
