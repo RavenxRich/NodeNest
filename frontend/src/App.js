@@ -10,10 +10,13 @@ import { Toaster } from './components/ui/sonner';
 import '@/App.css';
 
 function App() {
+  // Use basename only for production (GitHub Pages)
+  const basename = process.env.NODE_ENV === 'production' ? '/NodeNest' : '';
+  
   return (
     <ThemeProvider attribute="class" defaultTheme="dark">
       <StorageProvider>
-        <BrowserRouter basename="/NodeNest">
+        <BrowserRouter basename={basename}>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/dashboard" element={<Dashboard />} />
