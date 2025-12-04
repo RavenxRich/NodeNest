@@ -271,7 +271,7 @@ const Landing = () => {
           <div className="text-center">
             <div className="text-4xl mb-2">🎯</div>
             <h4 className="font-semibold text-lg mb-1">Visual Organization</h4>
-            <p className="text-violet-200 text-sm">Radial layout inspired by orbits</p>
+            <p className="text-violet-200 text-sm">Radial layout inspired by nodes</p>
           </div>
           <div className="text-center">
             <div className="text-4xl mb-2">🤖</div>
