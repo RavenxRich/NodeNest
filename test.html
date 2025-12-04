@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-family: sans-serif; padding: 50px; text-align: center; }
+        .test { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px auto; max-width: 500px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 NodeNest Debug Test</h1>
+    <div class="test">
+        <h2>✅ GitHub Pages is Working!</h2>
+        <p>If you see this, GitHub Pages is serving files correctly.</p>
+        <p>Current URL: <span id="url"></span></p>
+        <p>Expected: https://ravenxrich.github.io/NodeNest/</p>
+    </div>
+    <div class="test">
+        <h2>📁 File Check</h2>
+        <p>JS File: <a href="./static/js/main.7ce30d40.js" style="color: #4ade80">Check JS</a></p>
+        <p>CSS File: <a href="./static/css/main.0782e8bc.css" style="color: #4ade80">Check CSS</a></p>
+    </div>
+    <div class="test">
+        <h2>🔄 Next Steps</h2>
+        <p>1. If files load: React app issue</p>
+        <p>2. If files 404: Path issue</p>
+        <p>3. Go to <a href="./index.html" style="color: #4ade80">index.html</a></p>
+    </div>
+    <script>
+        document.getElementById('url').textContent = window.location.href;
+    </script>
+</body>
+</html>
