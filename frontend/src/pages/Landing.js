@@ -49,10 +49,26 @@ const Landing = () => {
                 if (permission === 'granted') {
                   // Permission already granted, go directly to dashboard
                   navigate('/dashboard');
+                } else if (permission === 'prompt') {
+                  // Request permission here
+                  try {
+                    const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+                    if (newPermission === 'granted') {
+                      navigate('/dashboard');
+                    } else {
+                      // Permission denied, clear state and stay on landing
+                      localStorage.removeItem('nodenest_storage_mode');
+                      localStorage.removeItem('nodenest_has_directory');
+                    }
+                  } catch (error) {
+                    console.error('Permission request failed:', error);
+                    localStorage.removeItem('nodenest_storage_mode');
+                    localStorage.removeItem('nodenest_has_directory');
+                  }
                 } else {
-                  // Permission not granted, will request when user enters dashboard
-                  // For now, go to dashboard and it will handle permission request
-                  navigate('/dashboard');
+                  // Permission denied, clear state
+                  localStorage.removeItem('nodenest_storage_mode');
+                  localStorage.removeItem('nodenest_has_directory');
                 }
               } else {
                 // No handle found, clear state and stay on landing page
