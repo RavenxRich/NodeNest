@@ -149,15 +149,19 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    // Clear session data but KEEP folder handle in IndexedDB for next login
-    localStorage.removeItem('nodenest_storage_mode');
+    // CRITICAL FIX: DON'T remove storage_mode and local_storage_type
+    // These are needed for the app to remember the user's storage choice
+    // Only clear the user_id and encrypted tools data
     localStorage.removeItem('nodenest_user_id');
     localStorage.removeItem('nodenest_tools_encrypted');
-    localStorage.removeItem('nodenest_local_storage_type');
-    // NOTE: We do NOT remove 'nodenest_has_directory' - folder handle persists!
+    // NOTE: We do NOT remove:
+    // - 'nodenest_storage_mode' (keeps user's choice: local/cloud)
+    // - 'nodenest_local_storage_type' (keeps type: browser/filesystem)
+    // - 'nodenest_has_directory' (folder handle persists for filesystem mode)
+    
     toast.success('Logged out successfully');
-    // Force full page reload to reset all React state
-    window.location.href = window.location.origin + window.location.pathname.replace(/dashboard.*/, '');
+    // Navigate to landing page using React Router (no full page reload)
+    navigate('/');
   };
 
   const favoriteCount = tools.filter(t => t.favorite).length;
