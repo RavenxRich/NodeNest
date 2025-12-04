@@ -114,21 +114,19 @@ const MobileQRCode = () => {
 
       {showQR && (
         <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.85)' }}
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black bg-opacity-85"
           onClick={() => setShowQR(false)}
         >
           <div 
             onClick={e => e.stopPropagation()}
-            className="bg-white rounded-2xl p-6 w-full max-w-md"
-            style={{ maxHeight: '90vh', overflow: 'auto' }}
+            className="bg-white rounded-2xl p-8 w-full max-w-lg mx-auto my-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Scan QR Code</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Scan QR Code</h3>
               <button
                 onClick={() => setShowQR(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl leading-none p-2"
+                className="text-gray-400 hover:text-gray-600 text-3xl leading-none p-2 -mt-2 -mr-2"
                 aria-label="Close"
               >
                 ×
@@ -136,43 +134,50 @@ const MobileQRCode = () => {
             </div>
             
             {qrData ? (
-              <div className="flex flex-col items-center justify-center space-y-4">
-                {/* QR Code Container */}
+              <div className="flex flex-col items-center justify-center space-y-6">
+                {/* QR Code Container - CENTERED AND LARGER */}
                 <div 
-                  className="bg-white p-6 rounded-xl flex items-center justify-center"
-                  style={{ border: '3px solid #8b5cf6' }}
+                  className="bg-white p-8 rounded-2xl flex items-center justify-center w-full"
+                  style={{ border: '4px solid #8b5cf6', minHeight: '300px' }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={220} 
+                    size={256}
                     level="M"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
-                    style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
+                    style={{ 
+                      display: 'block', 
+                      width: '256px', 
+                      height: '256px',
+                      margin: '0 auto'
+                    }}
                   />
                 </div>
                 
                 {/* Instructions */}
-                <div className="text-center">
-                  <p className="text-gray-700 font-semibold text-sm mb-1">
-                    Scan with your phone camera
+                <div className="text-center w-full">
+                  <p className="text-gray-700 font-semibold text-base mb-2">
+                    📱 Scan with your phone camera
                   </p>
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-gray-500 text-sm">
                     Your tools data will be imported automatically
                   </p>
                 </div>
                 
                 {/* Debug info */}
-                <details className="text-xs text-gray-400 w-full">
-                  <summary className="cursor-pointer">Debug Info</summary>
-                  <p className="mt-2">QR Data Length: {qrData.length}</p>
-                  <p className="break-all">QR Data: {qrData.substring(0, 100)}...</p>
+                <details className="text-xs text-gray-400 w-full mt-4">
+                  <summary className="cursor-pointer hover:text-gray-600">Debug Info</summary>
+                  <div className="mt-2 p-3 bg-gray-50 rounded">
+                    <p>QR Data Length: {qrData.length}</p>
+                    <p className="break-all mt-1">QR Data: {qrData.substring(0, 100)}...</p>
+                  </div>
                 </details>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <p>Loading QR code...</p>
-                <p className="text-xs mt-2">qrData is empty</p>
+              <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-4"></div>
+                <p className="text-lg">Generating QR code...</p>
               </div>
             )}
           </div>
