@@ -1,82 +1,26 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
 
-# Production build (deployed by GitHub Actions)
+# Production
 frontend/build/
 
-# Environment files
-.env*
-*.env
+# Environment
+.env
+.env.local
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# OS files
+# OS
 .DS_Store
-Thumbs.db
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Testing files
-coverage/
-test_result.md
-*_test.js
-*_test.html
-
-# Development only
+# Emergent
 .emergent/
 .gitconfig
-.deploy-timestamp
 
-# Backend (not used for GitHub Pages)
-backend/
-
-# Root static files (not needed - GitHub Actions builds from frontend/)
-static/
-index.html
-404.html
-asset-manifest.json
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+# Testing
+test_result.md
