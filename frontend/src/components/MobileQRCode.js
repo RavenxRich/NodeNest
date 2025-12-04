@@ -85,11 +85,11 @@ const MobileQRCode = () => {
       </div>
 
       {showQR && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setShowQR(false)}>
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setShowQR(false)}>
           <div className="relative w-full max-w-md mx-auto my-auto">
-            <Card className="p-6 bg-white dark:bg-slate-900 w-full" onClick={e => e.stopPropagation()}>
+            <Card className="p-6 bg-white w-full shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold dark:text-white">Scan to Import on Mobile</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Scan to Import on Mobile</h3>
                 <Button
                   onClick={() => setShowQR(false)}
                   variant="ghost"
@@ -99,10 +99,17 @@ const MobileQRCode = () => {
                   <X className="w-4 h-4" />
                 </Button>
               </div>
-              <div className="flex justify-center items-center p-8 bg-white dark:bg-slate-800 rounded-lg">
-                <QRCodeSVG value={qrData} size={220} level="M" includeMargin={true} />
+              <div className="flex justify-center items-center p-8 bg-white border-4 border-violet-500 rounded-xl">
+                <QRCodeSVG 
+                  value={qrData} 
+                  size={220} 
+                  level="M" 
+                  includeMargin={true}
+                  fgColor="#000000"
+                  bgColor="#FFFFFF"
+                />
               </div>
-              <p className="text-xs text-muted-foreground dark:text-slate-400 text-center mt-4">
+              <p className="text-sm text-gray-600 text-center mt-4 leading-relaxed">
                 Scan this QR code with your mobile device's camera to import your tools data
               </p>
             </Card>
