@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/NodeNest/static/css/main.1368b119.css",
+    "main.js": "/NodeNest/static/js/main.39156843.js",
+    "index.html": "/NodeNest/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.1368b119.css",
+    "static/js/main.39156843.js"
+  ]
+}

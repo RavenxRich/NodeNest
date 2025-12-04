@@ -1,19 +1,24 @@
 # Dependencies
 node_modules/
 frontend/node_modules/
+
+# Production build (will be deployed separately)
 frontend/build/
 
 # Environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/var/log/
 
 # OS files
 .DS_Store
@@ -27,100 +32,27 @@ Thumbs.db
 
 # Testing
 coverage/
+test_result.md
+*_test.js
+*_test.html
+browser_test.html
+comprehensive_test.js
+folder_persistence_test.js
+frontend_test.js
+test_folder_persistence.js
 
 # Misc
 .cache/
-asset-manifest.json
 
-# Emergent platform specific
+# Backend (not needed for GitHub Pages)
+backend/
+
+# Emergent platform specific (development environment only)
 .emergent/
 .gitconfig
 .deploy-timestamp
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Static folder at root (not needed - built files go in frontend/build)
+static/
+index.html
+404.html
