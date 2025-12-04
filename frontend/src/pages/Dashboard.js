@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/badge';
 import RadialCanvas from '../components/RadialCanvas';
 import AddNodeModal from '../components/AddNodeModal';
 import NodeDetailsSidebar from '../components/NodeDetailsSidebar';
+import MobileQRCode from '../components/MobileQRCode';
 import { toast } from 'sonner';
 import { Plus, Settings, BarChart3, Moon, Sun, Search, LogOut, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
