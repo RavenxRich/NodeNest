@@ -2,9 +2,6 @@
 node_modules/
 frontend/node_modules/
 
-# Build outputs (kept in root for GitHub Pages)
-# frontend/build is copied to root for deployment
-
 # Environment variables
 .env.local
 .env.development.local
@@ -32,23 +29,8 @@ coverage/
 
 # Misc
 .cache/
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Emergent platform specific
+.emergent/
+.gitconfig
+.deploy-timestamp
