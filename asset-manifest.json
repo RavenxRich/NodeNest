@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/NodeNest/static/css/main.4de493bd.css",
+    "main.js": "/NodeNest/static/js/main.f70acab1.js",
+    "index.html": "/NodeNest/index.html",
+    "main.4de493bd.css.map": "/NodeNest/static/css/main.4de493bd.css.map",
+    "main.f70acab1.js.map": "/NodeNest/static/js/main.f70acab1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4de493bd.css",
+    "static/js/main.f70acab1.js"
+  ]
+}
