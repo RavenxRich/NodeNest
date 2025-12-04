@@ -36,3 +36,7 @@ api/
 tests/
 *.test.js
 *.spec.js
+-e 
+# Environment files
+*.env
+*.env.*
