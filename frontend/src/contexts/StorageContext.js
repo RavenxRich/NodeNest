@@ -161,22 +161,36 @@ export const StorageProvider = ({ children }) => {
             const permission = await handle.queryPermission({ mode: 'readwrite' });
             if (permission === 'granted') {
               setDirectoryHandle(handle);
+              console.log('✅ Folder access already granted');
             } else if (permission === 'prompt') {
-              // Request permission again
+              // Request permission again - browser will show dialog
+              toast.info('Please confirm folder access in the browser dialog');
               const newPermission = await handle.requestPermission({ mode: 'readwrite' });
               if (newPermission === 'granted') {
                 setDirectoryHandle(handle);
+                toast.success('Folder access confirmed!');
               } else {
                 console.error('Permission denied');
+                toast.error('Folder access denied. Please allow access to continue.');
+                // Clear storage settings
+                localStorage.removeItem('nodenest_storage_mode');
+                localStorage.removeItem('nodenest_has_directory');
                 return [];
               }
             } else {
               console.error('Permission denied');
+              toast.error('Folder access was denied. Please select folder again.');
+              // Clear storage settings
+              localStorage.removeItem('nodenest_storage_mode');
+              localStorage.removeItem('nodenest_has_directory');
               return [];
             }
           } else {
             // No handle found, need to select directory again
             console.log('No directory handle found. Please select a folder again.');
+            toast.error('No folder found. Please select a folder again.');
+            localStorage.removeItem('nodenest_storage_mode');
+            localStorage.removeItem('nodenest_has_directory');
             return [];
           }
         } else {
