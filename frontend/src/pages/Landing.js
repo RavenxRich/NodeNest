@@ -31,16 +31,44 @@ const Landing = () => {
 
   // Check if already has storage mode selected
   React.useEffect(() => {
-    if (storageMode) {
-      // For folder storage, always require re-selection on page load
-      // This ensures user explicitly grants folder access each session
-      const hasDirectory = localStorage.getItem('nodenest_has_directory');
-      if (storageMode === 'local' && hasDirectory !== 'true') {
-        // Clear invalid storage mode
-        localStorage.removeItem('nodenest_storage_mode');
-        return;
+    const checkExistingStorage = async () => {
+      if (storageMode === 'local') {
+        const hasDirectory = localStorage.getItem('nodenest_has_directory');
+        if (hasDirectory === 'true') {
+          // Check if we can verify folder access without re-selection
+          try {
+            const db = await indexedDB.open('NodeNestDB', 1);
+            const tx = db.transaction('handles', 'readonly');
+            const request = tx.objectStore('handles').get('directory');
+            
+            request.onsuccess = async () => {
+              const handle = request.result;
+              if (handle) {
+                // Check permission status
+                const permission = await handle.queryPermission({ mode: 'readwrite' });
+                if (permission === 'granted') {
+                  // Permission already granted, go directly to dashboard
+                  navigate('/dashboard');
+                } else {
+                  // Need to request permission - will happen in dashboard
+                  navigate('/dashboard');
+                }
+              }
+            };
+          } catch (error) {
+            console.error('Error checking folder access:', error);
+            // Clear invalid state
+            localStorage.removeItem('nodenest_storage_mode');
+            localStorage.removeItem('nodenest_has_directory');
+          }
+        }
+      } else if (storageMode === 'cloud') {
+        navigate('/dashboard');
       }
-      navigate('/dashboard');
+    };
+    
+    if (storageMode) {
+      checkExistingStorage();
     }
   }, [storageMode, navigate]);
 
