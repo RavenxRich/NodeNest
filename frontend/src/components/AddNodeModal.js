@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useStorage } from '../contexts/StorageContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Button } from './ui/button';
@@ -9,33 +9,43 @@ import { Textarea } from './ui/textarea';
 import { Badge } from './ui/badge';
 import { toast } from 'sonner';
 import { Loader2, Sparkles, X } from 'lucide-react';
+import { STORAGE_KEYS, DEFAULT_CATEGORIES } from '../utils/constants';
+
+const INITIAL_FORM_STATE = {
+  url: '',
+  title: '',
+  description: '',
+  category_id: DEFAULT_CATEGORIES[0]?.id || 'ai_tools',
+  tags: [],
+  favicon: '',
+  notes: '',
+  favorite: false
+};
 
 const AddNodeModal = ({ open, onClose }) => {
   const { categories, addTool, extractMetadata, loadTools } = useStorage();
   const [loading, setLoading] = useState(false);
   const [extracting, setExtracting] = useState(false);
-  const [formData, setFormData] = useState({
-    url: '',
-    title: '',
-    description: '',
-    category_id: 'chat-assistants',
-    tags: [],
-    favicon: '',
-    notes: '',
-    favorite: false
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [tagInput, setTagInput] = useState('');
 
-  const normalizeUrl = (url) => {
+  // Normalize URL - add https if missing
+  const normalizeUrl = useCallback((url) => {
     let normalized = url.trim();
-    // If no protocol, add https://
     if (!normalized.match(/^https?:\/\//i)) {
       normalized = 'https://' + normalized;
     }
     return normalized;
-  };
+  }, []);
 
-  const handleExtractMetadata = async () => {
+  // Reset form to initial state
+  const resetForm = useCallback(() => {
+    setFormData(INITIAL_FORM_STATE);
+    setTagInput('');
+  }, []);
+
+  // Handle metadata extraction with AI
+  const handleExtractMetadata = useCallback(async () => {
     if (!formData.url) {
       toast.error('Please enter a URL first');
       return;
@@ -55,19 +65,20 @@ const AddNodeModal = ({ open, onClose }) => {
         favicon: metadata.favicon || prev.favicon
       }));
       
-      const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
+      const llmProvider = localStorage.getItem(STORAGE_KEYS.LLM_PROVIDER) || 'anthropic';
       const providerName = llmProvider === 'local' ? 'Local LLM' : 
                           llmProvider === 'anthropic' ? 'Claude' : 
                           llmProvider === 'openai' ? 'GPT' : 'Gemini';
       toast.success(`Metadata extracted using ${providerName}!`);
     } catch (error) {
-      toast.error('Failed to extract metadata');
+      toast.error('Failed to extract metadata. Please fill in manually.');
     } finally {
       setExtracting(false);
     }
-  };
+  }, [formData.url, normalizeUrl, extractMetadata]);
 
-  const handleAddTag = (e) => {
+  // Handle adding tags
+  const handleAddTag = useCallback((e) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
       const tag = tagInput.trim();
@@ -76,16 +87,23 @@ const AddNodeModal = ({ open, onClose }) => {
         setTagInput('');
       }
     }
-  };
+  }, [tagInput, formData.tags]);
 
-  const removeTag = (tagToRemove) => {
+  // Handle removing tags
+  const removeTag = useCallback((tagToRemove) => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e) => {
+  // Handle form field changes
+  const handleFieldChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  // Handle form submission
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
     if (!formData.url || !formData.title) {
@@ -100,28 +118,50 @@ const AddNodeModal = ({ open, onClose }) => {
       await loadTools();
       toast.success('Tool added successfully!');
       onClose();
-      // Reset form
-      setFormData({
-        url: '',
-        title: '',
-        description: '',
-        category_id: 'chat-assistants',
-        tags: [],
-        favicon: '',
-        notes: '',
-        favorite: false
-      });
-      setTagInput('');
+      resetForm();
     } catch (error) {
-      toast.error('Failed to add tool');
-      console.error('Error adding tool:', error);
+      toast.error('Failed to add tool. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [formData, normalizeUrl, addTool, loadTools, onClose, resetForm]);
+
+  // Handle dialog close
+  const handleClose = useCallback(() => {
+    if (!loading) {
+      onClose();
+    }
+  }, [loading, onClose]);
+
+  // Memoized category options
+  const categoryOptions = useMemo(() => 
+    categories.map(cat => (
+      <SelectItem key={cat.id} value={cat.id}>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
+          {cat.name}
+        </div>
+      </SelectItem>
+    )), [categories]);
+
+  // Memoized tag badges
+  const tagBadges = useMemo(() => 
+    formData.tags.map(tag => (
+      <Badge key={tag} variant="secondary" className="gap-1">
+        {tag}
+        <button
+          type="button"
+          onClick={() => removeTag(tag)}
+          className="ml-1 hover:text-destructive transition-colors"
+          aria-label={`Remove ${tag} tag`}
+        >
+          <X className="w-3 h-3" />
+        </button>
+      </Badge>
+    )), [formData.tags, removeTag]);
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent data-testid="add-node-modal" className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Add New Tool</DialogTitle>
@@ -141,15 +181,16 @@ const AddNodeModal = ({ open, onClose }) => {
                 type="text"
                 placeholder="claude.ai or https://example.com"
                 value={formData.url}
-                onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+                onChange={(e) => handleFieldChange('url', e.target.value)}
                 required
                 className="flex-1"
+                disabled={loading}
               />
               <Button
                 type="button"
                 data-testid="extract-metadata-btn"
                 onClick={handleExtractMetadata}
-                disabled={extracting || !formData.url}
+                disabled={extracting || !formData.url || loading}
                 variant="outline"
                 className="gap-2"
               >
@@ -173,8 +214,9 @@ const AddNodeModal = ({ open, onClose }) => {
               type="text"
               placeholder="Tool name"
               value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              onChange={(e) => handleFieldChange('title', e.target.value)}
               required
+              disabled={loading}
             />
           </div>
 
@@ -186,8 +228,9 @@ const AddNodeModal = ({ open, onClose }) => {
               data-testid="description-input"
               placeholder="What does this tool do?"
               value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => handleFieldChange('description', e.target.value)}
               rows={3}
+              disabled={loading}
             />
           </div>
 
@@ -196,20 +239,14 @@ const AddNodeModal = ({ open, onClose }) => {
             <Label htmlFor="category">Category *</Label>
             <Select
               value={formData.category_id}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+              onValueChange={(value) => handleFieldChange('category_id', value)}
+              disabled={loading}
             >
               <SelectTrigger data-testid="category-select">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {categories.map(cat => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                      {cat.name}
-                    </div>
-                  </SelectItem>
-                ))}
+                {categoryOptions}
               </SelectContent>
             </Select>
           </div>
@@ -219,18 +256,7 @@ const AddNodeModal = ({ open, onClose }) => {
             <Label htmlFor="tags">Tags</Label>
             {formData.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
-                {formData.tags.map(tag => (
-                  <Badge key={tag} variant="secondary" className="gap-1">
-                    {tag}
-                    <button
-                      type="button"
-                      onClick={() => removeTag(tag)}
-                      className="ml-1 hover:text-destructive"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
-                ))}
+                {tagBadges}
               </div>
             )}
             <Input
@@ -241,6 +267,7 @@ const AddNodeModal = ({ open, onClose }) => {
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleAddTag}
+              disabled={loading}
             />
             <p className="text-xs text-muted-foreground">Press Enter or comma to add tags</p>
           </div>
@@ -253,8 +280,9 @@ const AddNodeModal = ({ open, onClose }) => {
               data-testid="notes-input"
               placeholder="Add any personal notes..."
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) => handleFieldChange('notes', e.target.value)}
               rows={2}
+              disabled={loading}
             />
           </div>
 
@@ -263,15 +291,16 @@ const AddNodeModal = ({ open, onClose }) => {
             <Button
               type="button"
               variant="outline"
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1"
+              disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
               data-testid="add-tool-submit-btn"
-              disabled={loading}
+              disabled={loading || !formData.url || !formData.title}
               className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
             >
               {loading ? (

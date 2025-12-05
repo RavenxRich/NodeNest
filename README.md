@@ -1,149 +1,273 @@
 # NodeNest
 
-**Visual AI Tools Bookmark Manager**
+<div align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS" />
+  <img src="https://img.shields.io/badge/Framer_Motion-12.x-FF0066?style=for-the-badge&logo=framer" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
+</div>
 
-A personal, radial dashboard for organizing and managing your AI tools bookmarks.
+<br />
 
-🔗 **Live Site:** https://ravenxrich.github.io/NodeNest/
-
----
-
-## Features
-
-- 🎯 **Visual Organization**: Radial layout for tool management
-- 💾 **Local Storage**: Browser storage or folder-based storage using File System Access API
-- ☁️ **Cloud Sync**: Optional Google OAuth for cloud storage
-- 📱 **Mobile Sync**: QR code export/import for cross-device access
-- 🎨 **Modern UI**: Built with React, TailwindCSS, and Framer Motion
-
----
-
-## Repository Structure
-
-```
-NodeNest/
-├── .github/workflows/    # GitHub Actions for deployment
-├── frontend/             # React application source
-│   ├── public/          # Static assets
-│   ├── src/             # React components and logic
-│   └── package.json     # Dependencies
-├── .gitignore           # Git ignore rules
-├── .nojekyll            # GitHub Pages config
-└── README.md            # This file
-```
+<div align="center">
+  <h3>✨ Visual AI Tools Bookmark Manager ✨</h3>
+  <p>A beautiful, radial dashboard for organizing and managing your AI tools bookmarks with persistent storage and mobile sync.</p>
+  
+  🔗 **[Live Demo](https://ravenxrich.github.io/NodeNest/)**
+</div>
 
 ---
 
-## Development
+## 📸 Features
+
+| Feature | Description |
+|---------|-------------|
+| 🎯 **Radial Interface** | Visual organization with draggable nodes on category rings |
+| 💾 **Persistent Storage** | Browser localStorage or File System API for local files |
+| ☁️ **Cloud Sync** | Optional Google OAuth for cross-device sync |
+| 📱 **Mobile Sync** | QR code export/import with data compression |
+| 🤖 **AI Metadata** | Auto-extract tool info using Claude/GPT/Gemini |
+| ⭐ **Favorites** | Mark and filter your most-used tools |
+| 🔍 **Search** | Quickly find tools by title, description, or tags |
+| 📊 **Usage Analytics** | Track clicks, visualize category distribution |
+| 🌙 **Dark/Light Mode** | Beautiful themes with smooth transitions |
+| 🏷️ **Tags & Categories** | Organize tools with custom tags and 9 categories |
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+
-- Yarn
+- Yarn or npm
 
-### Local Development
+### Installation
+
 ```bash
-cd frontend
+# Clone the repository
+git clone https://github.com/ravenxrich/NodeNest.git
+cd NodeNest/frontend
+
+# Install dependencies
 yarn install
+
+# Start development server
 yarn start
 ```
 
-### Build
+The app will open at `http://localhost:3000`
+
+### Build for Production
+
 ```bash
-cd frontend
 yarn build
 ```
 
 ---
 
-## Deployment
-
-This site automatically deploys to GitHub Pages via GitHub Actions when you push to the `main` branch.
-
-**Deployment URL:** https://ravenxrich.github.io/NodeNest/
-
----
-
-## Tech Stack
-
-- **Frontend**: React 18, React Router
-- **Styling**: TailwindCSS, Framer Motion
-- **Storage**: IndexedDB, File System Access API, localStorage
-- **Build**: Create React App (with CRACO)
-- **Deployment**: GitHub Pages via GitHub Actions
-
----
-
-## License
-
-MIT
-
-A visual AI tools bookmark manager with radial interface for organizing your favorite tools.
-
-🌐 **Live Site**: [https://ravenxrich.github.io/NodeNest/](https://ravenxrich.github.io/NodeNest/)
-
-## Features
-
-- 📁 **Folder Storage** - Save tools to your local file system
-- ☁️ **Cloud Storage** - Sync across devices with Google Sign-In
-- 🎯 **Radial Interface** - Visual organization inspired by orbital mechanics
-- 📱 **Mobile Sync** - QR code export/import for mobile devices
-- 🎨 **Dark/Light Mode** - Beautiful themes for any preference
-- ⭐ **Favorites** - Mark and filter your most-used tools
-- 🔍 **Search** - Quickly find any tool
-- 📊 **Usage Stats** - Track which tools you use most
-
-## Tech Stack
-
-- **Frontend**: React 18.3.1
-- **UI**: Tailwind CSS + Shadcn UI
-- **Animations**: Framer Motion
-- **Storage**: Local File System API + Google OAuth
-- **Deployment**: GitHub Pages
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-NodeNest/                    (GitHub Pages Deployment)
+NodeNest/
 ├── .github/
-│   └── workflows/          # Auto-deployment via GitHub Actions
-├── frontend/               # React source code (for development)
+│   └── workflows/          # GitHub Actions CI/CD
+├── frontend/               # React application
+│   ├── public/
+│   │   ├── index.html     # HTML template
+│   │   └── 404.html       # SPA routing fallback
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Landing, Dashboard, Settings, Stats
-│   │   ├── contexts/      # StorageContext (folder/cloud storage)
-│   │   └── utils/         # Helper functions
-│   ├── public/            # Static assets
-│   └── package.json       # Dependencies
-├── static/                # Built assets (served by GitHub Pages)
-│   ├── css/              # Compiled stylesheets
-│   └── js/               # Compiled React bundle
-├── index.html             # Main entry point
-├── 404.html               # SPA routing fallback
-├── .gitignore             # Excludes node_modules, build artifacts
-├── .nojekyll              # Disables Jekyll processing
-└── README.md              # Documentation
+│   │   ├── components/    # React components
+│   │   │   ├── ui/        # Shadcn UI components
+│   │   │   ├── AddNodeModal.js
+│   │   │   ├── MobileQRCode.js
+│   │   │   ├── NodeDetailsSidebar.js
+│   │   │   ├── RadialCanvas.js
+│   │   │   └── ToolNode.js
+│   │   ├── contexts/
+│   │   │   └── StorageContext.js  # Global state & storage
+│   │   ├── pages/
+│   │   │   ├── Dashboard.js   # Main radial view
+│   │   │   ├── Landing.js     # Storage selection
+│   │   │   ├── Settings.js    # LLM & import/export
+│   │   │   └── Stats.js       # Usage analytics
+│   │   ├── utils/
+│   │   │   ├── compression.js # QR code data compression
+│   │   │   ├── constants.js   # Categories & storage keys
+│   │   │   ├── encryption.js  # Local data encryption
+│   │   │   ├── fileStorage.js # File System API helpers
+│   │   │   └── indexedDB.js   # IndexedDB utilities
+│   │   ├── hooks/
+│   │   │   └── use-toast.js   # Toast notifications
+│   │   ├── lib/
+│   │   │   └── utils.js       # Tailwind utilities
+│   │   ├── App.js             # Main app component
+│   │   ├── App.css            # Global styles
+│   │   └── index.js           # Entry point
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── craco.config.js
+├── .gitignore
+├── .nojekyll
+└── README.md
 ```
-
-**Only 4 essential items on GitHub:**
-- `index.html` & `404.html` - Entry points
-- `static/` - Compiled app
-- `.github/workflows/` - Auto-deployment
-
-## Development
-
-This project uses React with Create React App. To develop locally:
-
-1. Navigate to frontend directory: `cd frontend`
-2. Install dependencies: `yarn install`
-3. Start dev server: `yarn start`
-4. Build for production: `yarn build`
-
-## Deployment
-
-The site automatically deploys to GitHub Pages via GitHub Actions on every push to `main` branch.
-
-Built files are in the root directory (`/index.html`, `/static/`) for GitHub Pages compatibility.
 
 ---
 
-**Built with ❤️ using [Emergent](https://emergent.sh)**
+## 🔧 Technical Architecture
+
+### State Management
+- **StorageContext** - React Context for global state
+- **useCallback/useMemo** - Optimized re-renders throughout
+- **Immediate Persistence** - Data saved on every change
+
+### Storage Options
+
+| Option | Description | Use Case |
+|--------|-------------|----------|
+| **Browser Storage** | localStorage with XOR encryption | Default, works everywhere |
+| **File System** | Native file via File System Access API | Chrome/Edge/Brave only |
+| **Cloud** | Google OAuth + backend API | Cross-device sync |
+
+### Performance Optimizations
+- `React.memo()` on heavy components (ToolNode, RadialCanvas)
+- `useMemo()` for computed values (filtered tools, ring calculations)
+- `useCallback()` for event handlers
+- Lazy loading for images
+- Compressed QR code data for mobile sync
+
+### Categories
+9 built-in categories with distinct colors:
+- AI Tools (`#8B5CF6`)
+- Productivity (`#06B6D4`)
+- Design (`#EC4899`)
+- Development (`#10B981`)
+- Writing (`#F59E0B`)
+- Research (`#6366F1`)
+- Automation (`#EF4444`)
+- Communication (`#14B8A6`)
+- Other (`#64748B`)
+
+---
+
+## 📱 Mobile Sync
+
+NodeNest supports mobile sync via QR codes:
+
+1. **Small datasets** (< 2KB) - Direct URL encoding in QR
+2. **Large datasets** - Compressed minimal format + sync code fallback
+3. **Clipboard backup** - Copy full encrypted data manually
+
+The compression system:
+- Removes unnecessary fields (only keeps title, url, category, favicon, tags, favorite)
+- Uses single-character keys to minimize JSON size
+- Falls back gracefully when data exceeds QR limits
+
+---
+
+## 🔐 Security
+
+- **Local encryption** - XOR cipher with base64 encoding
+- **No backend required** - All data stays in your browser
+- **IndexedDB for handles** - File System API handles persist securely
+- **HTTPS only** - Required for File System Access API
+
+---
+
+## 🛠️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in `/frontend`:
+
+```env
+# Backend API (optional, for cloud features)
+REACT_APP_BACKEND_URL=https://your-backend.com
+
+# Google OAuth (optional, for cloud sync)
+REACT_APP_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+```
+
+### LLM Providers for AI Metadata Extraction
+
+Configure in Settings page:
+- **Anthropic** - Claude Sonnet 4 (recommended)
+- **OpenAI** - GPT-5.1
+- **Google** - Gemini 2.5 Flash
+- **Local** - Any OpenAI-compatible endpoint (Ollama, LMStudio)
+
+---
+
+## 🚢 Deployment
+
+### GitHub Pages (Default)
+
+The app auto-deploys to GitHub Pages via GitHub Actions on push to `main`.
+
+**Live URL:** https://ravenxrich.github.io/NodeNest/
+
+### Custom Deployment
+
+1. Build the production bundle:
+   ```bash
+   cd frontend && yarn build
+   ```
+
+2. Deploy the `build/` directory to any static host:
+   - Vercel
+   - Netlify
+   - AWS S3 + CloudFront
+   - Any static file server
+
+---
+
+## 📊 Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| **Framework** | React 18.3.1 |
+| **Routing** | React Router 7.x |
+| **Styling** | Tailwind CSS 3.4 + Shadcn UI |
+| **Animations** | Framer Motion 12.x |
+| **Charts** | Recharts 3.x |
+| **Icons** | Lucide React |
+| **Auth** | @react-oauth/google |
+| **QR Codes** | qrcode.react |
+| **Build Tool** | Create React App + CRACO |
+| **Package Manager** | Yarn |
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Shadcn UI](https://ui.shadcn.com/) for beautiful component primitives
+- [Radix UI](https://www.radix-ui.com/) for accessible components
+- [Framer Motion](https://www.framer.com/motion/) for animations
+- [Lucide](https://lucide.dev/) for icons
+- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by <a href="https://github.com/ravenxrich">ravenxrich</a></p>
+  <p>
+    <a href="https://ravenxrich.github.io/NodeNest/">Live Demo</a> •
+    <a href="https://github.com/ravenxrich/NodeNest/issues">Report Bug</a> •
+    <a href="https://github.com/ravenxrich/NodeNest/issues">Request Feature</a>
+  </p>
+</div>
