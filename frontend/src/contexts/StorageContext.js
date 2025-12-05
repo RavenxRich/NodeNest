@@ -488,6 +488,23 @@ export const StorageProvider = ({ children }) => {
     }
   }, [storageMode, tools, userId]);
 
+  // Logout - clear all storage and reset state
+  const logout = useCallback(() => {
+    // Clear all localStorage keys
+    localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+    localStorage.removeItem(STORAGE_KEYS.USER_ID);
+    localStorage.removeItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE);
+    localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
+    localStorage.removeItem(STORAGE_KEYS.TOOLS_ENCRYPTED);
+    
+    // Reset state
+    setStorageMode(null);
+    setUserId(null);
+    setTools([]);
+    setDirectoryHandle(null);
+    setLocalStorageType('browser');
+  }, []);
+
   // Load tools when storage mode changes
   useEffect(() => {
     if (storageMode) {
@@ -510,7 +527,8 @@ export const StorageProvider = ({ children }) => {
     trackClick,
     extractMetadata,
     importTools,
-    exportTools
+    exportTools,
+    logout
   };
 
   return (

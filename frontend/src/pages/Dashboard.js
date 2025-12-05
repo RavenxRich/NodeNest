@@ -15,7 +15,7 @@ import { motion } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { storageMode, tools, loadTools, updateTool } = useStorage();
+  const { storageMode, tools, loadTools, updateTool, logout } = useStorage();
   const { theme, setTheme } = useTheme();
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
@@ -102,13 +102,11 @@ const Dashboard = () => {
   }, [tools, updateTool]);
 
   const handleLogout = useCallback(() => {
-    // Only clear user data, keep storage preferences
-    localStorage.removeItem('nodenest_user_id');
-    localStorage.removeItem('nodenest_tools_encrypted');
-    
+    // Clear all storage and reset state via context
+    logout();
     toast.success('Logged out successfully');
     navigate('/');
-  }, [navigate]);
+  }, [logout, navigate]);
 
   const favoriteCount = tools.filter(t => t.favorite).length;
 
