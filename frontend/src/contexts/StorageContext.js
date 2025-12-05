@@ -7,8 +7,10 @@ import { toast } from 'sonner';
 
 const StorageContext = createContext();
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Backend URL - optional, app works fully offline without it
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API = BACKEND_URL ? `${BACKEND_URL}/api` : null;
+const HAS_BACKEND = !!API;
 
 export const useStorage = () => {
   const context = useContext(StorageContext);
@@ -350,8 +352,29 @@ export const StorageProvider = ({ children }) => {
     }
   }, [storageMode, tools, saveTools, loadTools]);
 
-  // Extract metadata
+  // Extract metadata - requires backend API
   const extractMetadata = useCallback(async (url) => {
+    // Check if backend is available
+    if (!HAS_BACKEND) {
+      // Fallback: extract basic metadata client-side
+      try {
+        const urlObj = new URL(url);
+        const hostname = urlObj.hostname.replace('www.', '');
+        const siteName = hostname.split('.')[0];
+        const title = siteName.charAt(0).toUpperCase() + siteName.slice(1);
+        
+        return {
+          title: title,
+          description: `Tool from ${hostname}`,
+          favicon: `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`,
+          category_id: 'ai_tools',
+          tags: [hostname.split('.')[0]]
+        };
+      } catch (e) {
+        throw new Error('Invalid URL. Please enter a valid URL.');
+      }
+    }
+
     try {
       const llmProvider = localStorage.getItem(STORAGE_KEYS.LLM_PROVIDER) || 'anthropic';
       const llmModel = llmProvider === 'local' 
@@ -374,7 +397,20 @@ export const StorageProvider = ({ children }) => {
       const response = await axios.post(`${API}/tools/extract-metadata`, payload);
       return response.data;
     } catch (error) {
-      throw error;
+      // Fallback to basic extraction on error
+      try {
+        const urlObj = new URL(url);
+        const hostname = urlObj.hostname.replace('www.', '');
+        return {
+          title: hostname.split('.')[0].charAt(0).toUpperCase() + hostname.split('.')[0].slice(1),
+          description: '',
+          favicon: `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`,
+          category_id: 'ai_tools',
+          tags: []
+        };
+      } catch (e) {
+        throw error;
+      }
     }
   }, []);
 

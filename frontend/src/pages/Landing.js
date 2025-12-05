@@ -5,13 +5,15 @@ import { useStorage } from '../contexts/StorageContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { HardDrive, Cloud, Sparkles } from 'lucide-react';
+import { HardDrive, Cloud, Sparkles, Monitor } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { openDB, getHandle } from '../utils/indexedDB';
 import { STORAGE_KEYS } from '../utils/constants';
 
 // Google OAuth Client ID from environment
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+// Check if backend is available for cloud features
+const HAS_BACKEND = !!process.env.REACT_APP_BACKEND_URL;
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -235,26 +237,49 @@ const Landing = () => {
               </div>
             </Card>
 
-            {/* Cloud Storage */}
+            {/* Browser Storage (alternative) or Cloud Storage */}
             <Card data-testid="cloud-storage-card" className="glass p-8 hover:scale-105 transition-transform duration-300 group">
               <div className="flex flex-col items-center gap-4 text-white">
-                <div className="w-20 h-20 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
-                  <Cloud className="w-10 h-10 text-cyan-300" />
-                </div>
-                <h3 className="text-2xl font-semibold">Cloud Storage</h3>
-                <p className="text-violet-200 text-sm text-center mb-4">
-                  Sync across devices with Google Sign-In. Access your tools anywhere.
-                </p>
-                <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    theme="filled_black"
-                    size="large"
-                    text="signin_with"
-                    useOneTap={false}
-                  />
-                </GoogleOAuthProvider>
+                {HAS_BACKEND && GOOGLE_CLIENT_ID ? (
+                  <>
+                    <div className="w-20 h-20 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
+                      <Cloud className="w-10 h-10 text-cyan-300" />
+                    </div>
+                    <h3 className="text-2xl font-semibold">Cloud Storage</h3>
+                    <p className="text-violet-200 text-sm text-center mb-4">
+                      Sync across devices with Google Sign-In. Access your tools anywhere.
+                    </p>
+                    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                      <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        theme="filled_black"
+                        size="large"
+                        text="signin_with"
+                        useOneTap={false}
+                      />
+                    </GoogleOAuthProvider>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-20 h-20 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500/30 transition-colors">
+                      <Monitor className="w-10 h-10 text-cyan-300" />
+                    </div>
+                    <h3 className="text-2xl font-semibold">Browser Storage</h3>
+                    <p className="text-violet-200 text-sm text-center mb-4">
+                      Quick start with browser storage. Your data stays in this browser.
+                    </p>
+                    <Button
+                      onClick={() => handleLocalStorage('browser')}
+                      className="w-full bg-cyan-600 hover:bg-cyan-700 text-white text-lg py-6"
+                    >
+                      🌐 Use Browser Storage
+                    </Button>
+                    <p className="text-xs text-cyan-300/70 text-center">
+                      ⚡ Instant setup, no folder selection needed
+                    </p>
+                  </>
+                )}
               </div>
             </Card>
           </motion.div>
