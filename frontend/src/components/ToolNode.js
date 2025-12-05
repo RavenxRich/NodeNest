@@ -1,9 +1,13 @@
 import React, { useState, useCallback, memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 
 // Memoized ToolNode for better performance with many nodes
 const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragStart, onDrag }) => {
   const [isDragging, setIsDragging] = useState(false);
+  
+  // Motion values for smooth drag - prevents animate from fighting with drag
+  const x = useMotionValue(position.x - 28);
+  const y = useMotionValue(position.y - 28);
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
@@ -12,16 +16,15 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
 
   const handleDrag = useCallback((event, info) => {
     if (onDrag) {
-      const newX = position.x + info.offset.x;
-      const newY = position.y + info.offset.y;
-      onDrag({ x: newX, y: newY });
+      const currentX = position.x + info.offset.x;
+      const currentY = position.y + info.offset.y;
+      onDrag({ x: currentX, y: currentY });
     }
   }, [onDrag, position.x, position.y]);
 
   const handleDragEnd = useCallback((event, info) => {
-    // Check if this was actually a drag or just a click
     const dragDistance = Math.sqrt(info.offset.x ** 2 + info.offset.y ** 2);
-    const wasDragged = dragDistance > 10; // 10px threshold
+    const wasDragged = dragDistance > 10;
     
     if (wasDragged) {
       const newX = position.x + info.offset.x;
@@ -29,11 +32,14 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
       onDragEnd({ x: newX, y: newY });
     }
     
-    // Small delay to prevent click from firing after drag
+    // Reset position after drag (will animate back if not moved to new category)
+    x.set(position.x - 28);
+    y.set(position.y - 28);
+    
     setTimeout(() => {
       setIsDragging(false);
     }, wasDragged ? 150 : 0);
-  }, [position.x, position.y, onDragEnd]);
+  }, [position.x, position.y, onDragEnd, x, y]);
 
   const handleClick = useCallback((e) => {
     e.stopPropagation();
@@ -48,36 +54,27 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
     if (fallback) fallback.style.display = 'flex';
   }, []);
 
+  // Update motion values when position prop changes
+  React.useEffect(() => {
+    if (!isDragging) {
+      x.set(position.x - 28);
+      y.set(position.y - 28);
+    }
+  }, [position.x, position.y, isDragging, x, y]);
+
   return (
     <motion.div
       data-testid={`tool-node-${tool.id}`}
       drag
       dragMomentum={false}
-      dragElastic={0}
-      dragConstraints={false}
-      dragTransition={{ power: 0, timeConstant: 0 }}
+      dragElastic={0.1}
       onDragStart={handleDragStart}
       onDrag={handleDrag}
       onDragEnd={handleDragEnd}
       onClick={handleClick}
-      initial={{ 
-        x: position.x - 28, 
-        y: position.y - 28,
-        scale: 1
-      }}
-      animate={{ 
-        x: position.x - 28, 
-        y: position.y - 28,
-        scale: isDragging ? 1.2 : 1,
-        rotate: isDragging ? 8 : 0,
-        filter: isDragging ? 'brightness(1.3)' : 'brightness(1)'
-      }}
-      transition={{
-        type: 'spring',
-        stiffness: 300,
-        damping: 25
-      }}
       style={{ 
+        x,
+        y,
         position: 'absolute',
         width: '56px',
         height: '56px',
@@ -85,46 +82,94 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
         touchAction: 'none',
         zIndex: isDragging ? 100 : 10
       }}
-      whileDrag={{ 
-        scale: 1.25,
-        rotate: 10,
-        boxShadow: '0 0 30px rgba(139, 92, 246, 0.9), 0 0 60px rgba(139, 92, 246, 0.6), 0 0 90px rgba(6, 182, 212, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3)',
-        cursor: 'grabbing'
+      animate={{
+        scale: isDragging ? 1.25 : 1,
+        rotate: isDragging ? 10 : 0,
+      }}
+      transition={{
+        scale: { type: 'spring', stiffness: 400, damping: 25 },
+        rotate: { type: 'spring', stiffness: 400, damping: 25 }
       }}
       whileHover={{ 
         scale: 1.1,
-        boxShadow: '0 0 20px rgba(139, 92, 246, 0.5), 0 10px 30px rgba(0, 0, 0, 0.2)'
       }}
-      className={`${isSelected ? 'glow-pulse' : ''} ${isDragging ? 'dragging-glow drag-ring-effect node-lifting' : ''}`}
+      className={isSelected ? 'glow-pulse' : ''}
       title={tool.title}
     >
+      {/* Drag glow effect layer */}
+      <motion.div
+        className="absolute inset-[-12px] rounded-full pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.6) 0%, rgba(6, 182, 212, 0.3) 50%, transparent 70%)',
+          filter: 'blur(8px)',
+        }}
+        animate={{
+          opacity: isDragging ? 1 : 0,
+          scale: isDragging ? 1.5 : 1,
+        }}
+        transition={{ duration: 0.2 }}
+      />
+      
+      {/* Pulsing rings when dragging */}
+      {isDragging && (
+        <>
+          <motion.div
+            className="absolute inset-[-6px] rounded-full border-2 border-violet-400 pointer-events-none"
+            animate={{
+              scale: [1, 1.8, 1],
+              opacity: [0.8, 0, 0.8],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              ease: "easeOut"
+            }}
+          />
+          <motion.div
+            className="absolute inset-[-4px] rounded-full border-2 border-cyan-400 pointer-events-none"
+            animate={{
+              scale: [1, 1.6, 1],
+              opacity: [0.6, 0, 0.6],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              ease: "easeOut",
+              delay: 0.3
+            }}
+          />
+        </>
+      )}
+      
       {/* Node Container - Bubble Design */}
-      <div className={`w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
+      <motion.div 
+        className={`w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
                     bg-gradient-to-br from-white/20 via-white/10 to-transparent
                     dark:from-white/15 dark:via-white/8 dark:to-transparent
                     backdrop-blur-xl border-2 
-                    ${isDragging 
-                      ? 'border-violet-400/80 dark:border-violet-400/80 shadow-[0_0_40px_rgba(139,92,246,0.8)]' 
-                      : 'border-white/30 dark:border-white/20 shadow-[0_8px_32px_0_rgba(139,92,246,0.25)]'}
-                    hover:shadow-[0_12px_48px_0_rgba(139,92,246,0.4)]
                     hover:border-white/40
-                    transition-all duration-300`}>
+                    transition-colors duration-300`}
+        animate={{
+          borderColor: isDragging ? 'rgba(139, 92, 246, 0.8)' : 'rgba(255, 255, 255, 0.3)',
+          boxShadow: isDragging 
+            ? '0 0 40px rgba(139, 92, 246, 0.8), 0 0 80px rgba(139, 92, 246, 0.4), 0 20px 40px rgba(0, 0, 0, 0.3)'
+            : '0 8px 32px rgba(139, 92, 246, 0.25)',
+        }}
+        transition={{ duration: 0.2 }}
+      >
         
-        {/* Inner glow effect - always visible when dragging */}
-        <div className={`absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/30 via-violet-400/20 to-cyan-500/30 
-                        transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
-        
-        {/* Pulsing ring when dragging */}
-        {isDragging && (
-          <>
-            <div className="absolute inset-[-8px] rounded-full border-2 border-violet-400/60 animate-ping" />
-            <div className="absolute inset-[-4px] rounded-full border border-cyan-400/40 animate-pulse" />
-          </>
-        )}
+        {/* Inner glow effect */}
+        <motion.div 
+          className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/30 via-violet-400/20 to-cyan-500/30"
+          animate={{
+            opacity: isDragging ? 1 : 0
+          }}
+          transition={{ duration: 0.2 }}
+        />
         
         {/* Shine effect */}
         <div className={`absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/30 via-transparent to-transparent 
-                        ${isDragging ? 'opacity-70' : 'opacity-40'}`} />
+                        ${isDragging ? 'opacity-70' : 'opacity-40'} transition-opacity duration-200`} />
         
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center w-full h-full p-1.5">
@@ -137,6 +182,7 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
                 style={{ display: 'block' }}
                 onError={handleImageError}
                 loading="lazy"
+                draggable={false}
               />
               <div className="fallback-icon hidden w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500/40 to-cyan-500/40 flex items-center justify-center backdrop-blur-sm">
                 <span className="text-xl font-bold text-white drop-shadow-lg">
@@ -159,7 +205,7 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
             ⭐
           </div>
         )}
-      </div>
+      </motion.div>
     </motion.div>
   );
 });
