@@ -10,9 +10,11 @@ A radial dashboard for organizing your AI tools. 100% offline, no account requir
 
 ## Features
 
-- **Radial Interface** – Drag-and-drop nodes on category rings
+- **Radial Interface** – Drag-and-drop nodes on category rings with glowing visual feedback
+- **Interactive Drag Effects** – Nodes light up with pulsing rings and glow effects when dragging
 - **Local Storage** – Browser storage or save to your own folder
-- **Mobile Sync** – QR code export with compression
+- **Mobile Sync** – QR code export with compression for cross-device sync
+- **Responsive Design** – Fully optimized for mobile and desktop
 - **Favorites** – Star tools for quick filtering
 - **Search** – Find by title, description, or tags
 - **Analytics** – Track your most-used tools

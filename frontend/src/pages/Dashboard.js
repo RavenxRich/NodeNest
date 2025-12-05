@@ -122,10 +122,10 @@ const Dashboard = () => {
         animate={{ y: 0 }}
         className="relative z-20 glass border-b border-white/10"
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-shrink-0">
             <h1 
-              className="text-2xl font-bold gradient-text cursor-pointer hover:scale-105 transition-transform"
+              className="text-lg sm:text-2xl font-bold gradient-text cursor-pointer hover:scale-105 transition-transform whitespace-nowrap"
               onClick={() => navigate('/')}
               data-testid="logo-home-btn"
             >
@@ -144,20 +144,20 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-end">
             {/* Favorites Toggle */}
             <Button
               data-testid="favorites-toggle-btn"
               size="sm"
               variant={showOnlyFavorites ? "default" : "ghost"}
               onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
-              className={`gap-2 ${
+              className={`gap-1 sm:gap-2 ${
                 showOnlyFavorites ? 'bg-orange-600 hover:bg-orange-700 text-white dark:bg-yellow-500 dark:hover:bg-yellow-600' : ''
               }`}
             >
               <Star className={`w-4 h-4 ${showOnlyFavorites ? 'fill-current' : ''}`} />
               {favoriteCount > 0 && (
-                <Badge variant="secondary" className="ml-1 text-xs">
+                <Badge variant="secondary" className="ml-1 text-xs hidden sm:inline-flex">
                   {favoriteCount}
                 </Badge>
               )}
@@ -167,10 +167,10 @@ const Dashboard = () => {
               data-testid="add-node-btn"
               size="sm"
               onClick={() => setShowAddModal(true)}
-              className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
+              className="bg-violet-600 hover:bg-violet-700 text-white gap-1 sm:gap-2"
             >
               <Plus className="w-4 h-4" />
-              Add Tool
+              <span className="hidden sm:inline">Add Tool</span>
             </Button>
             <MobileQRCode />
             <Button
@@ -178,7 +178,7 @@ const Dashboard = () => {
               size="sm"
               variant="ghost"
               onClick={() => navigate('/stats')}
-              className="gap-2"
+              className="gap-1 sm:gap-2"
             >
               <BarChart3 className="w-4 h-4" />
             </Button>
@@ -187,7 +187,7 @@ const Dashboard = () => {
               size="sm"
               variant="ghost"
               onClick={() => navigate('/settings')}
-              className="gap-2"
+              className="gap-1 sm:gap-2"
             >
               <Settings className="w-4 h-4" />
             </Button>
@@ -204,7 +204,7 @@ const Dashboard = () => {
               size="sm"
               variant="ghost"
               onClick={handleLogout}
-              className="gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+              className="gap-1 sm:gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
             >
               <LogOut className="w-4 h-4" />
             </Button>

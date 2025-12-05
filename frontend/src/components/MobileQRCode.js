@@ -180,20 +180,21 @@ const MobileQRCode = () => {
         onClick={exportLocalStorage}
         variant="outline"
         size="sm"
-        className="flex items-center gap-2"
+        className="flex items-center gap-1 sm:gap-2"
+        title="Export to Mobile"
       >
         <QrCode className="w-4 h-4" />
-        Export to Mobile
+        <span className="hidden sm:inline">Sync</span>
       </Button>
 
       {showQR && (
         <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85 overflow-y-auto"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-black/85 overflow-y-auto"
           onClick={() => setShowQR(false)}
         >
           <div 
             onClick={e => e.stopPropagation()}
-            className="bg-white rounded-2xl p-6 w-full max-w-md mx-auto my-auto"
+            className="bg-white rounded-2xl p-4 sm:p-6 w-full max-w-md mx-auto my-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
@@ -226,19 +227,20 @@ const MobileQRCode = () => {
               </div>
             )}
             
-            {qrData ? (
-              <div className="flex flex-col items-center justify-center space-y-4">
+              {qrData ? (
+              <div className="flex flex-col items-center justify-center space-y-3 sm:space-y-4">
                 {/* QR Code Container */}
                 <div 
-                  className="bg-white p-4 rounded-xl flex items-center justify-center"
+                  className="bg-white p-3 sm:p-4 rounded-xl flex items-center justify-center"
                   style={{ border: '3px solid #8b5cf6' }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={200}
+                    size={180}
                     level="L"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
+                    className="max-w-full h-auto"
                   />
                 </div>
                 

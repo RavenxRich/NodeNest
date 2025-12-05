@@ -39,6 +39,60 @@
   animation: glow-pulse 2s ease-in-out infinite;
 }
 
+/* Drag glow effect - intense lighting when dragging */
+@keyframes drag-glow {
+  0%, 100% { 
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.8),
+      0 0 40px rgba(139, 92, 246, 0.6),
+      0 0 60px rgba(139, 92, 246, 0.4),
+      0 0 80px rgba(6, 182, 212, 0.3);
+  }
+  50% { 
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 1),
+      0 0 60px rgba(139, 92, 246, 0.8),
+      0 0 90px rgba(139, 92, 246, 0.5),
+      0 0 120px rgba(6, 182, 212, 0.4);
+  }
+}
+
+.dragging-glow {
+  animation: drag-glow 0.8s ease-in-out infinite;
+  border-color: rgba(139, 92, 246, 0.8) !important;
+}
+
+/* Drag ring pulse effect */
+@keyframes drag-ring-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.drag-ring-effect::before,
+.drag-ring-effect::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(139, 92, 246, 0.6);
+  animation: drag-ring-pulse 1s ease-out infinite;
+}
+
+.drag-ring-effect::after {
+  animation-delay: 0.5s;
+}
+
+/* Node lift effect when dragging */
+.node-lifting {
+  filter: brightness(1.2) drop-shadow(0 10px 30px rgba(139, 92, 246, 0.5));
+}
+
 /* Fade in */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }

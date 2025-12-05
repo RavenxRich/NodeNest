@@ -62,11 +62,20 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
       onClick={handleClick}
       initial={{ 
         x: position.x - 28, 
-        y: position.y - 28 
+        y: position.y - 28,
+        scale: 1
       }}
       animate={{ 
         x: position.x - 28, 
-        y: position.y - 28 
+        y: position.y - 28,
+        scale: isDragging ? 1.2 : 1,
+        rotate: isDragging ? 8 : 0,
+        filter: isDragging ? 'brightness(1.3)' : 'brightness(1)'
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 300,
+        damping: 25
       }}
       style={{ 
         position: 'absolute',
@@ -74,33 +83,48 @@ const ToolNode = memo(({ tool, position, onClick, onDragEnd, isSelected, onDragS
         height: '56px',
         cursor: isDragging ? 'grabbing' : 'grab',
         touchAction: 'none',
-        zIndex: isDragging ? 50 : 10
+        zIndex: isDragging ? 100 : 10
       }}
       whileDrag={{ 
-        scale: 1.15,
-        rotate: 5,
-        boxShadow: '0 20px 60px rgba(139, 92, 246, 0.6)',
+        scale: 1.25,
+        rotate: 10,
+        boxShadow: '0 0 30px rgba(139, 92, 246, 0.9), 0 0 60px rgba(139, 92, 246, 0.6), 0 0 90px rgba(6, 182, 212, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3)',
         cursor: 'grabbing'
       }}
-      whileHover={{ scale: 1.1 }}
-      className={isSelected ? 'glow-pulse' : ''}
+      whileHover={{ 
+        scale: 1.1,
+        boxShadow: '0 0 20px rgba(139, 92, 246, 0.5), 0 10px 30px rgba(0, 0, 0, 0.2)'
+      }}
+      className={`${isSelected ? 'glow-pulse' : ''} ${isDragging ? 'dragging-glow drag-ring-effect node-lifting' : ''}`}
       title={tool.title}
     >
       {/* Node Container - Bubble Design */}
-      <div className="w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
+      <div className={`w-full h-full rounded-full flex items-center justify-center group relative overflow-hidden
                     bg-gradient-to-br from-white/20 via-white/10 to-transparent
                     dark:from-white/15 dark:via-white/8 dark:to-transparent
-                    backdrop-blur-xl border-2 border-white/30 dark:border-white/20
-                    shadow-[0_8px_32px_0_rgba(139,92,246,0.25)]
+                    backdrop-blur-xl border-2 
+                    ${isDragging 
+                      ? 'border-violet-400/80 dark:border-violet-400/80 shadow-[0_0_40px_rgba(139,92,246,0.8)]' 
+                      : 'border-white/30 dark:border-white/20 shadow-[0_8px_32px_0_rgba(139,92,246,0.25)]'}
                     hover:shadow-[0_12px_48px_0_rgba(139,92,246,0.4)]
                     hover:border-white/40
-                    transition-all duration-300">
+                    transition-all duration-300`}>
         
-        {/* Inner glow effect */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Inner glow effect - always visible when dragging */}
+        <div className={`absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/30 via-violet-400/20 to-cyan-500/30 
+                        transition-opacity duration-300 ${isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+        
+        {/* Pulsing ring when dragging */}
+        {isDragging && (
+          <>
+            <div className="absolute inset-[-8px] rounded-full border-2 border-violet-400/60 animate-ping" />
+            <div className="absolute inset-[-4px] rounded-full border border-cyan-400/40 animate-pulse" />
+          </>
+        )}
         
         {/* Shine effect */}
-        <div className="absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/30 via-transparent to-transparent opacity-40" />
+        <div className={`absolute top-0 left-0 w-full h-full rounded-full bg-gradient-to-br from-white/30 via-transparent to-transparent 
+                        ${isDragging ? 'opacity-70' : 'opacity-40'}`} />
         
         {/* Content */}
         <div className="relative z-10 flex items-center justify-center w-full h-full p-1.5">

@@ -130,10 +130,19 @@ const RadialCanvas = memo(({ tools, onToolClick, onToolMove, selectedTool, setSe
             <stop offset="0%" stopColor="#8B5CF6" />
             <stop offset="100%" stopColor="#06B6D4" />
           </radialGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
             <feMerge>
               <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="10" result="blur1"/>
+            <feGaussianBlur stdDeviation="20" result="blur2"/>
+            <feMerge>
+              <feMergeNode in="blur2"/>
+              <feMergeNode in="blur1"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
@@ -143,21 +152,56 @@ const RadialCanvas = memo(({ tools, onToolClick, onToolMove, selectedTool, setSe
           const isHovered = isDragging && hoveredRingIndex === idx;
           return (
             <g key={category.id}>
-              {/* Glow effect for hovered ring */}
+              {/* Outer glow effect for hovered ring */}
               {isHovered && (
-                <motion.circle
-                  cx={centerX}
-                  cy={centerY}
-                  r={radius}
-                  fill="none"
-                  stroke={category.color}
-                  strokeWidth="12"
-                  strokeOpacity="0.3"
-                  filter="url(#glow)"
-                  initial={{ strokeOpacity: 0 }}
-                  animate={{ strokeOpacity: 0.3 }}
-                  transition={{ duration: 0.2 }}
-                />
+                <>
+                  <motion.circle
+                    cx={centerX}
+                    cy={centerY}
+                    r={radius}
+                    fill="none"
+                    stroke={category.color}
+                    strokeWidth="20"
+                    strokeOpacity="0.15"
+                    filter="url(#glow)"
+                    initial={{ strokeOpacity: 0, r: radius - 10 }}
+                    animate={{ strokeOpacity: 0.15, r: radius }}
+                    transition={{ duration: 0.3 }}
+                  />
+                  <motion.circle
+                    cx={centerX}
+                    cy={centerY}
+                    r={radius}
+                    fill="none"
+                    stroke={category.color}
+                    strokeWidth="12"
+                    strokeOpacity="0.4"
+                    filter="url(#glow)"
+                    initial={{ strokeOpacity: 0 }}
+                    animate={{ strokeOpacity: 0.4 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                  {/* Pulsing outer ring */}
+                  <motion.circle
+                    cx={centerX}
+                    cy={centerY}
+                    r={radius}
+                    fill="none"
+                    stroke={category.color}
+                    strokeWidth="2"
+                    strokeOpacity="0.6"
+                    initial={{ r: radius, strokeOpacity: 0.6 }}
+                    animate={{ 
+                      r: [radius, radius + 15, radius],
+                      strokeOpacity: [0.6, 0, 0.6]
+                    }}
+                    transition={{ 
+                      duration: 1.2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </>
               )}
               {/* Ring circle */}
               <motion.circle
@@ -166,14 +210,14 @@ const RadialCanvas = memo(({ tools, onToolClick, onToolMove, selectedTool, setSe
                 r={radius}
                 fill="none"
                 stroke={category.color}
-                strokeWidth={isHovered ? "6" : "2"}
+                strokeWidth={isHovered ? "8" : "2"}
                 strokeOpacity={isHovered ? "1.0" : "0.45"}
                 strokeDasharray={isHovered ? "0" : "10 5"}
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ 
                   opacity: 1, 
                   scale: 1,
-                  strokeWidth: isHovered ? 6 : 2,
+                  strokeWidth: isHovered ? 8 : 2,
                   strokeOpacity: isHovered ? 1.0 : 0.45,
                   strokeDasharray: isHovered ? "0" : "10 5"
                 }}
@@ -211,28 +255,69 @@ const RadialCanvas = memo(({ tools, onToolClick, onToolMove, selectedTool, setSe
         {/* Ghost preview when dragging */}
         {isDragging && ghostPosition && hoveredRingIndex !== null && (
           <motion.g
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.6, scale: 1 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2, type: 'spring', stiffness: 200 }}
           >
+            {/* Outer glow */}
+            <circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="40"
+              fill={categories[hoveredRingIndex]?.color || '#8B5CF6'}
+              opacity="0.15"
+              filter="url(#glow)"
+            />
+            {/* Main ghost circle */}
             <circle
               cx={ghostPosition.x}
               cy={ghostPosition.y}
               r="28"
               fill={categories[hoveredRingIndex]?.color || '#8B5CF6'}
-              opacity="0.3"
+              opacity="0.4"
               filter="url(#glow)"
             />
+            {/* Inner bright ring */}
             <circle
               cx={ghostPosition.x}
               cy={ghostPosition.y}
               r="28"
               fill="none"
               stroke={categories[hoveredRingIndex]?.color || '#8B5CF6'}
-              strokeWidth="3"
-              strokeDasharray="5 5"
-              opacity="0.8"
+              strokeWidth="4"
+              opacity="0.9"
             />
+            {/* Dashed preview ring */}
+            <circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="28"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="2"
+              strokeDasharray="6 4"
+              opacity="0.6"
+            />
+            {/* First pulse ring */}
+            <motion.circle
+              cx={ghostPosition.x}
+              cy={ghostPosition.y}
+              r="28"
+              fill="none"
+              stroke={categories[hoveredRingIndex]?.color || '#8B5CF6'}
+              strokeWidth="3"
+              initial={{ r: 28, opacity: 0.8 }}
+              animate={{ 
+                r: [28, 50, 28],
+                opacity: [0.8, 0, 0.8]
+              }}
+              transition={{ 
+                duration: 1,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+            />
+            {/* Second pulse ring (offset) */}
             <motion.circle
               cx={ghostPosition.x}
               cy={ghostPosition.y}
@@ -240,15 +325,16 @@ const RadialCanvas = memo(({ tools, onToolClick, onToolMove, selectedTool, setSe
               fill="none"
               stroke={categories[hoveredRingIndex]?.color || '#8B5CF6'}
               strokeWidth="2"
-              opacity="0.4"
+              initial={{ r: 28, opacity: 0.6 }}
               animate={{ 
-                r: [28, 36, 28],
-                opacity: [0.4, 0, 0.4]
+                r: [28, 45, 28],
+                opacity: [0.6, 0, 0.6]
               }}
               transition={{ 
-                duration: 1.5,
+                duration: 1,
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeOut",
+                delay: 0.5
               }}
             />
           </motion.g>
