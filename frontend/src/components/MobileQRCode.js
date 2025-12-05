@@ -191,26 +191,33 @@ const MobileQRCode = () => {
       </Button>
 
       {showQR && (
-        <div 
-          className="fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          style={{ zIndex: 99999 }}
-          onClick={handleCloseModal}
-        >
+        <>
+          {/* Backdrop */}
           <div 
-            onClick={e => e.stopPropagation()}
-            className="bg-white dark:bg-gray-900 rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            style={{ zIndex: 99998 }}
+            onClick={handleCloseModal}
+          />
+          {/* Modal */}
+          <div 
+            className="fixed inset-0 flex items-center justify-center pointer-events-none"
+            style={{ zIndex: 99999 }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Sync to Mobile</h3>
-              <button
-                onClick={handleCloseModal}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl"
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
+            <div 
+              onClick={e => e.stopPropagation()}
+              className="pointer-events-auto bg-white dark:bg-gray-900 rounded-2xl p-6 w-full max-w-sm shadow-2xl m-4 max-h-[90vh] overflow-y-auto"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Sync to Mobile</h3>
+                <button
+                  onClick={handleCloseModal}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl"
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
             
             {/* Large data warning */}
             {isDataTooLarge && (
@@ -305,8 +312,9 @@ const MobileQRCode = () => {
                 </div>
               )}
             </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
