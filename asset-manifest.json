@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/NodeNest/static/css/main.4dce5a2b.css",
-    "main.js": "/NodeNest/static/js/main.6c3aa2f2.js",
+    "main.css": "/NodeNest/static/css/main.b165a727.css",
+    "main.js": "/NodeNest/static/js/main.2ff97fd3.js",
     "index.html": "/NodeNest/index.html",
-    "main.4dce5a2b.css.map": "/NodeNest/static/css/main.4dce5a2b.css.map",
-    "main.6c3aa2f2.js.map": "/NodeNest/static/js/main.6c3aa2f2.js.map"
+    "main.b165a727.css.map": "/NodeNest/static/css/main.b165a727.css.map",
+    "main.2ff97fd3.js.map": "/NodeNest/static/js/main.2ff97fd3.js.map"
   },
   "entrypoints": [
-    "static/css/main.4dce5a2b.css",
-    "static/js/main.6c3aa2f2.js"
+    "static/css/main.b165a727.css",
+    "static/js/main.2ff97fd3.js"
   ]
 }
