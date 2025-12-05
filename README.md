@@ -180,6 +180,32 @@ All components are optimized for production:
 └─────────────────────────────────────────────────────────┘
 ```
 
+### Returning User Flow (Folder Storage)
+
+When you return to NodeNest with a saved folder:
+
+```
+┌─────────────────────────────────────────┐
+│           Welcome Back!                  │
+│                                         │
+│   Your data is saved in:                │
+│   ┌─────────────────────────────────┐   │
+│   │  📁 MyFolder/                   │   │
+│   │     nodenest_tools.json         │   │
+│   └─────────────────────────────────┘   │
+│                                         │
+│   [Continue with This Folder]           │
+│                                         │
+│   Choose a Different Folder             │
+└─────────────────────────────────────────┘
+```
+
+1. **Auto-detect**: App checks IndexedDB for saved folder handle
+2. **Permission check**: If already granted → auto-navigate to dashboard
+3. **User confirmation**: If permission needed → show "Welcome Back" screen
+4. **One-click continue**: Click button → browser shows native permission dialog
+5. **Access granted**: Proceed to dashboard with your saved tools
+
 ### Categories
 
 9 built-in categories with distinct colors:
