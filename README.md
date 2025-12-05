@@ -1,314 +1,231 @@
-# NodeNest
+# 🪺 NodeNest
 
 <div align="center">
-  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="TailwindCSS" />
-  <img src="https://img.shields.io/badge/Framer_Motion-12.x-FF0066?style=for-the-badge&logo=framer" alt="Framer Motion" />
-  <img src="https://img.shields.io/badge/GitHub_Pages-Ready-222?style=for-the-badge&logo=github" alt="GitHub Pages" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License" />
-</div>
 
-<br />
+  ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+  ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+  ![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.x-FF0066?style=for-the-badge&logo=framer&logoColor=white)
+  ![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Ready-222?style=for-the-badge&logo=github&logoColor=white)
+  ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-<div align="center">
-  <h3>✨ Visual AI Tools Bookmark Manager ✨</h3>
-  <p>A beautiful, radial dashboard for organizing and managing your AI tools bookmarks.<br/>Works 100% offline on GitHub Pages - no backend required!</p>
+  <br />
   
-  🔗 **[Live Demo](https://ravenxrich.github.io/NodeNest/)**
+  <h2>✨ Visual AI Tools Bookmark Manager ✨</h2>
+  
+  <p>
+    A beautiful radial dashboard for organizing your AI tools.<br/>
+    <strong>100% offline</strong> • <strong>No account required</strong> • <strong>Your data stays local</strong>
+  </p>
+
+  <br />
+  
+  [**🌐 Live Demo**](https://ravenxrich.github.io/NodeNest/) · [**🐛 Report Bug**](https://github.com/ravenxrich/NodeNest/issues) · [**✨ Request Feature**](https://github.com/ravenxrich/NodeNest/issues)
+
 </div>
 
 ---
 
-## 📸 Features
+## 🎯 What is NodeNest?
+
+NodeNest is a **visual bookmark manager** designed specifically for AI tools. Instead of a boring list, your tools are displayed on a beautiful **radial canvas** where you can:
+
+- **Drag & drop** tools between category rings
+- **Search** instantly across all your tools
+- **Track usage** with built-in analytics
+- **Sync to mobile** via QR codes
+- **Export/Import** your collection anytime
+
+All data is stored **locally in your browser** or in a **folder you choose** - no accounts, no cloud, no tracking.
+
+---
+
+## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| 🎯 **Radial Interface** | Visual organization with draggable nodes on category rings |
-| 💾 **Persistent Storage** | Browser localStorage or File System API - data survives refresh |
-| 📁 **Folder Storage** | Save to your own folder using File System Access API |
-| 📱 **Mobile Sync** | QR code export/import with automatic data compression |
-| 🤖 **AI Metadata** | Auto-extract tool info (falls back to basic extraction offline) |
-| ⭐ **Favorites** | Mark and filter your most-used tools |
-| 🔍 **Search** | Quickly find tools by title, description, or tags |
-| 📊 **Usage Analytics** | Track clicks, visualize category distribution with charts |
-| 🌙 **Dark/Light Mode** | Beautiful themes with smooth transitions |
-| 🏷️ **Tags & Categories** | Organize tools with custom tags and 9 color-coded categories |
-| 📤 **Import/Export** | JSON and CSV support for backups and migrations |
-| ☁️ **Cloud Sync** | Optional Google OAuth (requires backend) |
+| 🎯 **Radial Interface** | Drag-and-drop nodes on beautiful category rings |
+| 💾 **Persistent Storage** | Data survives browser refresh - localStorage or File System |
+| 📁 **Folder Storage** | Save to your own folder as `nodenest_tools.json` |
+| 📱 **Mobile Sync** | QR code export with automatic compression |
+| 🤖 **Smart Extraction** | Auto-fetch title, favicon, and description from URLs |
+| ⭐ **Favorites** | Star your most-used tools for quick filtering |
+| 🔍 **Instant Search** | Find tools by title, description, or tags |
+| 📊 **Usage Analytics** | Charts showing your most-used tools |
+| 🌙 **Dark/Light Mode** | Beautiful themes that respect your preference |
+| 🏷️ **9 Categories** | AI Tools, Productivity, Design, Development, and more |
+| 📤 **Import/Export** | JSON and CSV support for backups |
 
 ---
 
 ## 🚀 Quick Start
 
-### Live Demo
-Visit **[https://ravenxrich.github.io/NodeNest/](https://ravenxrich.github.io/NodeNest/)** - no installation needed!
+### Option 1: Use Online (Recommended)
 
-### Local Development
+Visit **[https://ravenxrich.github.io/NodeNest/](https://ravenxrich.github.io/NodeNest/)** and start adding tools!
+
+### Option 2: Run Locally
 
 ```bash
-# Clone the repository
 git clone https://github.com/ravenxrich/NodeNest.git
 cd NodeNest/frontend
-
-# Install dependencies
 yarn install
-
-# Start development server
 yarn start
 ```
 
-The app opens at `http://localhost:3000`
+---
 
-### Build for Production
+## 💾 Storage Options
 
-```bash
-yarn build
+Choose how you want to store your data:
+
+| Storage Type | Persistence | Portability | Best For |
+|--------------|-------------|-------------|----------|
+| **📁 Folder Storage** | Permanent | Copy the JSON file anywhere | Power users who want full control |
+| **🌐 Browser Storage** | Per-browser | Use QR sync for mobile | Quick setup, single device |
+
+### Folder Storage Flow
+
 ```
+First Visit                          Return Visit
+───────────                          ────────────
+     │                                    │
+     ▼                                    ▼
+┌─────────────┐                    ┌─────────────────┐
+│ Select      │                    │ Welcome Back!   │
+│ Folder      │                    │                 │
+└─────────────┘                    │ 📁 MyFolder/    │
+     │                             │                 │
+     ▼                             │ [Continue]      │
+┌─────────────┐                    └─────────────────┘
+│ nodenest_   │                           │
+│ tools.json  │◄──────────────────────────┘
+│ created     │         (one-click confirm)
+└─────────────┘
+```
+
+Your folder is **remembered** - just confirm access when you return!
 
 ---
 
-## 🌐 GitHub Pages Deployment
+## 🎨 Categories
 
-NodeNest is designed to work **100% on GitHub Pages** without any backend:
+9 color-coded categories to organize your tools:
 
-### How It Works
-
-| Feature | GitHub Pages (No Backend) | With Backend |
-|---------|--------------------------|--------------|
-| **Local Storage** | ✅ Full support | ✅ Full support |
-| **File System Storage** | ✅ Chrome/Edge/Brave | ✅ Chrome/Edge/Brave |
-| **AI Metadata Extraction** | ✅ Basic client-side | ✅ Claude/GPT/Gemini |
-| **QR Code Sync** | ✅ Full support | ✅ Full support |
-| **Import/Export** | ✅ JSON & CSV | ✅ JSON & CSV |
-| **Cloud Sync** | ❌ Not available | ✅ Google OAuth |
-
-### Automatic Deployment
-
-Push to `main` branch → GitHub Actions builds → Deploys to GitHub Pages
-
-```yaml
-# .github/workflows/deploy.yml handles everything
-on:
-  push:
-    branches: [main]
-```
-
-### SPA Routing
-
-The app uses client-side routing with React Router. The `404.html` handles GitHub Pages SPA routing:
-- `/NodeNest/dashboard` → Works ✅
-- `/NodeNest/settings` → Works ✅
-- `/NodeNest/stats` → Works ✅
-
----
-
-## 📁 Project Structure
-
-```
-NodeNest/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml      # GitHub Actions CI/CD
-├── frontend/
-│   ├── public/
-│   │   ├── index.html      # Main HTML with SPA redirect script
-│   │   └── 404.html        # GitHub Pages SPA routing handler
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ui/         # Shadcn UI components (40+ components)
-│   │   │   ├── AddNodeModal.js
-│   │   │   ├── MobileQRCode.js
-│   │   │   ├── NodeDetailsSidebar.js
-│   │   │   ├── RadialCanvas.js
-│   │   │   └── ToolNode.js
-│   │   ├── contexts/
-│   │   │   └── StorageContext.js  # Global state & storage logic
-│   │   ├── pages/
-│   │   │   ├── Dashboard.js   # Main radial canvas view
-│   │   │   ├── Landing.js     # Storage selection screen
-│   │   │   ├── Settings.js    # LLM config & import/export
-│   │   │   └── Stats.js       # Usage analytics & charts
-│   │   ├── utils/
-│   │   │   ├── compression.js # QR code data compression
-│   │   │   ├── constants.js   # Categories, storage keys
-│   │   │   ├── encryption.js  # XOR cipher for local data
-│   │   │   └── indexedDB.js   # File handle persistence
-│   │   ├── hooks/
-│   │   │   └── use-toast.js
-│   │   ├── lib/
-│   │   │   └── utils.js       # Tailwind utilities
-│   │   ├── App.js
-│   │   ├── App.css
-│   │   └── index.js
-│   ├── package.json
-│   ├── tailwind.config.js
-│   └── craco.config.js
-├── .gitignore
-├── .nojekyll
-└── README.md
-```
-
----
-
-## 🔧 Technical Architecture
-
-### Performance Optimizations
-
-All components are optimized for production:
-
-| Component | Optimizations |
-|-----------|--------------|
-| **ToolNode** | `React.memo`, `useCallback` for drag handlers |
-| **RadialCanvas** | `React.memo`, `useMemo` for ring calculations |
-| **Dashboard** | `useMemo` for filtered tools |
-| **StorageContext** | `useCallback` for all storage operations |
-
-### Storage System
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    StorageContext                        │
-├─────────────────────────────────────────────────────────┤
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Browser    │  │  File System │  │    Cloud     │  │
-│  │  localStorage│  │   API        │  │  (optional)  │  │
-│  │              │  │              │  │              │  │
-│  │  • Encrypted │  │  • JSON file │  │  • Google    │  │
-│  │  • XOR cipher│  │  • IndexedDB │  │    OAuth     │  │
-│  │  • Instant   │  │    handles   │  │  • Backend   │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Returning User Flow (Folder Storage)
-
-When you return to NodeNest with a saved folder:
-
-```
-┌─────────────────────────────────────────┐
-│           Welcome Back!                  │
-│                                         │
-│   Your data is saved in:                │
-│   ┌─────────────────────────────────┐   │
-│   │  📁 MyFolder/                   │   │
-│   │     nodenest_tools.json         │   │
-│   └─────────────────────────────────┘   │
-│                                         │
-│   [Continue with This Folder]           │
-│                                         │
-│   Choose a Different Folder             │
-└─────────────────────────────────────────┘
-```
-
-1. **Auto-detect**: App checks IndexedDB for saved folder handle
-2. **Permission check**: If already granted → auto-navigate to dashboard
-3. **User confirmation**: If permission needed → show "Welcome Back" screen
-4. **One-click continue**: Click button → browser shows native permission dialog
-5. **Access granted**: Proceed to dashboard with your saved tools
-
-### Categories
-
-9 built-in categories with distinct colors:
-
-| Category | Color | ID |
-|----------|-------|-----|
-| AI Tools | `#8B5CF6` | `ai_tools` |
-| Productivity | `#06B6D4` | `productivity` |
-| Design | `#EC4899` | `design` |
-| Development | `#10B981` | `development` |
-| Writing | `#F59E0B` | `writing` |
-| Research | `#6366F1` | `research` |
-| Automation | `#EF4444` | `automation` |
-| Communication | `#14B8A6` | `communication` |
-| Other | `#64748B` | `other` |
+| Category | Color | Example Tools |
+|----------|-------|---------------|
+| 🟣 **AI Tools** | Purple | ChatGPT, Claude, Gemini |
+| 🔵 **Productivity** | Cyan | Notion, Todoist, Calendar |
+| 🩷 **Design** | Pink | Figma, Canva, Midjourney |
+| 🟢 **Development** | Green | GitHub, VS Code, Cursor |
+| 🟡 **Writing** | Amber | Grammarly, Jasper, Copy.ai |
+| 🔮 **Research** | Indigo | Perplexity, Elicit, Consensus |
+| 🔴 **Automation** | Red | Zapier, Make, n8n |
+| 🌊 **Communication** | Teal | Slack, Discord, Zoom |
+| ⚫ **Other** | Slate | Everything else |
 
 ---
 
 ## 📱 Mobile Sync
 
-Sync your tools to mobile via QR code:
+Share your tools collection to your phone:
 
-### How It Works
+1. Click **"Export to Mobile"** button
+2. Scan the QR code with your phone
+3. Tools are imported automatically!
 
-1. **Small datasets** (< 2KB): Direct URL encoding in QR code
-2. **Large datasets**: Compressed minimal format with sync code fallback
-3. **Clipboard backup**: Copy full encrypted data manually
+**How it handles large collections:**
+- Small (< 2KB): Direct URL in QR code
+- Large: Compressed format with sync code fallback
+- Huge: Copy to clipboard option
 
-### Data Compression
+---
 
-```javascript
-// Full tool object → Minimal sync format
-{
-  title: "ChatGPT",           →  { t: "ChatGPT",
-  url: "https://...",              u: "https://...",
-  category_id: "ai_tools",         c: "ai_tools",
-  favicon: "https://...",          f: "https://...",
-  favorite: true                   v: 1 }
-}
-// ~60% size reduction
+## 🏗️ Project Structure
+
+```
+NodeNest/
+├── frontend/
+│   ├── src/
+│   │   ├── components/     # UI components
+│   │   │   ├── ui/         # 40+ Shadcn components
+│   │   │   ├── RadialCanvas.js
+│   │   │   ├── ToolNode.js
+│   │   │   └── ...
+│   │   ├── pages/          # Route pages
+│   │   │   ├── Landing.js  # Storage selection
+│   │   │   ├── Dashboard.js # Main canvas
+│   │   │   ├── Settings.js
+│   │   │   └── Stats.js
+│   │   ├── contexts/       # React Context
+│   │   │   └── StorageContext.js
+│   │   └── utils/          # Helpers
+│   │       ├── constants.js
+│   │       ├── compression.js
+│   │       ├── encryption.js
+│   │       └── indexedDB.js
+│   └── public/
+│       ├── index.html
+│       └── 404.html        # SPA routing
+├── .github/workflows/
+│   └── deploy.yml          # Auto-deploy to GitHub Pages
+└── README.md
 ```
 
 ---
 
-## 🔐 Security
+## ⚡ Performance
 
-- **Local encryption**: XOR cipher with base64 encoding for localStorage
-- **No data leaves your browser**: Everything stored locally by default
-- **IndexedDB for handles**: File System API handles persist securely
-- **HTTPS required**: File System Access API only works over HTTPS
+Built for speed with React best practices:
+
+| Optimization | Implementation |
+|--------------|----------------|
+| **Memoization** | `React.memo` on ToolNode, RadialCanvas |
+| **Computed Values** | `useMemo` for filtered tools, ring calculations |
+| **Stable Callbacks** | `useCallback` for all handlers |
+| **Lazy Images** | `loading="lazy"` on all favicons |
+| **Immediate Persistence** | Data saved on every change |
 
 ---
 
-## ⚙️ Configuration
+## 🔐 Privacy & Security
 
-### Environment Variables (Optional)
-
-Create `.env` in `/frontend`:
-
-```env
-# Backend API (optional - app works fully without it)
-REACT_APP_BACKEND_URL=https://your-backend.com
-
-# Google OAuth (optional - for cloud sync)
-REACT_APP_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-```
-
-### LLM Providers
-
-When backend is available, configure AI metadata extraction in Settings:
-- **Anthropic** - Claude Sonnet 4
-- **OpenAI** - GPT-5.1
-- **Google** - Gemini 2.5 Flash
-- **Local** - Ollama, LMStudio (OpenAI-compatible endpoint)
-
-Without backend: Basic client-side metadata extraction (title from URL, Google favicon)
+- ✅ **No accounts** - Start using immediately
+- ✅ **No tracking** - We don't collect any data
+- ✅ **No cloud** - Everything stays on your device
+- ✅ **Encrypted storage** - localStorage data is XOR encrypted
+- ✅ **Open source** - Audit the code yourself
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|------------|
+| Layer | Technology |
+|-------|------------|
 | **Framework** | React 18.3.1 |
 | **Routing** | React Router 7.x |
-| **Styling** | Tailwind CSS 3.4 + Shadcn UI |
+| **Styling** | Tailwind CSS 3.4 |
+| **Components** | Shadcn UI + Radix |
 | **Animations** | Framer Motion 12.x |
 | **Charts** | Recharts 3.x |
 | **Icons** | Lucide React |
 | **QR Codes** | qrcode.react |
-| **Build Tool** | Create React App + CRACO |
-| **Deployment** | GitHub Pages + GitHub Actions |
+| **Build** | Create React App + CRACO |
+| **Deploy** | GitHub Pages + Actions |
 
 ---
 
-## 🚢 Alternative Deployment
+## 🚢 Deployment
 
-### Vercel / Netlify
+### GitHub Pages (Default)
+
+Push to `main` → Auto-deploys via GitHub Actions
+
+### Self-Host
 
 ```bash
 cd frontend
 yarn build
-# Deploy the `build/` folder
+# Serve the `build/` folder with any static host
 ```
 
 ### Docker
@@ -316,55 +233,53 @@ yarn build
 ```dockerfile
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY frontend/package.json frontend/yarn.lock ./
-RUN yarn install --frozen-lockfile
 COPY frontend/ ./
-RUN yarn build
+RUN yarn install --frozen-lockfile && yarn build
 
 FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
 ```
 
 ---
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
+Contributions are welcome!
+
+1. Fork the repo
+2. Create a branch: `git checkout -b feature/cool-feature`
+3. Commit: `git commit -m 'Add cool feature'`
+4. Push: `git push origin feature/cool-feature`
 5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License - do whatever you want with it!
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 Credits
 
-- [Shadcn UI](https://ui.shadcn.com/) - Beautiful component primitives
-- [Radix UI](https://www.radix-ui.com/) - Accessible components
+- [Shadcn UI](https://ui.shadcn.com/) - Component library
+- [Radix UI](https://www.radix-ui.com/) - Primitives
 - [Framer Motion](https://www.framer.com/motion/) - Animations
 - [Lucide](https://lucide.dev/) - Icons
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
 
 ---
 
 <div align="center">
-  <p>Built with ❤️ by <a href="https://github.com/ravenxrich">ravenxrich</a></p>
   
-  <p>
-    <a href="https://ravenxrich.github.io/NodeNest/">🌐 Live Demo</a> •
-    <a href="https://github.com/ravenxrich/NodeNest/issues">🐛 Report Bug</a> •
-    <a href="https://github.com/ravenxrich/NodeNest/issues">✨ Request Feature</a>
-  </p>
+  **[🌐 Try NodeNest Now](https://ravenxrich.github.io/NodeNest/)**
   
   <br />
   
-  <sub>⭐ Star this repo if you find it useful!</sub>
+  Made with ❤️ by [ravenxrich](https://github.com/ravenxrich)
+  
+  <br />
+  
+  ⭐ **Star this repo** if you find it useful!
+
 </div>
