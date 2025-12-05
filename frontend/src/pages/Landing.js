@@ -17,7 +17,7 @@ const HAS_BACKEND = !!process.env.REACT_APP_BACKEND_URL;
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { selectStorageMode, storageMode } = useStorage();
+  const { selectStorageMode } = useStorage();
   const [showOptions, setShowOptions] = useState(false);
   const [folderError, setFolderError] = useState(null);
   const [isReturningUser, setIsReturningUser] = useState(false);
@@ -40,7 +40,7 @@ const Landing = () => {
       }
       
       // If user has cloud storage, auto-navigate
-      if (storageMode === 'cloud') {
+      if (storedMode === 'cloud') {
         navigate('/dashboard');
         return;
       }
@@ -77,7 +77,7 @@ const Landing = () => {
     };
 
     checkReturningUser();
-  }, [navigate, selectStorageMode, storageMode]);
+  }, [navigate, selectStorageMode]);
 
   // Handle returning user confirming folder access
   const handleConfirmFolder = useCallback(async () => {

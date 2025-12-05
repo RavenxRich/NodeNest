@@ -188,19 +188,19 @@ const MobileQRCode = () => {
 
       {showQR && (
         <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85 overflow-y-auto"
           onClick={() => setShowQR(false)}
         >
           <div 
             onClick={e => e.stopPropagation()}
-            className="bg-white rounded-2xl p-8 w-full max-w-lg mx-auto"
+            className="bg-white rounded-2xl p-6 w-full max-w-md mx-auto my-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Sync to Mobile</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Sync to Mobile</h3>
               <button
                 onClick={() => setShowQR(false)}
-                className="text-gray-400 hover:text-gray-600 text-3xl leading-none p-2"
+                className="text-gray-400 hover:text-gray-600 text-2xl leading-none p-1"
                 aria-label="Close"
               >
                 ×
@@ -227,24 +227,18 @@ const MobileQRCode = () => {
             )}
             
             {qrData ? (
-              <div className="flex flex-col items-center justify-center space-y-6">
+              <div className="flex flex-col items-center justify-center space-y-4">
                 {/* QR Code Container */}
                 <div 
-                  className="bg-white p-6 rounded-2xl flex items-center justify-center w-full"
-                  style={{ border: '4px solid #8b5cf6', minHeight: '280px' }}
+                  className="bg-white p-4 rounded-xl flex items-center justify-center"
+                  style={{ border: '3px solid #8b5cf6' }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={240}
+                    size={200}
                     level="L"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
-                    style={{ 
-                      display: 'block', 
-                      width: '240px', 
-                      height: '240px',
-                      margin: '0 auto'
-                    }}
                   />
                 </div>
                 

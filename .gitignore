@@ -7,6 +7,8 @@ frontend/build/
 # Environment
 .env
 .env.local
+*.env
+*.env.*
 
 # Logs
 *.log
@@ -22,9 +24,10 @@ frontend/build/
 .emergent/
 .gitconfig
 
-# Testing
-test_result.md
--e 
-# Environment files
-*.env
-*.env.*
+# User data
+nodenest_tools.json
+*.pdf
+
+# Misc
+logos:*
+logo:*
