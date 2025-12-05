@@ -1,155 +1,248 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
 import { toast } from 'sonner';
-import { Upload, Download, QrCode, X } from 'lucide-react';
+import { QrCode, AlertTriangle, Copy, Check } from 'lucide-react';
+import { useStorage } from '../contexts/StorageContext';
+import { createMinimalSyncData, expandMinimalSyncData } from '../utils/compression';
+import { STORAGE_KEYS, QR_CODE_MAX_SIZE } from '../utils/constants';
+import { encryptData, decryptData } from '../utils/encryption';
 
 const MobileQRCode = () => {
+  const { tools, loadTools } = useStorage();
   const [showQR, setShowQR] = useState(false);
   const [qrData, setQrData] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [qrReady, setQrReady] = useState(false);
-  const qrRef = useRef(null);
-  
-  // Debug: Log when QR data changes
-  useEffect(() => {
-    if (qrData) {
-      console.log('✅ QR Data set:', qrData.substring(0, 50) + '...');
-      console.log('QR Data length:', qrData.length);
-      setQrReady(true);
-    }
-  }, [qrData]);
-  
-  // Debug: Log when modal shows
-  useEffect(() => {
-    if (showQR) {
-      console.log('📱 QR Modal opened');
-      console.log('QR Data exists:', !!qrData);
-      console.log('QR Ready:', qrReady);
-    }
-  }, [showQR, qrData, qrReady]);
+  const [isDataTooLarge, setIsDataTooLarge] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [syncCode, setSyncCode] = useState('');
 
-  const exportLocalStorage = () => {
+  // Generate a short sync code for the data
+  const generateSyncCode = useCallback(() => {
+    const minimalData = createMinimalSyncData(tools);
+    const jsonString = JSON.stringify(minimalData);
+    
+    // Create a unique sync code
+    const code = Math.random().toString(36).substr(2, 8).toUpperCase();
+    
+    // Store in localStorage with the code as key (for same-device testing)
+    // In production, this would be stored on a server
     try {
-      // Export all nodenest data from localStorage
-      const data = {
-        tools: localStorage.getItem('nodenest_tools_encrypted'),
-        storageMode: localStorage.getItem('nodenest_storage_mode'),
-        userId: localStorage.getItem('nodenest_user_id'),
-        localStorageType: localStorage.getItem('nodenest_local_storage_type')
-      };
+      localStorage.setItem(`nodenest_sync_${code}`, jsonString);
+      return code;
+    } catch (e) {
+      return null;
+    }
+  }, [tools]);
+
+  const exportLocalStorage = useCallback(() => {
+    try {
+      // Create minimal sync data for smaller QR code
+      const minimalData = createMinimalSyncData(tools);
+      const jsonString = JSON.stringify({
+        v: 1, // version
+        t: minimalData,
+        m: localStorage.getItem(STORAGE_KEYS.STORAGE_MODE),
+        s: localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE)
+      });
       
-      console.log('Exporting data:', data);
-      
-      const jsonString = JSON.stringify(data);
+      // Encode for URL
       const encoded = btoa(encodeURIComponent(jsonString));
+      const url = `${window.location.origin}${window.location.pathname}#sync=${encoded}`;
       
-      // Create URL with data
-      const url = `${window.location.origin}${window.location.pathname}#import=${encoded}`;
+      // Check if data is too large for reliable QR scanning
+      if (url.length > QR_CODE_MAX_SIZE) {
+        setIsDataTooLarge(true);
+        // Generate a sync code as alternative
+        const code = generateSyncCode();
+        setSyncCode(code);
+        
+        // Create shorter URL with just the sync code
+        const shortUrl = `${window.location.origin}${window.location.pathname}#code=${code}`;
+        setQrData(shortUrl);
+      } else {
+        setIsDataTooLarge(false);
+        setQrData(url);
+      }
       
-      console.log('✅ QR Code URL generated:', url);
-      console.log('✅ QR Code URL length:', url.length);
-      
-      // Set data and show modal immediately
-      setQrData(url);
-      setQrReady(true);
       setShowQR(true);
       toast.success('QR Code ready! Scan with your mobile device.');
     } catch (error) {
-      console.error('❌ Error generating QR code:', error);
       toast.error('Failed to generate QR code: ' + error.message);
     }
-  };
+  }, [tools, generateSyncCode]);
 
-  const importFromQR = () => {
+  const copyToClipboard = useCallback(async () => {
     try {
-      // Check if there's import data in the URL hash
-      const hash = window.location.hash;
-      if (hash.startsWith('#import=')) {
-        const encoded = hash.substring(8);
-        const jsonString = decodeURIComponent(atob(encoded));
-        const data = JSON.parse(jsonString);
-        
-        // Import data to localStorage
-        if (data.tools) localStorage.setItem('nodenest_tools_encrypted', data.tools);
-        if (data.storageMode) localStorage.setItem('nodenest_storage_mode', data.storageMode);
-        if (data.userId) localStorage.setItem('nodenest_user_id', data.userId);
-        if (data.localStorageType) localStorage.setItem('nodenest_local_storage_type', data.localStorageType);
-        
-        // Clear the hash and reload
-        window.location.hash = '';
-        window.location.reload();
-        
-        toast.success('Data imported successfully!');
-      } else {
-        toast.error('No import data found in URL');
-      }
+      // Export full data for clipboard
+      const encryptedData = localStorage.getItem(STORAGE_KEYS.TOOLS_ENCRYPTED);
+      const data = {
+        tools: encryptedData,
+        storageMode: localStorage.getItem(STORAGE_KEYS.STORAGE_MODE),
+        userId: localStorage.getItem(STORAGE_KEYS.USER_ID),
+        localStorageType: localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE)
+      };
+      
+      await navigator.clipboard.writeText(JSON.stringify(data));
+      setCopied(true);
+      toast.success('Data copied to clipboard!');
+      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Error importing data:', error);
-      toast.error('Failed to import data');
+      toast.error('Failed to copy to clipboard');
     }
-  };
+  }, []);
 
-  // Auto-import on mount if hash exists
-  React.useEffect(() => {
-    if (window.location.hash.startsWith('#import=')) {
-      importFromQR();
-    }
+  // Handle import from URL hash
+  useEffect(() => {
+    const handleImport = () => {
+      const hash = window.location.hash;
+      
+      if (hash.startsWith('#sync=')) {
+        try {
+          const encoded = hash.substring(6);
+          const jsonString = decodeURIComponent(atob(encoded));
+          const data = JSON.parse(jsonString);
+          
+          if (data.v === 1 && data.t) {
+            // Expand minimal data back to full tools
+            const expandedTools = expandMinimalSyncData(data.t);
+            const encrypted = encryptData(expandedTools);
+            
+            if (encrypted) {
+              localStorage.setItem(STORAGE_KEYS.TOOLS_ENCRYPTED, encrypted);
+            }
+            if (data.m) localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, data.m);
+            if (data.s) localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE, data.s);
+            localStorage.setItem(STORAGE_KEYS.USER_ID, 'local_user');
+            
+            window.location.hash = '';
+            window.location.reload();
+            toast.success('Data imported successfully!');
+          }
+        } catch (error) {
+          toast.error('Failed to import data from QR code');
+        }
+      } else if (hash.startsWith('#code=')) {
+        try {
+          const code = hash.substring(6);
+          const storedData = localStorage.getItem(`nodenest_sync_${code}`);
+          
+          if (storedData) {
+            const minimalTools = JSON.parse(storedData);
+            const expandedTools = expandMinimalSyncData(minimalTools);
+            const encrypted = encryptData(expandedTools);
+            
+            if (encrypted) {
+              localStorage.setItem(STORAGE_KEYS.TOOLS_ENCRYPTED, encrypted);
+            }
+            localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, 'local');
+            localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE, 'browser');
+            localStorage.setItem(STORAGE_KEYS.USER_ID, 'local_user');
+            
+            // Clean up sync code
+            localStorage.removeItem(`nodenest_sync_${code}`);
+            
+            window.location.hash = '';
+            window.location.reload();
+            toast.success('Data imported successfully!');
+          } else {
+            toast.error('Sync code not found. It may have expired.');
+          }
+        } catch (error) {
+          toast.error('Failed to import data');
+        }
+      } else if (hash.startsWith('#import=')) {
+        // Legacy import format
+        try {
+          const encoded = hash.substring(8);
+          const jsonString = decodeURIComponent(atob(encoded));
+          const data = JSON.parse(jsonString);
+          
+          if (data.tools) localStorage.setItem(STORAGE_KEYS.TOOLS_ENCRYPTED, data.tools);
+          if (data.storageMode) localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, data.storageMode);
+          if (data.userId) localStorage.setItem(STORAGE_KEYS.USER_ID, data.userId);
+          if (data.localStorageType) localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE, data.localStorageType);
+          
+          window.location.hash = '';
+          window.location.reload();
+          toast.success('Data imported successfully!');
+        } catch (error) {
+          toast.error('Failed to import data');
+        }
+      }
+    };
+
+    handleImport();
   }, []);
 
   return (
     <div className="relative">
-      <div className="flex gap-2">
-        <Button
-          onClick={exportLocalStorage}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <QrCode className="w-4 h-4" />
-          Export to Mobile
-        </Button>
-      </div>
+      <Button
+        onClick={exportLocalStorage}
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2"
+      >
+        <QrCode className="w-4 h-4" />
+        Export to Mobile
+      </Button>
 
       {showQR && (
         <div 
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black bg-opacity-85"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/85"
           onClick={() => setShowQR(false)}
         >
           <div 
             onClick={e => e.stopPropagation()}
-            className="bg-white rounded-2xl p-8 w-full max-w-lg mx-auto my-auto"
+            className="bg-white rounded-2xl p-8 w-full max-w-lg mx-auto"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">Scan QR Code</h3>
+              <h3 className="text-2xl font-bold text-gray-900">Sync to Mobile</h3>
               <button
                 onClick={() => setShowQR(false)}
-                className="text-gray-400 hover:text-gray-600 text-3xl leading-none p-2 -mt-2 -mr-2"
+                className="text-gray-400 hover:text-gray-600 text-3xl leading-none p-2"
                 aria-label="Close"
               >
                 ×
               </button>
             </div>
             
+            {isDataTooLarge && (
+              <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-800">
+                    Large data detected ({tools.length} tools)
+                  </p>
+                  <p className="text-xs text-amber-700 mt-1">
+                    Using sync code method for reliability. Scan the QR code, or manually copy data below.
+                  </p>
+                  {syncCode && (
+                    <p className="text-sm font-mono font-bold text-amber-900 mt-2">
+                      Sync Code: {syncCode}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            
             {qrData ? (
               <div className="flex flex-col items-center justify-center space-y-6">
-                {/* QR Code Container - CENTERED AND LARGER */}
+                {/* QR Code Container */}
                 <div 
-                  className="bg-white p-8 rounded-2xl flex items-center justify-center w-full"
-                  style={{ border: '4px solid #8b5cf6', minHeight: '300px' }}
+                  className="bg-white p-6 rounded-2xl flex items-center justify-center w-full"
+                  style={{ border: '4px solid #8b5cf6', minHeight: '280px' }}
                 >
                   <QRCodeCanvas 
                     value={qrData} 
-                    size={256}
-                    level="M"
+                    size={240}
+                    level="L"
                     fgColor="#000000"
                     bgColor="#FFFFFF"
                     style={{ 
                       display: 'block', 
-                      width: '256px', 
-                      height: '256px',
+                      width: '240px', 
+                      height: '240px',
                       margin: '0 auto'
                     }}
                   />
@@ -161,22 +254,36 @@ const MobileQRCode = () => {
                     📱 Scan with your phone camera
                   </p>
                   <p className="text-gray-500 text-sm">
-                    Your tools data will be imported automatically
+                    {isDataTooLarge 
+                      ? 'Open the link on your phone while this page is open'
+                      : 'Your tools will be imported automatically'}
                   </p>
                 </div>
                 
-                {/* Debug info */}
-                <details className="text-xs text-gray-400 w-full mt-4">
-                  <summary className="cursor-pointer hover:text-gray-600">Debug Info</summary>
-                  <div className="mt-2 p-3 bg-gray-50 rounded">
-                    <p>QR Data Length: {qrData.length}</p>
-                    <p className="break-all mt-1">QR Data: {qrData.substring(0, 100)}...</p>
-                  </div>
-                </details>
+                {/* Alternative: Copy button for large data */}
+                {isDataTooLarge && (
+                  <Button
+                    onClick={copyToClipboard}
+                    variant="outline"
+                    className="w-full gap-2"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        Copy Full Data to Clipboard
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-4"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-4" />
                 <p className="text-lg">Generating QR code...</p>
               </div>
             )}

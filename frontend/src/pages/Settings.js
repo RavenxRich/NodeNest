@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage } from '../contexts/StorageContext';
 import { Button } from '../components/ui/button';
@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { toast } from 'sonner';
 import { ArrowLeft, Upload, Download, Database, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { STORAGE_KEYS } from '../utils/constants';
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -17,30 +18,30 @@ const Settings = () => {
   const [importFormat, setImportFormat] = useState('json');
   const [importData, setImportData] = useState('');
   const [llmProvider, setLlmProvider] = useState(() => {
-    return localStorage.getItem('llmProvider') || 'anthropic';
+    return localStorage.getItem(STORAGE_KEYS.LLM_PROVIDER) || 'anthropic';
   });
   const [localEndpoint, setLocalEndpoint] = useState(() => {
-    return localStorage.getItem('localLlmEndpoint') || '';
+    return localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_ENDPOINT) || '';
   });
   const [localModel, setLocalModel] = useState(() => {
-    return localStorage.getItem('localLlmModel') || 'default';
+    return localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_MODEL) || 'default';
   });
   const [localApiKey, setLocalApiKey] = useState(() => {
-    return localStorage.getItem('localLlmApiKey') || '';
+    return localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_API_KEY) || '';
   });
   const [loading, setLoading] = useState(false);
 
-  const handleSaveLlmSettings = () => {
-    localStorage.setItem('llmProvider', llmProvider);
+  const handleSaveLlmSettings = useCallback(() => {
+    localStorage.setItem(STORAGE_KEYS.LLM_PROVIDER, llmProvider);
     if (llmProvider === 'local') {
-      localStorage.setItem('localLlmEndpoint', localEndpoint);
-      localStorage.setItem('localLlmModel', localModel);
-      localStorage.setItem('localLlmApiKey', localApiKey);
+      localStorage.setItem(STORAGE_KEYS.LOCAL_LLM_ENDPOINT, localEndpoint);
+      localStorage.setItem(STORAGE_KEYS.LOCAL_LLM_MODEL, localModel);
+      localStorage.setItem(STORAGE_KEYS.LOCAL_LLM_API_KEY, localApiKey);
     }
     toast.success('LLM settings saved!');
-  };
+  }, [llmProvider, localEndpoint, localModel, localApiKey]);
 
-  const handleImport = async () => {
+  const handleImport = useCallback(async () => {
     if (!importData.trim()) {
       toast.error('Please paste data to import');
       return;
@@ -56,9 +57,9 @@ const Settings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [importData, importFormat, importTools]);
 
-  const handleExport = async (format) => {
+  const handleExport = useCallback(async (format) => {
     setLoading(true);
     try {
       const result = await exportTools(format);
@@ -75,7 +76,7 @@ const Settings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [exportTools]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-violet-50 to-purple-50 dark:from-slate-950 dark:via-violet-950 dark:to-slate-900">
@@ -228,12 +229,11 @@ const Settings = () => {
                             id="custom-api-key"
                             type="password"
                             placeholder="Your own Claude/GPT/Gemini API key"
-                            defaultValue={localStorage.getItem('custom_llm_key_encrypted') ? '••••••••••••••••' : ''}
+                            defaultValue={localStorage.getItem(STORAGE_KEYS.CUSTOM_LLM_KEY) ? '••••••••••••••••' : ''}
                             onChange={(e) => {
                               if (e.target.value) {
-                                // Encrypt and store
                                 const encrypted = btoa(e.target.value);
-                                localStorage.setItem('custom_llm_key_encrypted', encrypted);
+                                localStorage.setItem(STORAGE_KEYS.CUSTOM_LLM_KEY, encrypted);
                               }
                             }}
                             className="mt-1"

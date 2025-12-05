@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStorage } from '../contexts/StorageContext';
 import { useTheme } from 'next-themes';
@@ -15,90 +15,60 @@ import { motion } from 'framer-motion';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { storageMode, tools, loadTools, trackClick, updateTool } = useStorage();
+  const { storageMode, tools, loadTools, updateTool } = useStorage();
   const { theme, setTheme } = useTheme();
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTool, setSelectedTool] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredTools, setFilteredTools] = useState([]);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
+  // Redirect if no storage mode
   useEffect(() => {
-    // CRITICAL FIX: Since StorageContext now initializes synchronously from localStorage,
-    // we can trust the storageMode value immediately
     if (!storageMode) {
-      console.log('❌ No storage mode found, redirecting to landing');
       navigate('/');
-      return;
     }
-    
-    console.log('✅ Storage mode confirmed:', storageMode);
   }, [storageMode, navigate]);
 
+  // Load tools on mount
   useEffect(() => {
-    console.log('🏁 Dashboard mounted, calling loadTools...');
     loadTools();
-  }, []);
+  }, [loadTools]);
 
-  useEffect(() => {
-    console.log('🔍 Tools updated in Dashboard:', tools.length, 'tools');
-    console.log('📋 Tools array:', tools);
-    
+  // Memoized filtered tools for better performance
+  const filteredTools = useMemo(() => {
     let result = tools;
     
-    // Filter by favorites if enabled
     if (showOnlyFavorites) {
       result = result.filter(t => t.favorite);
-      console.log('⭐ Filtered for favorites:', result.length);
     }
     
-    // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(t => 
-        t.title.toLowerCase().includes(query) ||
+        t.title?.toLowerCase().includes(query) ||
         t.description?.toLowerCase().includes(query) ||
         t.tags?.some(tag => tag.toLowerCase().includes(query))
       );
-      console.log('🔎 Filtered by search:', result.length);
     }
     
-    console.log('✅ Final filteredTools:', result.length);
-    setFilteredTools(result);
+    return result;
   }, [searchQuery, tools, showOnlyFavorites]);
 
-  const handleToolClick = (tool) => {
-    // Just open the sidebar, don't track or open URL yet
+  const handleToolClick = useCallback((tool) => {
     setSelectedTool(tool);
-  };
+  }, []);
 
-  const handleToolMove = async (toolId, newPosition, ringRadiuses, categories) => {
-    console.log('📍 handleToolMove called:', {
-      toolId,
-      newPosition,
-      ringRadiuses,
-      categoriesCount: categories?.length
-    });
-
+  const handleToolMove = useCallback(async (toolId, newPosition, ringRadiuses, categories) => {
     if (!ringRadiuses || !categories || ringRadiuses.length === 0) {
-      console.error('❌ Missing ringRadiuses or categories');
       return;
     }
 
-    // Convert screen position back to angle and radius
     const centerX = window.innerWidth / 2;
     const centerY = (window.innerHeight - 80) / 2;
     const dx = newPosition.x - centerX;
     const dy = newPosition.y - centerY;
     const angle = Math.atan2(dy, dx);
     const draggedRadius = Math.sqrt(dx * dx + dy * dy);
-
-    console.log('📐 Position calculation:', {
-      center: { x: centerX, y: centerY },
-      delta: { dx, dy },
-      angle,
-      draggedRadius
-    });
 
     // Find the closest ring
     let closestRingIndex = 0;
@@ -112,17 +82,8 @@ const Dashboard = () => {
       }
     }
 
-    // Snap to the closest ring
     const snappedRadius = ringRadiuses[closestRingIndex];
     const newCategory = categories[closestRingIndex];
-
-    console.log('🎯 Snapping to ring:', {
-      closestRingIndex,
-      snappedRadius,
-      newCategory: newCategory.name
-    });
-
-    // Update tool with new position and category
     const tool = tools.find(t => t.id === toolId);
     const oldCategory = tool?.category_id;
     
@@ -131,34 +92,23 @@ const Dashboard = () => {
         position: { angle, radius: snappedRadius },
         category_id: newCategory.id
       });
-      
-      console.log('✅ Tool updated successfully - state should be updated by saveTools');
 
-      // Show feedback toast
       if (tool && oldCategory !== newCategory.id) {
         toast.success(`Moved to ${newCategory.name}`);
       }
     } catch (error) {
-      console.error('❌ Error updating tool:', error);
       toast.error('Failed to move node');
     }
-  };
+  }, [tools, updateTool]);
 
-  const handleLogout = () => {
-    // CRITICAL FIX: DON'T remove storage_mode and local_storage_type
-    // These are needed for the app to remember the user's storage choice
-    // Only clear the user_id and encrypted tools data
+  const handleLogout = useCallback(() => {
+    // Only clear user data, keep storage preferences
     localStorage.removeItem('nodenest_user_id');
     localStorage.removeItem('nodenest_tools_encrypted');
-    // NOTE: We do NOT remove:
-    // - 'nodenest_storage_mode' (keeps user's choice: local/cloud)
-    // - 'nodenest_local_storage_type' (keeps type: browser/filesystem)
-    // - 'nodenest_has_directory' (folder handle persists for filesystem mode)
     
     toast.success('Logged out successfully');
-    // Navigate to landing page using React Router (no full page reload)
     navigate('/');
-  };
+  }, [navigate]);
 
   const favoriteCount = tools.filter(t => t.favorite).length;
 

@@ -1,24 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { encryptData, decryptData } from '../utils/encryption';
+import { openDB, getHandle, setHandle } from '../utils/indexedDB';
+import { DEFAULT_CATEGORIES, STORAGE_KEYS } from '../utils/constants';
 import { toast } from 'sonner';
 
 const StorageContext = createContext();
-
-// IndexedDB helper for storing file handles
-const openDB = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('NodeNestDB', 1);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if (!db.objectStoreNames.contains('handles')) {
-        db.createObjectStore('handles');
-      }
-    };
-  });
-};
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -32,20 +19,21 @@ export const useStorage = () => {
 };
 
 export const StorageProvider = ({ children }) => {
-  // CRITICAL FIX: Initialize all state synchronously from localStorage to avoid race conditions
+  // Initialize state synchronously from localStorage to avoid race conditions
   const [storageMode, setStorageMode] = useState(() => {
-    const mode = localStorage.getItem('nodenest_storage_mode');
-    console.log('🔄 StorageProvider initializing - storageMode from localStorage:', mode);
-    return mode;
+    return localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
   });
+  
   const [userId, setUserId] = useState(() => {
-    return localStorage.getItem('nodenest_user_id');
+    return localStorage.getItem(STORAGE_KEYS.USER_ID);
   });
+  
   const [tools, setTools] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categories] = useState(DEFAULT_CATEGORIES);
   const [directoryHandle, setDirectoryHandle] = useState(null);
+  
   const [localStorageType, setLocalStorageType] = useState(() => {
-    return localStorage.getItem('nodenest_local_storage_type') || 'browser';
+    return localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE) || 'browser';
   });
 
   // Initialize storage mode
@@ -53,218 +41,132 @@ export const StorageProvider = ({ children }) => {
     if (mode === 'cloud' && googleUser) {
       const uid = googleUser.sub || googleUser.email;
       setUserId(uid);
-      localStorage.setItem('nodenest_user_id', uid);
+      localStorage.setItem(STORAGE_KEYS.USER_ID, uid);
       setStorageMode(mode);
-      localStorage.setItem('nodenest_storage_mode', mode);
+      localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, mode);
     } else if (mode === 'local') {
-      // If filesystem storage, check for existing handle first
       if (storageType === 'filesystem') {
         try {
-          console.log('🔧 selectStorageMode called with filesystem mode');
-          console.log('showDirectoryPicker available:', 'showDirectoryPicker' in window);
-          console.log('User Agent:', navigator.userAgent);
-          console.log('Is in iframe:', window.self !== window.top);
-          
           if (!('showDirectoryPicker' in window)) {
             throw new Error('File System Access API not supported in your browser. Please use Chrome, Edge, or Brave.');
           }
           
-          // Check if running in iframe (preview environments)
           if (window.self !== window.top) {
-            throw new Error('Folder storage cannot be used in preview mode. Please open the app in a new tab: Right-click → "Open in New Tab" or use Cloud Storage instead.');
+            throw new Error('Folder storage cannot be used in preview mode. Please open the app in a new tab.');
           }
           
-          // Check if we already have a folder handle from previous session
-          let handle = directoryHandle; // Try in-memory handle first
-          const hasDirectory = localStorage.getItem('nodenest_has_directory');
+          let handle = directoryHandle;
+          const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
           
-          console.log('📁 hasDirectory flag:', hasDirectory);
-          console.log('📁 In-memory handle exists:', !!handle);
-          
-          // Only check IndexedDB if we don't have in-memory handle
+          // Try to get existing handle from IndexedDB
           if (!handle && hasDirectory === 'true') {
-            console.log('📂 Checking for existing folder handle in IndexedDB...');
             try {
-              const db = await openDB();
-              console.log('✅ IndexedDB opened successfully');
-              
-              const tx = db.transaction('handles', 'readonly');
-              const request = tx.objectStore('handles').get('directory');
-              
-              handle = await new Promise((resolve, reject) => {
-                request.onsuccess = () => {
-                  console.log('✅ IndexedDB query success, handle:', request.result);
-                  resolve(request.result);
-                };
-                request.onerror = () => {
-                  console.error('❌ IndexedDB query error:', request.error);
-                  reject(request.error);
-                };
-              });
+              handle = await getHandle('directory');
               
               if (handle) {
-                console.log('✅ Found existing folder handle in IndexedDB');
-                
-                // Verify permission (but don't request if not granted - let caller handle it)
-                try {
-                  const permission = await handle.queryPermission({ mode: 'readwrite' });
-                  console.log('📝 Permission status:', permission);
-                  
-                  if (permission !== 'granted') {
-                    console.log('⚠️ Permission not granted. Handle needs permission request from user gesture.');
-                    // Don't request permission here - caller should have already done it
-                    // Just use the handle - caller verified permission
-                  }
-                } catch (permError) {
-                  console.error('❌ Error checking permission:', permError);
+                const permission = await handle.queryPermission({ mode: 'readwrite' });
+                if (permission !== 'granted') {
                   handle = null;
-                  localStorage.removeItem('nodenest_has_directory');
+                  localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
                 }
               } else {
-                console.log('⚠️ No handle found in IndexedDB');
-                localStorage.removeItem('nodenest_has_directory');
+                localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
               }
             } catch (error) {
-              console.error('❌ Error accessing IndexedDB:', error);
               handle = null;
-              localStorage.removeItem('nodenest_has_directory');
+              localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
             }
           }
           
-          // If no existing handle, prompt user
+          // Prompt user if no existing handle
           if (!handle) {
-            console.log('📂 No existing handle, prompting user to select folder...');
             toast.info('Please select a folder to store your tools');
             handle = await window.showDirectoryPicker({
               mode: 'readwrite',
               startIn: 'documents'
             });
-            console.log('✅ Folder selected successfully:', handle.name);
             
-            // Store new handle in IndexedDB for persistence
-            const db = await openDB();
-            const tx = db.transaction('handles', 'readwrite');
-            tx.objectStore('handles').put(handle, 'directory');
-            
-            // Wait for transaction to complete
-            await new Promise((resolve, reject) => {
-              tx.oncomplete = () => resolve();
-              tx.onerror = () => reject(tx.error);
-            });
-            
-            localStorage.setItem('nodenest_has_directory', 'true');
+            await setHandle(handle, 'directory');
+            localStorage.setItem(STORAGE_KEYS.HAS_DIRECTORY, 'true');
           }
           
-          // Set all state variables
           setDirectoryHandle(handle);
           setUserId('local_user');
-          localStorage.setItem('nodenest_user_id', 'local_user');
+          localStorage.setItem(STORAGE_KEYS.USER_ID, 'local_user');
           setLocalStorageType(storageType);
-          localStorage.setItem('nodenest_local_storage_type', storageType);
+          localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE, storageType);
           setStorageMode(mode);
-          localStorage.setItem('nodenest_storage_mode', mode);
+          localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, mode);
           
-          console.log('✅ Folder storage setup complete!');
           return { success: true };
         } catch (error) {
-          console.error('❌ Error in selectStorageMode:', error);
-          console.error('Error name:', error.name);
-          console.error('Error message:', error.message);
-          
-          // NO FALLBACK - User wants folder only
-          // Return error details so Landing page can show appropriate message
           return { 
             success: false, 
             error: error.name === 'AbortError' 
               ? 'Folder selection was cancelled.' 
               : error.name === 'NotAllowedError'
-              ? 'Folder access was blocked. Please check your browser settings (e.g., Brave Shields).'
-              : `Folder access failed: ${error.message || 'File System Access API not supported in your browser.'}` 
+              ? 'Folder access was blocked. Please check your browser settings.'
+              : `Folder access failed: ${error.message}` 
           };
         }
       } else {
-        // Browser storage mode - set immediately
+        // Browser storage mode
         setUserId('local_user');
-        localStorage.setItem('nodenest_user_id', 'local_user');
+        localStorage.setItem(STORAGE_KEYS.USER_ID, 'local_user');
         setLocalStorageType(storageType);
-        localStorage.setItem('nodenest_local_storage_type', storageType);
+        localStorage.setItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE, storageType);
         setStorageMode(mode);
-        localStorage.setItem('nodenest_storage_mode', mode);
+        localStorage.setItem(STORAGE_KEYS.STORAGE_MODE, mode);
       }
     }
     return { success: true };
   };
 
-  // Initialize default categories
-  useEffect(() => {
-    // Use default categories since we don't have a backend
-    const defaultCategories = [
-      'AI Tools',
-      'Productivity',
-      'Design',
-      'Development',
-      'Writing',
-      'Research',
-      'Automation',
-      'Communication',
-      'Other'
-    ];
-    setCategories(defaultCategories);
+  // Read tools from filesystem directory
+  const readToolsFromDirectory = useCallback(async (handle) => {
+    try {
+      const fileHandle = await handle.getFileHandle('nodenest_tools.json', { create: true });
+      const file = await fileHandle.getFile();
+      const content = await file.text();
+      return content.trim() ? JSON.parse(content) : [];
+    } catch (error) {
+      return [];
+    }
   }, []);
 
   // Load tools from filesystem
-  const loadFromFileSystem = async () => {
+  const loadFromFileSystem = useCallback(async () => {
     try {
       let handle = directoryHandle;
       
-      // If no handle in memory, try to get from IndexedDB
       if (!handle) {
-        const hasDirectory = localStorage.getItem('nodenest_has_directory');
+        const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
         if (hasDirectory === 'true') {
-          const db = await openDB();
-          const tx = db.transaction('handles', 'readonly');
-          const request = tx.objectStore('handles').get('directory');
-          
-          handle = await new Promise((resolve, reject) => {
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-          });
+          handle = await getHandle('directory');
           
           if (handle) {
-            // Verify we still have permission
             const permission = await handle.queryPermission({ mode: 'readwrite' });
             if (permission === 'granted') {
               setDirectoryHandle(handle);
-              console.log('✅ Folder access already granted');
             } else if (permission === 'prompt') {
-              // Request permission again - browser will show dialog
               toast.info('Please confirm folder access in the browser dialog');
               const newPermission = await handle.requestPermission({ mode: 'readwrite' });
               if (newPermission === 'granted') {
                 setDirectoryHandle(handle);
                 toast.success('Folder access confirmed!');
               } else {
-                console.error('Permission denied');
-                toast.error('Folder access denied. Please allow access to continue.');
-                // Clear storage settings
-                localStorage.removeItem('nodenest_storage_mode');
-                localStorage.removeItem('nodenest_has_directory');
+                localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+                localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
                 return [];
               }
             } else {
-              console.error('Permission denied');
-              toast.error('Folder access was denied. Please select folder again.');
-              // Clear storage settings
-              localStorage.removeItem('nodenest_storage_mode');
-              localStorage.removeItem('nodenest_has_directory');
+              localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+              localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
               return [];
             }
           } else {
-            // No handle found, need to select directory again
-            console.log('No directory handle found. Please select a folder again.');
-            toast.error('No folder found. Please select a folder again.');
-            localStorage.removeItem('nodenest_storage_mode');
-            localStorage.removeItem('nodenest_has_directory');
+            localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+            localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
             return [];
           }
         } else {
@@ -274,137 +176,87 @@ export const StorageProvider = ({ children }) => {
       
       return await readToolsFromDirectory(handle);
     } catch (error) {
-      console.error('Error loading from filesystem:', error);
       return [];
     }
-  };
-
-  const readToolsFromDirectory = async (handle) => {
-    try {
-      const fileHandle = await handle.getFileHandle('nodenest_tools.json', { create: true });
-      const file = await fileHandle.getFile();
-      const content = await file.text();
-      if (content.trim()) {
-        return JSON.parse(content);
-      }
-      return [];
-    } catch (error) {
-      console.error('Error reading from file:', error);
-      return [];
-    }
-  };
+  }, [directoryHandle, readToolsFromDirectory]);
 
   // Save tools to filesystem
-  const saveToFileSystem = async (tools) => {
+  const saveToFileSystem = useCallback(async (toolsData) => {
     try {
       let handle = directoryHandle;
       
-      // If no handle, try to get from IndexedDB
       if (!handle) {
-        const db = await openDB();
-        const tx = db.transaction('handles', 'readonly');
-        const request = tx.objectStore('handles').get('directory');
-        
-        handle = await new Promise((resolve, reject) => {
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error);
-        });
+        handle = await getHandle('directory');
         
         if (handle) {
-          // Verify permission
           const permission = await handle.queryPermission({ mode: 'readwrite' });
           if (permission !== 'granted') {
             const newPermission = await handle.requestPermission({ mode: 'readwrite' });
             if (newPermission !== 'granted') {
-              console.error('Permission denied for saving');
               return false;
             }
           }
           setDirectoryHandle(handle);
         } else {
-          console.error('No directory handle available. Please select a folder.');
           return false;
         }
       }
       
       const fileHandle = await handle.getFileHandle('nodenest_tools.json', { create: true });
       const writable = await fileHandle.createWritable();
-      await writable.write(JSON.stringify(tools, null, 2));
+      await writable.write(JSON.stringify(toolsData, null, 2));
       await writable.close();
-      console.log('Successfully saved to filesystem');
       return true;
     } catch (error) {
-      console.error('Error saving to filesystem:', error);
       return false;
     }
-  };
+  }, [directoryHandle]);
 
-  // Load tools
-  const loadTools = async () => {
-    console.log('🔄 loadTools called, storageMode:', storageMode, 'localStorageType:', localStorageType);
-    
-    if (!storageMode) {
-      console.warn('⚠️ No storage mode set, cannot load tools');
-      return;
-    }
+  // Load tools - memoized to prevent unnecessary re-renders
+  const loadTools = useCallback(async () => {
+    if (!storageMode) return;
 
     try {
       if (storageMode === 'local') {
-        console.log('📦 Loading from local storage...');
-        
         if (localStorageType === 'filesystem') {
-          console.log('📁 Loading from filesystem...');
           const fileTools = await loadFromFileSystem();
-          console.log('📁 Loaded from filesystem:', fileTools);
           setTools(fileTools || []);
         } else {
-          console.log('🔒 Loading from browser storage...');
-          const encryptedData = localStorage.getItem('nodenest_tools_encrypted');
-          console.log('🔒 Encrypted data found:', !!encryptedData);
+          const encryptedData = localStorage.getItem(STORAGE_KEYS.TOOLS_ENCRYPTED);
           const localTools = encryptedData ? decryptData(encryptedData) : [];
-          console.log('🔒 Decrypted tools:', localTools);
           setTools(localTools || []);
         }
-        
-        console.log('✅ Tools loaded successfully, count:', tools.length);
       } else if (storageMode === 'cloud') {
-        console.log('☁️ Loading from cloud...');
         const response = await axios.get(`${API}/tools`, {
           params: { user_id: userId }
         });
-        console.log('☁️ Cloud tools:', response.data);
         setTools(response.data);
       }
     } catch (error) {
-      console.error('❌ Error loading tools:', error);
       setTools([]);
     }
-  };
+  }, [storageMode, localStorageType, userId, loadFromFileSystem]);
 
-  // Save tools
-  const saveTools = async (updatedTools) => {
-    console.log('💾 saveTools called with', updatedTools.length, 'tools');
+  // Save tools - with immediate localStorage persistence
+  const saveTools = useCallback(async (updatedTools) => {
+    // Update state first for immediate UI feedback
     setTools(updatedTools);
 
     if (storageMode === 'local') {
       if (localStorageType === 'filesystem') {
-        console.log('📁 Saving to filesystem...');
-        const saved = await saveToFileSystem(updatedTools);
-        console.log('📁 Filesystem save result:', saved);
+        await saveToFileSystem(updatedTools);
       } else {
-        console.log('🔒 Saving to browser storage...');
+        // CRITICAL: Always save to localStorage immediately
         const encrypted = encryptData(updatedTools);
         if (encrypted) {
-          localStorage.setItem('nodenest_tools_encrypted', encrypted);
-          console.log('🔒 Browser storage save complete');
+          localStorage.setItem(STORAGE_KEYS.TOOLS_ENCRYPTED, encrypted);
         }
       }
     }
-    console.log('✅ saveTools complete, tools state updated');
-  };
+  }, [storageMode, localStorageType, saveToFileSystem]);
 
   // Add tool
-  const addTool = async (toolData) => {
+  const addTool = useCallback(async (toolData) => {
     try {
       if (storageMode === 'local') {
         // Auto-generate favicon if not provided
@@ -413,7 +265,7 @@ export const StorageProvider = ({ children }) => {
             const urlObj = new URL(toolData.url);
             toolData.favicon = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=64`;
           } catch (e) {
-            console.error('Error generating favicon:', e);
+            // Invalid URL, skip favicon
           }
         }
         
@@ -424,10 +276,10 @@ export const StorageProvider = ({ children }) => {
           click_count: 0,
           last_used: null
         };
+        
+        // Get current tools from state and add new one
         const updatedTools = [...tools, newTool];
         await saveTools(updatedTools);
-        // Reload tools to update UI
-        await loadTools();
         return newTool;
       } else if (storageMode === 'cloud') {
         const response = await axios.post(`${API}/tools`, {
@@ -438,36 +290,29 @@ export const StorageProvider = ({ children }) => {
         return response.data;
       }
     } catch (error) {
-      console.error('Error adding tool:', error);
       throw error;
     }
-  };
+  }, [storageMode, tools, userId, saveTools, loadTools]);
 
   // Update tool
-  const updateTool = async (toolId, updates) => {
+  const updateTool = useCallback(async (toolId, updates) => {
     try {
-      console.log('📝 Updating tool:', toolId, 'with updates:', updates);
       if (storageMode === 'local') {
         const updatedTools = tools.map(t => 
           t.id === toolId ? { ...t, ...updates } : t
         );
-        console.log('💾 Saving updated tools to storage');
         await saveTools(updatedTools);
-        console.log('✅ Save complete');
       } else if (storageMode === 'cloud') {
-        console.log('☁️ Updating cloud storage');
         await axios.put(`${API}/tools/${toolId}`, updates);
         await loadTools();
-        console.log('✅ Cloud update complete');
       }
     } catch (error) {
-      console.error('❌ Error updating tool:', error);
       throw error;
     }
-  };
+  }, [storageMode, tools, saveTools, loadTools]);
 
   // Delete tool
-  const deleteTool = async (toolId) => {
+  const deleteTool = useCallback(async (toolId) => {
     try {
       if (storageMode === 'local') {
         const updatedTools = tools.filter(t => t.id !== toolId);
@@ -477,13 +322,12 @@ export const StorageProvider = ({ children }) => {
         await loadTools();
       }
     } catch (error) {
-      console.error('Error deleting tool:', error);
       throw error;
     }
-  };
+  }, [storageMode, tools, saveTools, loadTools]);
 
   // Track click
-  const trackClick = async (toolId) => {
+  const trackClick = useCallback(async (toolId) => {
     try {
       if (storageMode === 'local') {
         const updatedTools = tools.map(t => {
@@ -502,16 +346,16 @@ export const StorageProvider = ({ children }) => {
         await loadTools();
       }
     } catch (error) {
-      console.error('Error tracking click:', error);
+      // Silent fail for tracking
     }
-  };
+  }, [storageMode, tools, saveTools, loadTools]);
 
   // Extract metadata
-  const extractMetadata = async (url) => {
+  const extractMetadata = useCallback(async (url) => {
     try {
-      const llmProvider = localStorage.getItem('llmProvider') || 'anthropic';
+      const llmProvider = localStorage.getItem(STORAGE_KEYS.LLM_PROVIDER) || 'anthropic';
       const llmModel = llmProvider === 'local' 
-        ? localStorage.getItem('localLlmModel') || 'default'
+        ? localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_MODEL) || 'default'
         : llmProvider === 'anthropic' ? 'claude-4-sonnet-20250514'
         : llmProvider === 'openai' ? 'gpt-5.1'
         : 'gemini-2.5-flash';
@@ -523,20 +367,19 @@ export const StorageProvider = ({ children }) => {
       };
 
       if (llmProvider === 'local') {
-        payload.local_endpoint = localStorage.getItem('localLlmEndpoint') || '';
-        payload.local_api_key = localStorage.getItem('localLlmApiKey') || '';
+        payload.local_endpoint = localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_ENDPOINT) || '';
+        payload.local_api_key = localStorage.getItem(STORAGE_KEYS.LOCAL_LLM_API_KEY) || '';
       }
 
       const response = await axios.post(`${API}/tools/extract-metadata`, payload);
       return response.data;
     } catch (error) {
-      console.error('Error extracting metadata:', error);
       throw error;
     }
-  };
+  }, []);
 
   // Import tools
-  const importTools = async (format, data) => {
+  const importTools = useCallback(async (format, data) => {
     try {
       if (storageMode === 'local') {
         let importedTools = [];
@@ -573,13 +416,12 @@ export const StorageProvider = ({ children }) => {
         return response.data;
       }
     } catch (error) {
-      console.error('Error importing tools:', error);
       throw error;
     }
-  };
+  }, [storageMode, tools, userId, saveTools, loadTools]);
 
   // Export tools
-  const exportTools = async (format) => {
+  const exportTools = useCallback(async (format) => {
     try {
       if (storageMode === 'local') {
         if (format === 'json') {
@@ -606,16 +448,16 @@ export const StorageProvider = ({ children }) => {
         return response.data;
       }
     } catch (error) {
-      console.error('Error exporting tools:', error);
       throw error;
     }
-  };
+  }, [storageMode, tools, userId]);
 
+  // Load tools when storage mode changes
   useEffect(() => {
     if (storageMode) {
       loadTools();
     }
-  }, [storageMode, userId]);
+  }, [storageMode, loadTools]);
 
   const value = {
     storageMode,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useStorage } from '../contexts/StorageContext';
@@ -7,6 +7,8 @@ import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
 import { HardDrive, Cloud, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { openDB, getHandle } from '../utils/indexedDB';
+import { STORAGE_KEYS } from '../utils/constants';
 
 // Google OAuth Client ID from environment
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -15,181 +17,94 @@ const Landing = () => {
   const navigate = useNavigate();
   const { selectStorageMode, storageMode } = useStorage();
   const [showOptions, setShowOptions] = useState(false);
-  const [showLocalOptions, setShowLocalOptions] = useState(false);
-  const [supportsFileSystem, setSupportsFileSystem] = useState(false);
   const [folderError, setFolderError] = useState(null);
 
-  // Check browser support for File System Access API
-  React.useEffect(() => {
-    // Check if File System Access API is available
-    // This works in Chrome, Edge, Brave, and other Chromium-based browsers
-    const hasAPI = 'showDirectoryPicker' in window;
-    console.log('Browser supports File System Access API:', hasAPI);
-    console.log('User Agent:', navigator.userAgent);
-    setSupportsFileSystem(hasAPI);
-  }, []);
+  // Check for existing storage and navigate if valid
+  const checkExistingStorage = useCallback(async () => {
+    const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
+    const storedMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
+    
+    if (storedMode === 'local' || hasDirectory === 'true') {
+      if (hasDirectory === 'true') {
+        try {
+          const handle = await getHandle('directory');
 
-  // Helper to open IndexedDB
-  const openDB = React.useCallback(() => {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open('NodeNestDB', 1);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains('handles')) {
-          db.createObjectStore('handles');
-        }
-      };
-    });
-  }, []);
-
-  // Check if already has storage mode selected or has previous folder selection
-  React.useEffect(() => {
-
-    const checkExistingStorage = async () => {
-      // Check if folder handle exists even if storageMode not set (after logout/reload)
-      const hasDirectory = localStorage.getItem('nodenest_has_directory');
-      const storedMode = localStorage.getItem('nodenest_storage_mode');
-      
-      // CRITICAL FIX: Check for folder even when storageMode in context is null
-      // This handles the case where user returns and context hasn't initialized yet
-      if (storedMode === 'local' || hasDirectory === 'true') {
-        if (hasDirectory === 'true') {
-          // Check if we can verify folder access without re-selection
-          try {
-            const db = await openDB();
-            const tx = db.transaction('handles', 'readonly');
-            const request = tx.objectStore('handles').get('directory');
+          if (handle) {
+            const permission = await handle.queryPermission({ mode: 'readwrite' });
             
-            const handle = await new Promise((resolve, reject) => {
-              request.onsuccess = () => resolve(request.result);
-              request.onerror = () => reject(request.error);
-            });
-
-            if (handle) {
-              // Check permission status
-              const permission = await handle.queryPermission({ mode: 'readwrite' });
-              if (permission === 'granted') {
-                // Permission already granted, SET STORAGE MODE FIRST
-                console.log('✅ Folder permission already granted, setting storage mode in context');
-                
-                // CRITICAL FIX: Call selectStorageMode to update context BEFORE navigation
+            if (permission === 'granted') {
+              await selectStorageMode('local', null, 'filesystem');
+              navigate('/dashboard');
+            } else if (permission === 'prompt') {
+              const newPermission = await handle.requestPermission({ mode: 'readwrite' });
+              if (newPermission === 'granted') {
                 await selectStorageMode('local', null, 'filesystem');
-                
-                console.log('✅ Storage mode set in context');
-                console.log('🔄 Navigating to dashboard...');
-                
-                // Navigate using React Router (no full page reload)
                 navigate('/dashboard');
-              } else if (permission === 'prompt') {
-                // Request permission here
-                try {
-                  console.log('📂 Requesting folder permission...');
-                  const newPermission = await handle.requestPermission({ mode: 'readwrite' });
-                  if (newPermission === 'granted') {
-                    console.log('✅ Permission granted, setting storage mode in context');
-                    
-                    // CRITICAL FIX: Call selectStorageMode to update context BEFORE navigation
-                    await selectStorageMode('local', null, 'filesystem');
-                    
-                    console.log('✅ Storage mode set in context');
-                    console.log('🔄 Navigating to dashboard...');
-                    
-                    // Navigate using React Router (no full page reload)
-                    navigate('/dashboard');
-                  } else {
-                    console.log('❌ Permission denied');
-                    localStorage.removeItem('nodenest_storage_mode');
-                    localStorage.removeItem('nodenest_has_directory');
-                  }
-                } catch (error) {
-                  console.error('Permission request failed:', error);
-                  localStorage.removeItem('nodenest_storage_mode');
-                  localStorage.removeItem('nodenest_has_directory');
-                }
               } else {
-                // Permission denied, clear state
-                console.log('❌ Permission already denied');
-                localStorage.removeItem('nodenest_storage_mode');
-                localStorage.removeItem('nodenest_has_directory');
+                localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+                localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
               }
             } else {
-              // No handle found, clear state and stay on landing page
-              console.log('⚠️ No folder handle found in IndexedDB');
-              localStorage.removeItem('nodenest_storage_mode');
-              localStorage.removeItem('nodenest_has_directory');
+              localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+              localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
             }
-          } catch (error) {
-            console.error('Error checking folder access:', error);
-            // Clear invalid state
-            localStorage.removeItem('nodenest_storage_mode');
-            localStorage.removeItem('nodenest_has_directory');
+          } else {
+            localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+            localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
           }
+        } catch (error) {
+          localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+          localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
         }
-      } else if (storageMode === 'cloud') {
+      } else if (storedMode === 'local') {
+        // Browser storage mode - navigate directly
+        await selectStorageMode('local', null, 'browser');
         navigate('/dashboard');
       }
-    };
-    
-    // CRITICAL FIX: Check for existing storage even when context storageMode is null
-    // This is essential for returning users whose context hasn't initialized yet
-    const hasDirectory = localStorage.getItem('nodenest_has_directory');
-    const storedMode = localStorage.getItem('nodenest_storage_mode');
+    } else if (storageMode === 'cloud') {
+      navigate('/dashboard');
+    }
+  }, [navigate, selectStorageMode, storageMode]);
+
+  useEffect(() => {
+    const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
+    const storedMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
     
     if (storedMode || hasDirectory === 'true') {
-      console.log('🔍 Detected existing storage, checking folder handle...');
       checkExistingStorage();
     } else if (storageMode === 'cloud') {
       navigate('/dashboard');
     }
-  }, [navigate, selectStorageMode]);
+  }, [checkExistingStorage, navigate, storageMode]);
 
   const handleLocalStorage = async (storageType) => {
-    console.log('🚀 Starting storage setup:', storageType);
     setFolderError(null);
     
-    // Check for existing folder handle FIRST (before calling selectStorageMode)
-    const hasDirectory = localStorage.getItem('nodenest_has_directory');
+    // Check for existing folder handle first
+    const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
     if (hasDirectory === 'true' && storageType === 'filesystem') {
-      console.log('📂 Found existing folder flag, checking IndexedDB...');
       try {
-        const db = await openDB();
-        const tx = db.transaction('handles', 'readonly');
-        const request = tx.objectStore('handles').get('directory');
-        const handle = await new Promise((resolve, reject) => {
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error);
-        });
+        const handle = await getHandle('directory');
         
         if (handle) {
-          console.log('✅ Found existing handle, requesting permission...');
           const permission = await handle.requestPermission({ mode: 'readwrite' });
           if (permission === 'granted') {
-            console.log('✅ Permission granted! Setting storage mode in context...');
-            
-            // CRITICAL FIX: Call selectStorageMode to update context properly
             await selectStorageMode('local', null, 'filesystem');
-            
             toast.success('Using your saved folder location');
             navigate('/dashboard');
             return;
           }
         }
       } catch (error) {
-        console.log('⚠️ Could not use existing handle:', error);
+        // Continue with normal flow if existing handle fails
       }
     }
     
-    // If no existing handle or permission denied, proceed with normal flow
     const result = await selectStorageMode('local', null, storageType);
-    console.log('📦 Storage setup result:', result);
     
     if (result.success) {
-      console.log('✅ Navigating to dashboard...');
       navigate('/dashboard');
     } else {
-      console.error('❌ Folder selection failed:', result.error);
       setFolderError(result.error);
       toast.error(result.error);
     }
@@ -197,13 +112,11 @@ const Landing = () => {
 
   const handleGoogleSuccess = (credentialResponse) => {
     try {
-      // Decode JWT token to get user info
       const decoded = JSON.parse(atob(credentialResponse.credential.split('.')[1]));
       selectStorageMode('cloud', decoded);
       toast.success(`Welcome ${decoded.name || decoded.email}! Using cloud storage.`);
       setTimeout(() => navigate('/dashboard'), 500);
     } catch (error) {
-      console.error('Error decoding Google token:', error);
       toast.error('Failed to sign in with Google');
     }
   };
