@@ -5,9 +5,9 @@ import { useStorage } from '../contexts/StorageContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
 import { toast } from 'sonner';
-import { HardDrive, Cloud, Sparkles, Monitor } from 'lucide-react';
+import { HardDrive, Cloud, Sparkles, Monitor, FolderOpen, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { openDB, getHandle } from '../utils/indexedDB';
+import { getHandle } from '../utils/indexedDB';
 import { STORAGE_KEYS } from '../utils/constants';
 
 // Google OAuth Client ID from environment
@@ -20,64 +20,117 @@ const Landing = () => {
   const { selectStorageMode, storageMode } = useStorage();
   const [showOptions, setShowOptions] = useState(false);
   const [folderError, setFolderError] = useState(null);
+  const [isReturningUser, setIsReturningUser] = useState(false);
+  const [savedFolderName, setSavedFolderName] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isConfirming, setIsConfirming] = useState(false);
 
-  // Check for existing storage and navigate if valid
-  const checkExistingStorage = useCallback(async () => {
-    const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
-    const storedMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
-    
-    if (storedMode === 'local' || hasDirectory === 'true') {
+  // Check if user is returning with saved folder
+  useEffect(() => {
+    const checkReturningUser = async () => {
+      const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
+      const storedMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
+      const localStorageType = localStorage.getItem(STORAGE_KEYS.LOCAL_STORAGE_TYPE);
+      
+      // If user has browser storage (not filesystem), auto-navigate
+      if (storedMode === 'local' && localStorageType === 'browser') {
+        await selectStorageMode('local', null, 'browser');
+        navigate('/dashboard');
+        return;
+      }
+      
+      // If user has cloud storage, auto-navigate
+      if (storageMode === 'cloud') {
+        navigate('/dashboard');
+        return;
+      }
+      
+      // If user has filesystem storage, check for saved handle
       if (hasDirectory === 'true') {
         try {
           const handle = await getHandle('directory');
-
           if (handle) {
+            // Check current permission status (don't request yet - needs user gesture)
             const permission = await handle.queryPermission({ mode: 'readwrite' });
             
             if (permission === 'granted') {
+              // Permission already granted, go directly to dashboard
               await selectStorageMode('local', null, 'filesystem');
               navigate('/dashboard');
+              return;
             } else if (permission === 'prompt') {
-              const newPermission = await handle.requestPermission({ mode: 'readwrite' });
-              if (newPermission === 'granted') {
-                await selectStorageMode('local', null, 'filesystem');
-                navigate('/dashboard');
-              } else {
-                localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
-                localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
-              }
-            } else {
-              localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
-              localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
+              // Need user to confirm - show welcome back screen
+              setSavedFolderName(handle.name);
+              setIsReturningUser(true);
+              setIsLoading(false);
+              return;
             }
-          } else {
-            localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
-            localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
           }
         } catch (error) {
-          localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
+          // Handle failed, clear storage
           localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
+          localStorage.removeItem(STORAGE_KEYS.STORAGE_MODE);
         }
-      } else if (storedMode === 'local') {
-        // Browser storage mode - navigate directly
-        await selectStorageMode('local', null, 'browser');
-        navigate('/dashboard');
       }
-    } else if (storageMode === 'cloud') {
-      navigate('/dashboard');
-    }
+      
+      setIsLoading(false);
+    };
+
+    checkReturningUser();
   }, [navigate, selectStorageMode, storageMode]);
 
-  useEffect(() => {
-    const hasDirectory = localStorage.getItem(STORAGE_KEYS.HAS_DIRECTORY);
-    const storedMode = localStorage.getItem(STORAGE_KEYS.STORAGE_MODE);
+  // Handle returning user confirming folder access
+  const handleConfirmFolder = useCallback(async () => {
+    setIsConfirming(true);
+    setFolderError(null);
     
-    if (storedMode || hasDirectory === 'true') {
-      checkExistingStorage();
-    } else if (storageMode === 'cloud') {
-      navigate('/dashboard');
+    try {
+      const handle = await getHandle('directory');
+      
+      if (handle) {
+        // Request permission - this works because it's triggered by user click
+        const permission = await handle.requestPermission({ mode: 'readwrite' });
+        
+        if (permission === 'granted') {
+          await selectStorageMode('local', null, 'filesystem');
+          toast.success(`Connected to folder: ${handle.name}`);
+          navigate('/dashboard');
+          return;
+        } else {
+          setFolderError('Folder access denied. Please try again or choose a new folder.');
+        }
+      } else {
+        setFolderError('Saved folder not found. Please select a new folder.');
+        localStorage.removeItem(STORAGE_KEYS.HAS_DIRECTORY);
+        setIsReturningUser(false);
+      }
+    } catch (error) {
+      setFolderError('Failed to access folder. Please try again.');
+    } finally {
+      setIsConfirming(false);
     }
-  }, [checkExistingStorage, navigate, storageMode]);
+  }, [navigate, selectStorageMode]);
+
+  // Handle choosing a different folder
+  const handleChooseDifferentFolder = useCallback(async () => {
+    setIsConfirming(true);
+    setFolderError(null);
+    
+    try {
+      const result = await selectStorageMode('local', null, 'filesystem');
+      
+      if (result.success) {
+        toast.success('New folder selected!');
+        navigate('/dashboard');
+      } else {
+        setFolderError(result.error);
+      }
+    } catch (error) {
+      setFolderError('Failed to select folder.');
+    } finally {
+      setIsConfirming(false);
+    }
+  }, [navigate, selectStorageMode]);
 
   const handleLocalStorage = async (storageType) => {
     setFolderError(null);
@@ -127,6 +180,106 @@ const Landing = () => {
     toast.error('Google sign-in failed. Please try again.');
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center animate-pulse">
+            <Sparkles className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-violet-200">Loading NodeNest...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Show "Welcome Back" screen for returning users
+  if (isReturningUser) {
+    return (
+      <div className="min-h-screen w-full relative overflow-hidden flex items-center justify-center">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-violet-950 to-slate-900" />
+        <div className="absolute inset-0 radial-bg" />
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 max-w-lg mx-auto px-6 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 flex items-center justify-center">
+              <FolderOpen className="w-10 h-10 text-white" />
+            </div>
+            
+            <h1 className="text-4xl font-bold text-white mb-4">Welcome Back!</h1>
+            
+            <p className="text-violet-200 mb-2">Your data is saved in:</p>
+            <div className="bg-white/10 rounded-lg px-4 py-3 mb-6 backdrop-blur-sm border border-white/20">
+              <p className="text-cyan-300 font-mono text-lg">{savedFolderName}/</p>
+              <p className="text-violet-300/70 text-sm">nodenest_tools.json</p>
+            </div>
+
+            {folderError && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-sm text-red-200"
+              >
+                <p>{folderError}</p>
+              </motion.div>
+            )}
+
+            <div className="space-y-3">
+              <Button
+                onClick={handleConfirmFolder}
+                disabled={isConfirming}
+                className="w-full bg-violet-600 hover:bg-violet-700 text-white text-lg py-6 gap-2"
+              >
+                {isConfirming ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <FolderOpen className="w-5 h-5" />
+                    Continue with This Folder
+                  </>
+                )}
+              </Button>
+              
+              <p className="text-xs text-violet-300/60">
+                Your browser will ask you to confirm folder access
+              </p>
+              
+              <div className="pt-4 border-t border-white/10">
+                <Button
+                  onClick={handleChooseDifferentFolder}
+                  disabled={isConfirming}
+                  variant="ghost"
+                  className="text-violet-300 hover:text-white hover:bg-white/10"
+                >
+                  Choose a Different Folder
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Show normal landing page for new users
   return (
     <div className="min-h-screen w-full relative overflow-hidden flex items-center justify-center">
       {/* Background */}
