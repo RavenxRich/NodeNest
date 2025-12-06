@@ -18,6 +18,7 @@ export const STORAGE_KEYS = {
   LOCAL_STORAGE_TYPE: 'nodenest_local_storage_type',
   HAS_DIRECTORY: 'nodenest_has_directory',
   TOOLS_ENCRYPTED: 'nodenest_tools_encrypted',
+  SYSTEMS_ENCRYPTED: 'nodenest_systems_encrypted',
   LLM_PROVIDER: 'llmProvider',
   LOCAL_LLM_ENDPOINT: 'localLlmEndpoint',
   LOCAL_LLM_MODEL: 'localLlmModel',

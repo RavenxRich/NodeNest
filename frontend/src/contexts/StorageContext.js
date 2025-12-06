@@ -31,6 +31,7 @@ export const StorageProvider = ({ children }) => {
   });
   
   const [tools, setTools] = useState([]);
+  const [systems, setSystems] = useState([]);
   const [categories] = useState(DEFAULT_CATEGORIES);
   const [directoryHandle, setDirectoryHandle] = useState(null);
   
@@ -501,29 +502,111 @@ export const StorageProvider = ({ children }) => {
     setStorageMode(null);
     setUserId(null);
     setTools([]);
+    setSystems([]);
     setDirectoryHandle(null);
     setLocalStorageType('browser');
   }, []);
+
+  // Load systems - similar to tools
+  const loadSystems = useCallback(async () => {
+    if (!storageMode) return;
+
+    try {
+      if (storageMode === 'local') {
+        const encryptedData = localStorage.getItem(STORAGE_KEYS.SYSTEMS_ENCRYPTED);
+        const localSystems = encryptedData ? decryptData(encryptedData) : [];
+        setSystems(localSystems || []);
+      } else if (storageMode === 'cloud' && HAS_BACKEND) {
+        const response = await axios.get(`${API}/systems`, {
+          params: { user_id: userId }
+        });
+        setSystems(response.data || []);
+      }
+    } catch (error) {
+      setSystems([]);
+    }
+  }, [storageMode, userId]);
+
+  // Save systems
+  const saveSystems = useCallback(async (updatedSystems) => {
+    setSystems(updatedSystems);
+
+    if (storageMode === 'local') {
+      const encrypted = encryptData(updatedSystems);
+      if (encrypted) {
+        localStorage.setItem(STORAGE_KEYS.SYSTEMS_ENCRYPTED, encrypted);
+      }
+    } else if (storageMode === 'cloud' && HAS_BACKEND) {
+      // Cloud save would go here
+    }
+  }, [storageMode]);
+
+  // Create system
+  const createSystem = useCallback(async (systemData) => {
+    try {
+      const newSystem = {
+        ...systemData,
+        id: `system_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        created_at: new Date().toISOString()
+      };
+      
+      const updatedSystems = [...systems, newSystem];
+      await saveSystems(updatedSystems);
+      return newSystem;
+    } catch (error) {
+      throw error;
+    }
+  }, [systems, saveSystems]);
+
+  // Update system
+  const updateSystem = useCallback(async (systemId, systemData) => {
+    try {
+      const updatedSystems = systems.map(s => 
+        s.id === systemId 
+          ? { ...s, ...systemData, updated_at: new Date().toISOString() }
+          : s
+      );
+      await saveSystems(updatedSystems);
+    } catch (error) {
+      throw error;
+    }
+  }, [systems, saveSystems]);
+
+  // Delete system
+  const deleteSystem = useCallback(async (systemId) => {
+    try {
+      const updatedSystems = systems.filter(s => s.id !== systemId);
+      await saveSystems(updatedSystems);
+    } catch (error) {
+      throw error;
+    }
+  }, [systems, saveSystems]);
 
   // Load tools when storage mode changes
   useEffect(() => {
     if (storageMode) {
       loadTools();
+      loadSystems();
     }
-  }, [storageMode, loadTools]);
+  }, [storageMode, loadTools, loadSystems]);
 
   const value = {
     storageMode,
     userId,
     tools,
+    systems,
     categories,
     localStorageType,
     directoryHandle,
     selectStorageMode,
     loadTools,
+    loadSystems,
     addTool,
     updateTool,
     deleteTool,
+    createSystem,
+    updateSystem,
+    deleteSystem,
     trackClick,
     extractMetadata,
     importTools,

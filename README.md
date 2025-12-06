@@ -30,6 +30,7 @@
 NodeNest is a **visual bookmark manager** designed specifically for AI tools. Instead of a boring list, your tools are displayed on a beautiful **radial canvas** where you can:
 
 - **Drag & drop** tools between category rings with glowing visual feedback
+- **Create Systems & Processes** - Link your tools together into workflows
 - **Search** instantly across all your tools
 - **Track usage** with built-in analytics
 - **Sync to mobile** via QR codes
@@ -45,6 +46,7 @@ All data is stored **locally in your browser** or in a **folder you choose** - n
 |---------|-------------|
 | 🎯 **Radial Interface** | Drag-and-drop nodes on beautiful category rings |
 | ✨ **Interactive Drag Effects** | Nodes light up with pulsing rings and glow effects |
+| 🔗 **Systems & Processes** | Link tools together into step-by-step workflows |
 | 💾 **Persistent Storage** | Data survives browser refresh - localStorage or File System |
 | 📁 **Folder Storage** | Save to your own folder as `nodenest_tools.json` |
 | 📱 **Mobile Sync** | QR code export with automatic compression |
@@ -127,6 +129,27 @@ Your folder is **remembered** - just confirm access when you return!
 
 ---
 
+## 🔗 Systems & Processes
+
+Create workflows by linking your tools together:
+
+1. Click the **Sparkles** icon in the dashboard header
+2. Create a new system with a name and description
+3. Add steps by selecting tools from your collection
+4. Add notes for each step to document your process
+5. Reorder steps with up/down arrows
+
+**Example System: "Vibing Coding Process"**
+1. Brainstorm with Perplexity.ai
+2. Vibe code MVP with Emergent
+3. Edit code with Cursor
+4. Deploy on GitHub Pages / Vercel / Railway
+5. Add to App Stores
+
+Each system shows your tools with icons, and you can open tools directly from the system view!
+
+---
+
 ## 📱 Mobile Sync
 
 Share your tools collection to your phone:
@@ -157,7 +180,8 @@ NodeNest/
 │   │   │   ├── Landing.js  # Storage selection
 │   │   │   ├── Dashboard.js # Main canvas
 │   │   │   ├── Settings.js
-│   │   │   └── Stats.js
+│   │   │   ├── Stats.js
+│   │   │   └── Systems.js  # Systems & Processes
 │   │   ├── contexts/       # React Context
 │   │   │   └── StorageContext.js
 │   │   └── utils/          # Helpers

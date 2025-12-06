@@ -5,6 +5,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Stats from './pages/Stats';
+import Systems from './pages/Systems';
 import { StorageProvider } from './contexts/StorageContext';
 import { Toaster } from './components/ui/sonner';
 import '@/App.css';
@@ -22,6 +23,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/stats" element={<Stats />} />
+            <Route path="/systems" element={<Systems />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>
