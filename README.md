@@ -282,7 +282,26 @@ Contributions are welcome!
 
 ## 📄 License
 
-MIT License - do whatever you want with it!
+**MIT License with Commercial Use Restriction**
+
+This project is open source and free for personal, educational, and non-commercial use. However, **commercial use, including subscription-based services, is prohibited** without explicit permission.
+
+**What's Allowed:**
+- ✅ Personal projects and portfolios
+- ✅ Educational purposes
+- ✅ Open source projects
+- ✅ Internal company tools (not sold as a service)
+- ✅ Non-profit organizations
+
+**What's NOT Allowed:**
+- ❌ Subscription-based services or SaaS products
+- ❌ Paid applications or services
+- ❌ Freemium models with paid tiers
+- ❌ Any service that charges users
+
+For commercial licensing inquiries, please contact the repository owner.
+
+See [LICENSE](LICENSE) for full terms.
 
 ---
 
